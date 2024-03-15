@@ -8,22 +8,22 @@ import StatCards from './stat-cards';
 import TotalStats from './total-stats';
 import RevenueStats from './revenue-stats';
 import OrderStats from './order-stats1';
-import { PiPlusBold } from 'react-icons/pi';
 import welcomeImg from '@public/shop-illustration.png';
 import HandWaveIcon from '@/component/icons/hand-wave';
 import { useContext } from 'react';
 import { UserContext } from '@/store/user/context';
 import { formatNumber } from '@/utils/format-number';
 import useSWR from 'swr';
-import { BaseApi, totalCounts } from '@/constants';
+import { BaseApi, admintotalCount } from '@/constants';
 import axios from 'axios';
+import { BsActivity } from 'react-icons/bs';
 
 export default function EcommerceDashboard() {
   function getGreeting() {
     const now = new Date();
     const hours = now.getHours();
     const morningEnd = 12;
-    const afternoonEnd = 16;
+    const afternoonEnd = 17;
     const eveningEnd = 19;
     if (hours < morningEnd) {
       return 'Good Morning';
@@ -42,23 +42,30 @@ export default function EcommerceDashboard() {
     data: data1,
     isLoading,
     error,
-  } = useSWR(`${BaseApi}${totalCounts}/${state?.user?.id}`, fetcher, {
+  } = useSWR(`${BaseApi}${admintotalCount}`, fetcher, {
     refreshInterval: 3600000,
     revalidateOnFocus: true,
     errorRetryCount: 3,
   });
-  const revenue = data1?.data?.revenue;
+  const totalSales = data1?.data?.totalSales;
   const orders = data1?.data?.orders;
   const products = data1?.data?.products;
   const coupons = data1?.data?.coupons;
   const tickets = data1?.data?.tickets;
+  const platformRevenue = data1?.data?.platformRevenue;
 
   const data = [
     {
-      name: 'Total Revenue',
-      value: `₹${revenue && formatNumber(revenue)}`,
+      name: 'Total Sales',
+      value: `₹${totalSales && formatNumber(totalSales)}`,
       percentage: 75,
       color: '#3872FA',
+    },
+    {
+      name: 'Platform Revenue',
+      value: `₹${platformRevenue && formatNumber(platformRevenue)}`,
+      percentage: 50,
+      color: '#f1416c',
     },
     {
       name: 'Total Orders',
@@ -67,19 +74,12 @@ export default function EcommerceDashboard() {
       color: '#10b981',
     },
     {
-      name: 'Selling Products',
+      name: 'Total Products',
       value: `${products && formatNumber(products)}`,
       percentage: 50,
       color: '#f1416c',
     },
-    {
-      name: 'Selling Categories',
-      value: `${
-        products && formatNumber(state?.user?.sellingCategory?.length)
-      }`,
-      percentage: 50,
-      color: '#f1416c',
-    },
+
     {
       name: 'Total Coupons',
       value: `${coupons && formatNumber(coupons)}`,
@@ -101,7 +101,7 @@ export default function EcommerceDashboard() {
           title={
             <>
               {getGreeting()}, <br />{' '}
-              {state?.user != null && state?.user?.shopname + ' '}
+              {state?.user != null && state?.user?.name + ' '}
               <HandWaveIcon className="inline-flex h-8 w-8" />
             </>
           }
@@ -122,12 +122,12 @@ export default function EcommerceDashboard() {
           contentClassName="@2xl:max-w-[calc(100%-340px)]"
           className="border border-gray-200 bg-gray-0 pb-8 @4xl:col-span-2 @7xl:col-span-8 lg:pb-9 dark:bg-gray-100/30"
         >
-          <Link href={'/products/create'} className="inline-flex">
+          <Link href={'/sellers'} className="inline-flex">
             <Button
               tag="span"
               className="h-[38px] shadow md:h-10 dark:bg-gray-100 dark:text-gray-900"
             >
-              <PiPlusBold className="me-1 h-4 w-4" /> Add Product
+              <BsActivity className="me-1 h-4 w-4" /> View Sellers
             </Button>
           </Link>
         </WelcomeBanner>

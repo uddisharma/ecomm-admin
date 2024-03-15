@@ -4,84 +4,188 @@ import {
   PiCreditCardDuotone,
   PiHouseLine,
 } from 'react-icons/pi';
-import { CiDeliveryTruck } from 'react-icons/ci';
+import { CiDeliveryTruck, CiMoneyCheck1 } from 'react-icons/ci';
 import { TiTicket } from 'react-icons/ti';
+import { VscGitPullRequestCreate } from 'react-icons/vsc';
 import {
+  MdConnectWithoutContact,
+  MdOutlineAddPhotoAlternate,
+  MdOutlineAutoDelete,
   MdOutlineCreateNewFolder,
   MdOutlineFileDownload,
+  MdOutlinePendingActions,
+  MdOutlinePhotoLibrary,
 } from 'react-icons/md';
-import { RiCoupon2Line } from 'react-icons/ri';
+import { RiCoupon2Line, RiUserStarLine } from 'react-icons/ri';
+import { FiUser, FiUserPlus } from 'react-icons/fi';
+import { IoTicketOutline } from 'react-icons/io5';
 export const menuItems = [
   {
     name: 'Home',
     href: '/',
     icon: <PiHouseLine />,
   },
-
   {
-    name: 'Orders',
-    href: '/orders',
-    icon: <PiPackageDuotone />,
+    name: 'Sellers',
+    href: '/sellers',
+    icon: <RiUserStarLine />,
   },
   {
-    name: 'Products',
-    href: '/products',
-    icon: <PiShoppingCartDuotone />,
+    name: 'Onboard',
+    href: '/seller/onboarding',
+    icon: <FiUserPlus />,
   },
   {
-    name: 'Add Product',
-    href: '/products/create',
-    icon: <MdOutlineCreateNewFolder />,
-    badge: '',
-  },
-  {
-    name: 'Categories',
-    href: '/categories',
-    icon: <PiCreditCardDuotone />,
-  },
-  {
-    name: 'Add Category',
-    href: '/categories/create',
-    icon: <MdOutlineCreateNewFolder />,
+    name: 'Pending ',
+    href: '/onboarding/pending',
+    icon: <MdOutlinePendingActions />,
     badge: '',
   },
 
   {
-    name: 'Coupons',
-    href: '/coupons',
-    icon: <RiCoupon2Line />,
-  },
-  {
-    name: 'Add Coupon',
-    href: '/coupons/create',
-    icon: <MdOutlineCreateNewFolder />,
+    name: 'Deleted',
+    href: '/sellers/deleted',
+    icon: <MdOutlineAutoDelete />,
     badge: '',
+  },
+
+  {
+    name: 'Requests',
+    href: '/onboarding/requests',
+    icon: <VscGitPullRequestCreate />,
+    badge: '',
+  },
+
+  {
+    name: 'Users',
+    href: '/users',
+    icon: <FiUser />,
+  },
+
+  {
+    name: 'Deleted',
+    href: '/users/deleted',
+    icon: <MdOutlineAutoDelete />,
+  },
+
+  {
+    name: 'New User',
+    href: '/users/create',
+    icon: <FiUserPlus />,
   },
 
   {
     name: 'Payouts',
-    href: '/transactions',
-    icon: <PiCreditCardDuotone />,
+    href: '/payouts/all',
+    icon: <CiMoneyCheck1 />,
     badge: '',
   },
   {
-    name: 'Logistics',
-    href: '/logistics',
-    icon: <CiDeliveryTruck />,
+    name: 'Create Payout',
+    href: '/payouts/create',
+    icon: <MdOutlineCreateNewFolder />,
     badge: '',
   },
+
   {
     name: 'Tickets',
     href: '/tickets',
-    icon: <TiTicket />,
+    icon: <IoTicketOutline />,
     badge: '',
   },
+
   {
     name: 'Create Ticket',
     href: '/tickets/create',
     icon: <MdOutlineCreateNewFolder />,
     badge: '',
   },
+
+  {
+    name: 'Contacts',
+    href: '/contacts',
+    icon: <MdConnectWithoutContact />,
+    badge: '',
+  },
+
+  {
+    name: 'Banners',
+    href: '/banners',
+    icon: <MdOutlinePhotoLibrary />,
+    badge: '',
+  },
+
+  {
+    name: 'Add Banner',
+    href: '/banners/create',
+    icon: <MdOutlineAddPhotoAlternate />,
+    badge: '',
+  },
+
+  // {
+  //   name: 'Orders',
+  //   href: '/orders',
+  //   icon: <PiPackageDuotone />,
+  // },
+  // {
+  //   name: 'Products',
+  //   href: '/products',
+  //   icon: <PiShoppingCartDuotone />,
+  // },
+  // {
+  //   name: 'Add Product',
+  //   href: '/products/create',
+  //   icon: <MdOutlineCreateNewFolder />,
+  //   badge: '',
+  // },
+  // {
+  //   name: 'Categories',
+  //   href: '/categories',
+  //   icon: <PiCreditCardDuotone />,
+  // },
+  // {
+  //   name: 'Add Category',
+  //   href: '/categories/create',
+  //   icon: <MdOutlineCreateNewFolder />,
+  //   badge: '',
+  // },
+
+  // {
+  //   name: 'Coupons',
+  //   href: '/coupons',
+  //   icon: <RiCoupon2Line />,
+  // },
+  // {
+  //   name: 'Add Coupon',
+  //   href: '/coupons/create',
+  //   icon: <MdOutlineCreateNewFolder />,
+  //   badge: '',
+  // },
+
+  // {
+  //   name: 'Payouts',
+  //   href: '/transactions',
+  //   icon: <PiCreditCardDuotone />,
+  //   badge: '',
+  // },
+  // {
+  //   name: 'Logistics',
+  //   href: '/logistics',
+  //   icon: <CiDeliveryTruck />,
+  //   badge: '',
+  // },
+  // {
+  //   name: 'Tickets',
+  //   href: '/tickets',
+  //   icon: <TiTicket />,
+  //   badge: '',
+  // },
+  // {
+  //   name: 'Create Ticket',
+  //   href: '/tickets/create',
+  //   icon: <MdOutlineCreateNewFolder />,
+  //   badge: '',
+  // },
   {
     name: 'Download Report',
     href: '/report',

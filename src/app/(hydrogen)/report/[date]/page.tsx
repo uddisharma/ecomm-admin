@@ -3,19 +3,18 @@ import cn from '@/utils/class-names';
 import { Button } from 'rizzui';
 import * as XLSX from 'xlsx';
 import PageHeader from '@/component/others/pageHeader';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { UserContext } from '@/store/user/context';
 import {
   BaseApi,
+  adminOrders,
+  admindatewiseStats,
   datewiseStats,
-  sellerAllTickets,
   sellerOrders,
 } from '@/constants';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { useParams, useRouter } from 'next/navigation';
-import ExportButton from '@/component/others/export-button';
-import useSWR from 'swr';
 import { PiArrowLineDownBold, PiArrowLineUpBold } from 'react-icons/pi';
 import useMedia from 'react-use/lib/useMedia';
 function convertDateFormat(inputDate: any) {
@@ -58,18 +57,16 @@ function PromoBanner() {
       },
     ],
   };
-  const { state } = useContext(UserContext);
 
   const comprehensive = () => {
     setLoading1(true);
     axios
-      .get(`${BaseApi}${datewiseStats}/${state?.user?.id}?date=${date}`)
+      .get(`${BaseApi}${admindatewiseStats}?date=${date}`)
       .then((res) => {
         if (res.data?.status != 'SUCCESS') {
           return toast.error('Something went wrong ! while downloading report');
         }
         if (res.data?.data) {
-          console.log([{ ...res?.data?.data }]);
           setD_data1([{ ...res?.data?.data }]);
         }
       })
@@ -96,11 +93,12 @@ function PromoBanner() {
     setLoading2(true);
     axios
       .get(
-        `${BaseApi}${sellerOrders}/${state?.user?.id}?date=${convertToISOFormat(
+        `${BaseApi}${adminOrders}?date=${convertToISOFormat(
           date
         )}&status=All&courior=All&page=${1}&limit=${100000}`
       )
       .then((res) => {
+        // console.log(res?.data);
         if (res.data?.status == 'SUCCESS') {
           const orders = res.data?.data?.data;
           const calculateTotalQuantity = (orderItems: any) => {
@@ -111,34 +109,41 @@ function PromoBanner() {
             return totalQuantity;
           };
 
-          const newdata = orders?.map((e: any) => {
-            return {
-              orderId: e.order_id,
-              customer: `${e.customerId.name} ${e.customerId.email}`,
-              shippingAddress: `${e.customerId.shippingAddress.find(
-                (address: any) => address._id === e.addressId
-              )?.address} ${e.customerId.shippingAddress.find(
-                (address: any) => address._id === e.addressId
-              )?.district} ${e.customerId.shippingAddress.find(
-                (address: any) => address._id === e.addressId
-              )?.state}`,
-              orderedProducts: e.orderItems
-                .map((item: any) => {
-                  const formattedProduct = `${item.productId.name}-${item.quantity}-${item.color.name}-${item.size}`;
-                  return formattedProduct;
-                })
-                .join(' | '),
-              totalAmount: e.totalAmount,
-              totalItems: calculateTotalQuantity(e.orderItems),
-              shippingCost: e.shipping,
-              discount: e.discount,
-              courier: e.courior == 'Local' ? 'Local' : 'Serviceable',
-              note: e.note,
-              paymentStatus: e.payment ? 'paid' : 'Not Paid',
-              orderStatus: e.status,
-              charge: e.charge,
-            };
-          });
+          const newdata =
+            orders &&
+            orders?.length &&
+            orders?.map((e: any) => {
+              return {
+                orderId: e.order_id,
+                customer: e.customerId
+                  ? `${e.customerId.name} ${e.customerId.email}`
+                  : '',
+                shippingAddress: e.customerId
+                  ? `${e.customerId.shippingAddress.find(
+                      (address: any) => address._id === e.addressId
+                    )?.address} ${e.customerId.shippingAddress.find(
+                      (address: any) => address._id === e.addressId
+                    )?.district} ${e.customerId.shippingAddress.find(
+                      (address: any) => address._id === e.addressId
+                    )?.state}`
+                  : '',
+                orderedProducts: e.orderItems
+                  .map((item: any) => {
+                    const formattedProduct = `${item.productId.name}-${item.quantity}-${item.color.name}-${item.size}`;
+                    return formattedProduct;
+                  })
+                  .join(' | '),
+                totalAmount: e.totalAmount,
+                totalItems: calculateTotalQuantity(e.orderItems),
+                shippingCost: e.shipping,
+                discount: e.discount,
+                courier: e.courior == 'Local' ? 'Local' : 'Serviceable',
+                note: e.note,
+                paymentStatus: e.payment ? 'paid' : 'Not Paid',
+                orderStatus: e.status,
+                charge: e.charge,
+              };
+            });
           setD_data2(newdata);
         }
         if (res.data?.status == 'RECORD_NOT_FOUND') {

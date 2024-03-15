@@ -5,46 +5,50 @@ import { Title, Text } from '@/component/ui/text';
 import { Button } from '@/component/ui/button';
 import { useScrollableSlider } from '@/hooks/use-scrollable-slider';
 import { PiCaretLeftBold, PiCaretRightBold } from 'react-icons/pi';
-import { usePathname } from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
 import cn from '@/utils/class-names';
 import { useLayout } from '@/hooks/use-layout';
 import { LAYOUT_OPTIONS } from '@/config/enums';
 import { useBerylliumSidebars } from '@/layouts/beryllium/beryllium-utils';
 
-const menuItems = [
-  {
-    label: 'Profile',
-    value: '/shop/profile',
-  },
-  {
-    label: 'Password',
-    value: '/shop/password',
-  },
-  {
-    label: 'Legal',
-    value: '/shop/legal',
-  },
-  {
-    label: 'Warehouse',
-    value: '/shop/warehouse',
-  },
-  {
-    label: 'Owner',
-    value: '/shop/owner',
-  },
-  {
-    label: 'Social Links',
-    value: '/shop/social',
-  },
-  {
-    label: 'Disable Account',
-    value: '/shop/disable-account',
-  },
-];
-
 export default function ProfileSettingsNav() {
   const pathname = usePathname();
   const { layout } = useLayout();
+  const params = useParams();
+  const menuItems = [
+    {
+      label: 'Profile',
+      value: `/${params?.seller}/shop/profile`,
+    },
+    {
+      label: 'Password',
+      value: `/${params?.seller}/shop/password`,
+    },
+    {
+      label: 'Legal',
+      value: `/${params?.seller}/shop/legal`,
+    },
+    {
+      label: 'Warehouse',
+      value: `/${params?.seller}/shop/warehouse`,
+    },
+    {
+      label: 'Owner',
+      value: `/${params?.seller}/shop/owner`,
+    },
+    {
+      label: 'Social Links',
+      value: `/${params?.seller}/shop/social`,
+    },
+    {
+      label: 'Disable Account',
+      value: `/${params?.seller}/shop/disable-account`,
+    },
+    {
+      label: 'Onboarding',
+      value: `/${params?.seller}/shop/onboarding`,
+    },
+  ];
   const {
     sliderEl,
     sliderPrevBtn,

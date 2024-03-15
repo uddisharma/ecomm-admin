@@ -91,7 +91,7 @@ function HeaderMenuRight() {
           />
         </ActionIcon>
       </NotificationDropdown> */}
-      {!isActive && (
+      {/* {!isActive && (
         <Tooltip
           size="sm"
           content={() => 'Account Disabled'}
@@ -110,7 +110,7 @@ function HeaderMenuRight() {
             </ActionIcon>
           </Link>
         </Tooltip>
-      )}
+      )} */}
       <SettingsButton className="rounded-full text-gray-700 shadow-none backdrop-blur-none hover:text-gray-1000 3xl:h-10 3xl:w-10 dark:bg-gray-100/0">
         <PiGearDuotone className="h-[22px] w-auto animate-spin-slow" />
       </SettingsButton>

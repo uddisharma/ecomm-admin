@@ -1,5 +1,4 @@
 'use client';
-
 import MetricCard from '@/component/cards/metric-card';
 import { Text } from '@/component/ui/text';
 import { BaseApi, datewiseStats } from '@/constants';
@@ -7,10 +6,8 @@ import { UserContext } from '@/store/user/context';
 import cn from '@/utils/class-names';
 import { formatNumber } from '@/utils/format-number';
 import axios from 'axios';
-import { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react';
 import {
-  PiCaretDoubleUpDuotone,
-  PiCaretDoubleDownDuotone,
   PiGiftDuotone,
   PiBankDuotone,
   PiChartPieSliceDuotone,
@@ -195,16 +192,14 @@ export default function StatCards({ className }: { className?: string }) {
       id: '3',
       icon: <PiBankDuotone className="h-6 w-6" />,
       title: 'Revenue',
-      metric: `₹${data?.data && formatNumber(data?.data?.revenue)}`,
+      metric: `₹${data?.data && formatNumber(data?.data?.charge)}`,
       increased: true,
       decreased: false,
       percentage: '+32.40',
       style: 'text-[#7928ca]',
       fill: '#7928ca',
       chart: revenueData,
-      desc: `Revenue of day ₹${
-        data?.data ? data?.data?.revenue : ''
-      } and Platform fee ₹${data ? data?.data?.charge : ''}`,
+      desc: `Revenue of day ₹${data?.data ? data?.data?.charge : ''}`,
     },
   ];
 

@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { ActionIcon, Tooltip } from 'rizzui';
 import EyeIcon from '../icons/eye';
 import PencilIcon from '../icons/pencil';
+import TemperoryDeletePopover from '../others/temperory-delete-popover';
 
 type Columns = {
   data: any[];
@@ -16,6 +17,7 @@ type Columns = {
   onDeleteItem: (id: string) => void;
   onHeaderCellClick: (value: string) => void;
   onChecked?: (id: string) => void;
+  temperoryDelete: any;
 };
 
 export const getColumns = ({
@@ -26,6 +28,7 @@ export const getColumns = ({
   onHeaderCellClick,
   handleSelectAll,
   onChecked,
+  temperoryDelete,
 }: Columns) => [
   {
     title: <HeaderCell title="Coupon Code" />,
@@ -92,7 +95,7 @@ export const getColumns = ({
           placement="top"
           color="invert"
         >
-          <Link href={`/coupons/${row?.id}/edit`}>
+          <Link href={`/${row?.seller}/coupons/${row?.id}/edit`}>
             <ActionIcon size="sm" variant="outline" aria-label={'Edit Coupon'}>
               <PencilIcon className="h-4 w-4" />
             </ActionIcon>
@@ -104,16 +107,16 @@ export const getColumns = ({
           placement="top"
           color="invert"
         >
-          <Link href={`/coupons/${row?.id}/view`}>
+          <Link href={`/${row?.seller}/coupons/${row?.id}/view`}>
             <ActionIcon size="sm" variant="outline" aria-label={'View Coupon'}>
               <EyeIcon className="h-4 w-4" />
             </ActionIcon>
           </Link>
         </Tooltip>
-        <DeletePopover
-          title={`Delete the Coupon`}
-          description={`Are you sure you want to delete this coupon?`}
-          onDelete={() => onDeleteItem(row.id)}
+        <TemperoryDeletePopover
+          title={`Temperory Delete the Coupon`}
+          description={`Are you sure you want to temperory delete this coupon?`}
+          onDelete={() => temperoryDelete(row.id)}
         />
       </div>
     ),

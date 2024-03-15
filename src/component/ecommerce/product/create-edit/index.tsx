@@ -5,7 +5,6 @@ import { Element } from 'react-scroll';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, FormProvider, SubmitHandler } from 'react-hook-form';
 import cn from '@/utils/class-names';
-import { Text } from '@/component/ui/text';
 import FormNav, {
   formParts,
 } from '@/component/ecommerce/product/create-edit/form-nav';
@@ -28,6 +27,7 @@ import { UserContext } from '@/store/user/context';
 import axios from 'axios';
 import { BaseApi, addProduct } from '@/constants';
 import { toast } from 'sonner';
+import { useParams } from 'next/navigation';
 
 const MAP_STEP_TO_COMPONENT = {
   [formParts.summary]: ProductSummary,
@@ -45,38 +45,7 @@ interface IndexProps {
   product?: any;
 }
 
-// const product = {
-//   name: 'Sample Product',
-//   price: 29,
-//   mrp: 39,
-//   brand: 'Sample Brand',
-//   category: 'Sample Category',
-//   desc: 'This is a sample product description.',
-//   images: {
-//     name: 'Sample Product',
-//     size: 1024,
-//     url: 'https://res.cloudinary.com/drchnavue/image/upload/q_auto/v1697650326/cld-sample.jpg',
-//   },
 
-//   stock: '200',
-//   tags: ['Tag1', 'Tag2'],
-//   colors: [
-//     {
-//       name: 'Red',
-//       code: '#FF0000',
-//     },
-//     {
-//       name: 'Blue',
-//       code: '#0000FF',
-//     },
-//   ],
-//   sizes: ['Small', 'Medium', 'Large'],
-//   instaId: 'sample_insta_id',
-//   height: '10 cm',
-//   weight: '500 g',
-//   length: '20 cm',
-//   breadth: '15 cm',
-// };
 
 export default function CreateEditProduct1({
   slug,
@@ -84,6 +53,7 @@ export default function CreateEditProduct1({
   className,
 }: IndexProps) {
   const { layout } = useLayout();
+  const params = useParams();
   const [isLoading, setLoading] = useState(false);
   const methods = useForm<CreateProductInput>({
     resolver: zodResolver(productFormSchema),
@@ -155,7 +125,7 @@ export default function CreateEditProduct1({
       };
     });
 
-    const sizes = data?.sizes?.map((e) => {
+    const sizes = data?.sizes?.map((e: any) => {
       return { size: e, available: true };
     });
 
@@ -163,7 +133,7 @@ export default function CreateEditProduct1({
     axios
       .post(`${BaseApi}${addProduct}`, {
         ...data,
-        sellerId: state?.user?.id,
+        sellerId: params?.seller,
         colors,
         sizes,
         category,

@@ -15,28 +15,20 @@ import { toast } from 'sonner';
 const menuItems = [
   {
     name: 'My Profile',
-    href: '/shop/profile',
+    href: '/profile',
   },
-  // {
-  //   name: 'Account Settings',
-  //   href: routes.forms.profileSettings,
-  // },
-  // {
-  //   name: 'Activity Log',
-  //   href: '#',
-  // },
 ];
 
 function DropdownMenu() {
   const { setUser, state, logout: lgt } = useContext(UserContext);
 
-  const [cookies, setCookie, removeCookie] = useCookies(['sellertoken']);
+  const [cookies, setCookie, removeCookie] = useCookies(['admintoken']);
 
   const router = useRouter();
 
   const logout = () => {
-    localStorage.removeItem('seller');
-    removeCookie('sellertoken', { path: '/' });
+    localStorage.removeItem('admin');
+    removeCookie('admintoken', { path: '/' });
     router.push('/auth/sign-in');
     toast.success('Succesfully Logout');
   };
@@ -46,18 +38,18 @@ function DropdownMenu() {
         <Avatar
           src={
             state?.user != null
-              ? state?.user?.cover
+              ? state?.user?.profile
               : 'https://isomorphic-furyroad.s3.amazonaws.com/public/avatars-blur/avatar-11.webp'
           }
-          name={state?.user != null ? state?.user?.shopname : 'Shop Name'}
+          name={state?.user != null ? state?.user?.name : 'Admin Name'}
           color="invert"
         />
         <div className="ms-3">
           <Title as="h6" className="font-semibold">
-            {state?.user != null ? state?.user?.shopname : 'Shop Name'}
+            {state?.user != null ? state?.user?.name : 'Admin Name'}
           </Title>
           <Text className="text-xs text-gray-600">
-            {state?.user != null ? state?.user?.email : 'shop@gmail.com'}
+            {state?.user != null ? state?.user?.email : 'admin@gmail.com'}
           </Text>
         </div>
       </div>
@@ -100,14 +92,15 @@ export default function ProfileMenu({
   useEffect(() => {
     setIsOpen(false);
   }, [pathname]);
-  const [cookies, setCookie] = useCookies(['sellertoken']);
+  const [cookies, setCookie] = useCookies(['admintoken']);
   const router = useRouter();
   useEffect(() => {
-    const cookieValue = cookies.sellertoken;
-    const seller = state?.user?.shopname;
-    if (!cookieValue || !seller) {
+    const cookieValue = cookies.admintoken;
+    const admin = state?.user?.name;
+    if (!cookieValue || !admin) {
       router.push('/auth/sign-in');
     }
+    // console.log(state?.user);
   }, []);
 
   return (
@@ -128,13 +121,21 @@ export default function ProfileMenu({
         <Avatar
           src={
             state?.user != null
-              ? state?.user?.cover
+              ? state?.user?.profile
               : 'https://isomorphic-furyroad.s3.amazonaws.com/public/avatars-blur/avatar-11.webp'
           }
-          name={state?.user != null ? state?.user?.shopname : 'Shop Name'}
+          name={state?.user != null ? state?.user?.name : 'Admin Name'}
           color="invert"
           className={cn('!h-9 w-9 sm:!h-10 sm:w-10', avatarClassName)}
         />
+        {/* <Avatar
+          src={
+            'https://isomorphic-furyroad.s3.amazonaws.com/public/avatars-blur/avatar-11.webp'
+          }
+          name={'Shop Name'}
+          color="invert"
+          className={cn('!h-9 w-9 sm:!h-10 sm:w-10', avatarClassName)}
+        /> */}
       </button>
     </Popover>
   );

@@ -9,11 +9,11 @@ import { useTable } from '@/hooks/use-table';
 import { getColumns } from '@/component/ecommerce/category/category-list/columns';
 import { seller } from '@/data/category';
 import { UserContext } from '@/store/user/context';
-import { BaseApi, deleteCategory } from '@/constants';
+import { BaseApi, deleteCategory1 } from '@/constants';
 import axios from 'axios';
 import { toast } from 'sonner';
 
-export default function CategoryTable() {
+export default function CategoryTable({ data, deleteCategory }: any) {
   const { state, setUser } = useContext(UserContext);
   const [pageSize, setPageSize] = useState(10);
 
@@ -24,20 +24,7 @@ export default function CategoryTable() {
   });
 
   const onDeleteItem = useCallback((id: string) => {
-    axios
-      .delete(`${BaseApi}${deleteCategory}/${state?.user?.id}/${id}`)
-      .then((res) => {
-        if (res.data?.status == 'SUCCESS') {
-          toast.success('Category Deleted Success');
-          setUser(res.data?.data);
-        } else {
-          return toast.error('Something went wrong');
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        return toast.error('Something went wrong');
-      });
+    deleteCategory(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -88,7 +75,7 @@ export default function CategoryTable() {
       variant="modern"
       isLoading={isLoading}
       showLoadingText={true}
-      data={state?.user?.sellingCategory}
+      data={data}
       // @ts-ignore
       columns={visibleColumns}
       // columns={(columnsProps) =>

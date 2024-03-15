@@ -18,16 +18,14 @@ import { CustomTooltip } from '@/component/charts/custom-tooltip';
 import SimpleBar from '@/component/ui/simplebar';
 import { formatNumber } from '@/utils/format-number';
 import Spinner from '@/component/ui/spinner';
-import { BaseApi, monthwiseRevenue } from '@/constants';
+import { BaseApi, adminmonthwiseRevenue, monthwiseRevenue } from '@/constants';
 import useSWR from 'swr';
-import { UserContext } from '@/store/user/context';
 import axios from 'axios';
 import { Empty, SearchNotFoundIcon } from 'rizzui';
 
 export default function RevenueStats({ className }: { className?: string }) {
   const isTablet = useMedia('(max-width: 820px)', false);
   const [startDate, setStartDate] = useState<Date>(new Date());
-  const { state } = useContext(UserContext);
 
   const fetcher = (url: any) => axios.get(url).then((res) => res.data);
   let {
@@ -35,8 +33,7 @@ export default function RevenueStats({ className }: { className?: string }) {
     isLoading,
     error,
   } = useSWR(
-    `${BaseApi}${monthwiseRevenue}/${state?.user
-      ?.id}?year=${startDate?.getFullYear()}`,
+    `${BaseApi}${adminmonthwiseRevenue}?year=${startDate?.getFullYear()}`,
     fetcher,
     {
       refreshInterval: 3600000,

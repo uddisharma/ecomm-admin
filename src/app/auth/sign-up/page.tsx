@@ -11,10 +11,10 @@ export const metadata = {
 export default function SignUp() {
   return (
     <div>
-      <AuthWrapperFive
+      {/* <AuthWrapperFive
         title={
           <>
-            Join our community and unlock a world of possibilities –{' '}
+            Join us and unlock a world of possibilities –{' '}
             <span className="relative mt-2 inline-flex px-2 text-white @sm:mt-0">
               <span className="relative z-10">SIGN UP!</span>{' '}
               <WaveShape className="absolute start-0 top-1/2 h-[52px] w-36 -translate-y-1/2 text-primary md:h-14 md:w-40 xl:h-16 xl:w-44 2xl:h-[70px] 2xl:w-48" />
@@ -38,7 +38,7 @@ export default function SignUp() {
         isSocialLoginActive
       >
         <SignUpForm />
-      </AuthWrapperFive>
+      </AuthWrapperFive> */}
     </div>
   );
 }

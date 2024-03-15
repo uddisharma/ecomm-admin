@@ -21,7 +21,7 @@ import { LAYOUT_OPTIONS } from '@/config/enums';
 import { UserContext } from '@/store/user/context';
 import axios from 'axios';
 import { BaseApi, addProduct, updateProduct } from '@/constants';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 const MAP_STEP_TO_COMPONENT = {
@@ -42,6 +42,7 @@ interface IndexProps {
 
 export default function EditProduct({ slug, className, product }: IndexProps) {
   const { layout } = useLayout();
+  const params = useParams();
   const router = useRouter();
   const [isLoading, setLoading] = useState(false);
   const methods = useForm<CreateProductInput>({
@@ -122,7 +123,7 @@ export default function EditProduct({ slug, className, product }: IndexProps) {
     axios
       .patch(`${BaseApi}${updateProduct}/${slug}`, {
         ...data,
-        sellerId: state?.user?.id,
+        sellerId: params?.seller,
         colors,
         sizes,
         category,

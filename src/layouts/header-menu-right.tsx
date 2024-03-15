@@ -29,8 +29,9 @@ export default function HeaderMenuRight() {
         </ActionIcon>
       </MessagesDropdown> */}
       <div></div>
+      <div></div>
 
-      {!isActive ? (
+      {/* {!isActive ? (
         <Tooltip
           size="sm"
           content={() => 'Account Disabled'}
@@ -52,7 +53,7 @@ export default function HeaderMenuRight() {
         </Tooltip>
       ) : (
         <div></div>
-      )}
+      )} */}
 
       {/* <NotificationDropdown>
         <ActionIcon

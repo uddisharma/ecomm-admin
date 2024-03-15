@@ -47,7 +47,7 @@ export default function UploadZone({
 
   const onDrop = useCallback(
     (acceptedFiles: FileWithPath[]) => {
-      console.log('acceptedFiles', acceptedFiles);
+      // console.log('acceptedFiles', acceptedFiles);
       setFiles([
         ...acceptedFiles.map((file) =>
           Object.assign(file, {
@@ -84,7 +84,7 @@ export default function UploadZone({
     'generalMedia',
     {
       onClientUploadComplete: (res: UploadFileResponse[] | undefined) => {
-        console.log('res', res);
+        // console.log('res', res);
         if (setValue) {
           // const respondedUrls = res?.map((r) => r.url);
           setFiles([]);
@@ -102,7 +102,7 @@ export default function UploadZone({
         );
       },
       onUploadError: (error: Error) => {
-        console.error(error);
+        // console.error(error);
         toast.error(error.message);
       },
     }

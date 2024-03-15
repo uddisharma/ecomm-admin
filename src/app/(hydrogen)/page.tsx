@@ -11,12 +11,12 @@ const metadata = {
 };
 
 export default function FileDashboardPage() {
-  const [cookies, setCookie] = useCookies(['sellertoken']);
+  const [cookies, setCookie] = useCookies(['admintoken']);
   const router = useRouter();
   const { state } = useContext(UserContext);
   useEffect(() => {
-    const cookieValue = cookies.sellertoken;
-    const seller = state?.user?.shopname;
+    const cookieValue = cookies.admintoken;
+    const seller = state?.user?.name;
     if (!cookieValue || !seller) {
       router.push('/auth/sign-in');
     }

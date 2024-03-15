@@ -15,6 +15,8 @@ const NextProgress = dynamic(() => import('@/component/others/next-progress'), {
 // styles
 import '@/app/globals.css';
 import { UserProvider } from '@/store/user/context';
+import { OnboardingProvider } from '@/store/onboarding/context';
+import { SellerProvider } from '@/store/seller/context';
 
 const metadata = {
   title: siteConfig.title,
@@ -33,14 +35,18 @@ export default function RootLayout({
         className={cn(inter.variable, lexendDeca.variable, 'font-inter')}
       >
         <UserProvider>
-          <ThemeProvider>
-            <NextProgress />
-            {children}
-            <Toaster />
-            <Toaster1 />
-            <GlobalDrawer />
-            <GlobalModal />
-          </ThemeProvider>
+          <OnboardingProvider>
+            <SellerProvider>
+              <ThemeProvider>
+                <NextProgress />
+                {children}
+                <Toaster />
+                <Toaster1 />
+                <GlobalDrawer />
+                <GlobalModal />
+              </ThemeProvider>
+            </SellerProvider>
+          </OnboardingProvider>
         </UserProvider>
       </body>
     </html>

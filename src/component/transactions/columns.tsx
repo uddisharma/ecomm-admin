@@ -5,6 +5,9 @@ import DateCell from '@/component/ui/date-cell';
 import { ActionIcon, Tooltip } from 'rizzui';
 import Link from 'next/link';
 import { FaFileDownload } from 'react-icons/fa';
+import PencilIcon from '../icons/pencil';
+import DeletePopover from '../others/delete-popover';
+import TemperoryDeletePopover from '../others/temperory-delete-popover';
 
 type Columns = {
   data: any[];
@@ -14,6 +17,7 @@ type Columns = {
   onDeleteItem: (id: string) => void;
   onHeaderCellClick: (value: string) => void;
   onChecked?: (id: string) => void;
+  temperoryDelete: any;
 };
 
 export const getColumns = ({
@@ -24,6 +28,7 @@ export const getColumns = ({
   onHeaderCellClick,
   handleSelectAll,
   onChecked,
+  temperoryDelete,
 }: Columns) => [
   {
     title: <HeaderCell title="Transaction ID" />,
@@ -115,6 +120,27 @@ export const getColumns = ({
             <FaFileDownload className="h-4 w-4" />
           </ActionIcon>
         </Tooltip>
+        <Tooltip
+          size="sm"
+          content={() => 'Edit Transaction'}
+          placement="top"
+          color="invert"
+        >
+          <Link href={`/${row?.seller}/transactions/${row?.id}/edit`}>
+            <ActionIcon
+              size="sm"
+              variant="outline"
+              aria-label={'Edit Transaction'}
+            >
+              <PencilIcon className="h-4 w-4" />
+            </ActionIcon>
+          </Link>
+        </Tooltip>
+        <TemperoryDeletePopover
+          title={`Temperory Delete the Transaction`}
+          description={`Are you sure you want to temperory delete this transaction?`}
+          onDelete={() => temperoryDelete(row.id)}
+        />
       </div>
     ),
   },

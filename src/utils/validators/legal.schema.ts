@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { fileSchema } from './common-rules';
 
 export const legalSchema = z.object({
   aadhar: z.object({
@@ -23,7 +24,8 @@ export const legalSchema = z.object({
   }),
   gst: z.string(),
   taxid: z.string(),
-  certificate: z.array(z.string()),
+  signed: z.boolean(),
+  certificate: z.array(fileSchema).optional(),
 });
 
 export type LegalFormTypes = z.infer<typeof legalSchema>;

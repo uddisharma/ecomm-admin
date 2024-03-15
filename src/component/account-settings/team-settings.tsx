@@ -12,6 +12,16 @@ import { endsWith } from 'lodash';
 import { toast } from 'sonner';
 import SelectLoader from '../loader/select-loader';
 import dynamic from 'next/dynamic';
+import UploadZone from '../ui/file-upload/upload-zone';
+import FormFooter from '../others/form-footer';
+import { useContext, useEffect, useState } from 'react';
+import axios from 'axios';
+import { BaseApi, updateSeller } from '@/constants';
+import { useParams, useRouter } from 'next/navigation';
+import { SellerContext } from '@/store/seller/context';
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
+
 const Select = dynamic(() => import('@/component/ui/select'), {
   ssr: false,
   loading: () => <SelectLoader />,
@@ -31,10 +41,90 @@ const panTypes = [
   },
 ];
 
-export default function Legal({ legal }: any) {
+export default function Legal({ legal, name }: any) {
+  const [isloading, setIsLoading] = useState(false);
+  const params = useParams();
+  const router = useRouter();
+  const { setSeller } = useContext(SellerContext);
+
+  // const handleDownload = async (imageLinks: any) => {
+  //   const zip = new JSZip();
+  //   await Promise.all(
+  //     imageLinks.map(async (imageLink: any, index: any) => {
+  //       const response = await fetch(imageLink);
+  //       const arrayBuffer = await response.arrayBuffer();
+  //       zip.file(`image_${index + 1}.png`, arrayBuffer);
+  //     })
+  //   );
+
+  //   const content = await zip.generateAsync({ type: 'blob' });
+  //   saveAs(content, `${name}_certificates.zip`);
+  // };
+
+  const handleDownload = async (fileLinks: any) => {
+    const zip = new JSZip();
+
+    // Fetch files and add them to the zip file
+    await Promise.all(
+      fileLinks.map(async (fileLink: any, index: any) => {
+        const response = await fetch(fileLink);
+        const arrayBuffer = await response.arrayBuffer();
+
+        // Determine the file extension
+        const fileExtension = fileLink.split('.').pop().toLowerCase();
+
+        // Use different file names based on the file type
+        const fileName = `file_${index + 1}.${fileExtension}`;
+        zip.file(fileName, arrayBuffer);
+      })
+    );
+
+    // Generate the zip file
+    const content = await zip.generateAsync({ type: 'blob' });
+
+    // Save the zip file
+    saveAs(content, `${name}_certificates.zip`);
+  };
+
+  // useEffect(() => {
+  //   if (!legal?.aadhar?.name) {
+  //     router.push(`/${params?.seller}/shop`);
+  //   }
+  // }, [legal]);
   const onSubmit: SubmitHandler<LegalFormTypes> = (data) => {
-    toast.success('Profile successfully updated!');
-    console.log(data);
+    setIsLoading(true);
+    axios
+      .patch(`${BaseApi}${updateSeller}/${params?.seller}`, {
+        legal: {
+          ...data,
+          pan: {
+            type: data?.pan?.type1,
+            name: data?.pan?.name,
+            pannumber: data?.pan?.pannumber,
+            signed: data?.pan?.signed,
+          },
+          certificate: data?.certificate?.map((e: any) => {
+            return e?.url;
+          }),
+          gst: data?.gst,
+          taxid: data?.taxid,
+        },
+      })
+      .then((res) => {
+        if (res?.data?.status == 'SUCCESS') {
+          setSeller(res?.data?.data);
+          return toast.success('Profile successfully updated!');
+        } else {
+          toast.warning(res?.data?.message ?? 'Something went wrong!');
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error('Something went wrong !');
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   const defaultValues = {
@@ -60,7 +150,13 @@ export default function Legal({ legal }: any) {
     },
     gst: legal?.gst ?? 'NA',
     taxid: legal?.taxid ?? 'NA',
-    certificate: legal?.certificate ?? [],
+    signed: legal?.signed ?? false,
+    // certificate: legal?.certificate ?? [],
+    certificate: legal?.certificate
+      ? legal?.certificate?.map((e: any, i: any) => {
+          return { name: `document${i + 1}`, size: 1024, url: e };
+        })
+      : undefined,
   };
 
   return (
@@ -92,7 +188,6 @@ export default function Legal({ legal }: any) {
                     className="col-grow"
                     placeholder="Aadhaar Number"
                     label="Aadhaar Number"
-                    disabled
                     prefixClassName="relative pe-2.5 before:w-[1px] before:h-[38px] before:absolute before:bg-gray-300 before:-top-[9px] before:right-0"
                     {...register('aadhar.aadharnumber')}
                     error={errors.aadhar?.aadharnumber?.message}
@@ -101,7 +196,6 @@ export default function Legal({ legal }: any) {
                     className="col-grow"
                     placeholder="Aadhaar Name"
                     label="Aadhaar Name"
-                    disabled
                     prefixClassName="relative pe-2.5 before:w-[1px] before:h-[38px] before:absolute before:bg-gray-300 before:-top-[9px] before:right-0"
                     {...register('aadhar.name')}
                     error={errors.aadhar?.name?.message}
@@ -110,7 +204,6 @@ export default function Legal({ legal }: any) {
                     className="col-grow"
                     placeholder="Care Of"
                     label="Care Of"
-                    disabled
                     prefixClassName="relative pe-2.5 before:w-[1px] before:h-[38px] before:absolute before:bg-gray-300 before:-top-[9px] before:right-0"
                     {...register('aadhar.careof')}
                     error={errors.aadhar?.careof?.message}
@@ -119,7 +212,6 @@ export default function Legal({ legal }: any) {
                     className="col-grow"
                     placeholder="Address"
                     label="Aadhaar Address"
-                    disabled
                     prefixClassName="relative pe-2.5 before:w-[1px] before:h-[38px] before:absolute before:bg-gray-300 before:-top-[9px] before:right-0"
                     {...register('aadhar.address')}
                     error={errors.aadhar?.address?.message}
@@ -127,7 +219,6 @@ export default function Legal({ legal }: any) {
                   <Checkbox
                     label="Aadhaar Card Signed"
                     className="mt-3"
-                    disabled
                     {...register('aadhar.signed')}
                     error={errors.aadhar?.signed?.message}
                   />
@@ -141,21 +232,19 @@ export default function Legal({ legal }: any) {
                     className="col-grow"
                     placeholder="PAN Number"
                     label="PAN Number"
-                    disabled
                     prefixClassName="relative pe-2.5 before:w-[1px] before:h-[38px] before:absolute before:bg-gray-300 before:-top-[9px] before:right-0"
                     {...register('pan.pannumber')}
                     error={errors.pan?.pannumber?.message}
                   />
-                  <Input
+                  {/* <Input
                     className="col-grow"
                     placeholder="PAN Type"
                     label="PAN Type"
-                    disabled
                     prefixClassName="relative pe-2.5 before:w-[1px] before:h-[38px] before:absolute before:bg-gray-300 before:-top-[9px] before:right-0"
                     {...register('pan.type1')}
                     error={errors.pan?.type1?.message}
-                  />
-                  {/* <Controller
+                  /> */}
+                  <Controller
                     name="pan.type1"
                     control={control}
                     render={({ field: { onChange, value } }) => (
@@ -170,12 +259,11 @@ export default function Legal({ legal }: any) {
                         getOptionDisplayValue={(option) => option.name}
                       />
                     )}
-                  /> */}
+                  />
                   <Checkbox
                     label="PAN Card Signed"
                     className="mt-3"
                     {...register('pan.signed')}
-                    disabled
                     error={errors.pan?.signed?.message}
                   />
                 </FormGroup>
@@ -188,7 +276,6 @@ export default function Legal({ legal }: any) {
                     className="col-grow"
                     placeholder="Account Number"
                     label="Account Number"
-                    disabled
                     prefixClassName="relative pe-2.5 before:w-[1px] before:h-[38px] before:absolute before:bg-gray-300 before:-top-[9px] before:right-0"
                     {...register('bank.account')}
                     error={errors.bank?.account?.message}
@@ -197,7 +284,6 @@ export default function Legal({ legal }: any) {
                     className="col-grow"
                     placeholder="IFSC Code"
                     label="IFSC Code"
-                    disabled
                     prefixClassName="relative pe-2.5 before:w-[1px] before:h-[38px] before:absolute before:bg-gray-300 before:-top-[9px] before:right-0"
                     {...register('bank.ifsc')}
                     error={errors.bank?.ifsc?.message}
@@ -206,7 +292,6 @@ export default function Legal({ legal }: any) {
                     className="col-grow"
                     placeholder="Bank Name"
                     label="Bank Name"
-                    disabled
                     prefixClassName="relative pe-2.5 before:w-[1px] before:h-[38px] before:absolute before:bg-gray-300 before:-top-[9px] before:right-0"
                     {...register('bank.name')}
                     error={errors.bank?.name?.message}
@@ -215,7 +300,6 @@ export default function Legal({ legal }: any) {
                     className="col-grow"
                     placeholder="Branch Name"
                     label="Branch Name"
-                    disabled
                     prefixClassName="relative pe-2.5 before:w-[1px] before:h-[38px] before:absolute before:bg-gray-300 before:-top-[9px] before:right-0"
                     {...register('bank.branch')}
                     error={errors.bank?.branch?.message}
@@ -223,7 +307,6 @@ export default function Legal({ legal }: any) {
                   <Checkbox
                     label="Bank Details Signed"
                     className="mt-3"
-                    disabled
                     {...register('bank.signed')}
                     error={errors.bank?.signed?.message}
                   />
@@ -237,7 +320,6 @@ export default function Legal({ legal }: any) {
                     className="col-grow"
                     placeholder="GST Number"
                     label="GST Number"
-                    disabled
                     prefixClassName="relative pe-2.5 before:w-[1px] before:h-[38px] before:absolute before:bg-gray-300 before:-top-[9px] before:right-0"
                     {...register('gst')}
                     error={errors.gst?.message}
@@ -246,7 +328,6 @@ export default function Legal({ legal }: any) {
                     className="col-grow"
                     placeholder="TAX ID"
                     label="TAX ID"
-                    disabled
                     prefixClassName="relative pe-2.5 before:w-[1px] before:h-[38px] before:absolute before:bg-gray-300 before:-top-[9px] before:right-0"
                     {...register('taxid')}
                     error={errors.taxid?.message}
@@ -258,7 +339,23 @@ export default function Legal({ legal }: any) {
                   description=""
                   className="pt-7 @2xl:pt-9 @3xl:grid-cols-12 @3xl:pt-11"
                 >
-                  <div
+                  <p
+                    style={{ textDecoration: 'underline' }}
+                    className="flex cursor-pointer "
+                    onClick={() => {
+                      handleDownload(legal?.certificate);
+                    }}
+                  >
+                    Download Certificates
+                  </p>
+                  <UploadZone
+                    name="certificate"
+                    className="col-span-full"
+                    label="Soft copies of Aadhaar, PAN, Bank, GST & TAX"
+                    getValues={getValues}
+                    setValue={setValue}
+                  />
+                  {/* <div
                     className="col-span-full"
                     style={{
                       display: 'flex',
@@ -275,9 +372,20 @@ export default function Legal({ legal }: any) {
                         </figure>
                       </div>
                     ))}
-                  </div>
+                  </div> */}
+                  <Checkbox
+                    label="Document Signed"
+                    className="mt-3"
+                    {...register('signed')}
+                    error={errors.signed?.message}
+                  />
                 </FormGroup>
               </div>
+              <FormFooter
+                isLoading={isloading}
+                altBtnText="Cancel"
+                submitBtnText="Save"
+              />
             </>
           );
         }}

@@ -16,6 +16,7 @@ import { ProductType } from '@/data/products-data';
 import { PiStarFill } from 'react-icons/pi';
 import DeletePopover from '@/component/others/delete-popover';
 import DateCell from '@/component/ui/date-cell';
+import TemperoryDeletePopover from '@/component/others/temperory-delete-popover';
 
 // get stock status
 function getStockStatus(status: number) {
@@ -201,7 +202,7 @@ export const getColumns = ({
     dataIndex: 'action',
     key: 'action',
     width: 120,
-    render: (_: string, row: ProductType) => (
+    render: (_: string, row: any) => (
       <div className="flex items-center justify-end gap-3 pe-4">
         <Tooltip
           size="sm"
@@ -209,7 +210,7 @@ export const getColumns = ({
           placement="top"
           color="invert"
         >
-          <Link href={`/products/${row?.id}/edit`}>
+          <Link href={`/${row?.sellerId}/products/${row?.id}/edit`}>
             <ActionIcon size="sm" variant="outline" aria-label={'Edit Product'}>
               <PencilIcon className="h-4 w-4" />
             </ActionIcon>
@@ -221,15 +222,15 @@ export const getColumns = ({
           placement="top"
           color="invert"
         >
-          <Link href={`/products/${row?.id}/view`}>
+          <Link href={`/${row?.sellerId}/products/${row?.id}/view`}>
             <ActionIcon size="sm" variant="outline" aria-label={'View Product'}>
               <EyeIcon className="h-4 w-4" />
             </ActionIcon>
           </Link>
         </Tooltip>
-        <DeletePopover
-          title={`Delete the product`}
-          description={`Are you sure you want to delete this  product?`}
+        <TemperoryDeletePopover
+          title={`Temperory delete the product`}
+          description={`Are you sure you want to temperory delete this product?`}
           onDelete={() => onDeleteItem(row.id)}
         />
       </div>

@@ -11,7 +11,7 @@ import { Text } from '@/component/ui/text';
 import { Form } from '@/component/ui/form';
 import { routes } from '@/config/routes';
 import { loginSchema, LoginSchema } from '@/utils/validators/login.schema';
-import { BaseApi, Login } from '@/constants';
+import { adminLogin, BaseApi, Login } from '@/constants';
 import axios from 'axios';
 import { useContext, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -28,23 +28,22 @@ export default function SignInForm() {
   const isMedium = useMedia('(max-width: 1200px)', false);
   const [reset, setReset] = useState({});
   const [loading, setLoading] = useState(false);
-
   const params = useSearchParams();
   const router = useRouter();
-  const [cookies, setCookie] = useCookies(['sellertoken']);
+  const [cookies, setCookie] = useCookies(['admintoken']);
   const { setUser, state } = useContext(UserContext);
 
   useEffect(() => {
-    const cookieValue = cookies.sellertoken;
-    const seller = state?.user?.shopname;
-    if (cookieValue && seller) {
+    const cookieValue = cookies.admintoken;
+    const admin = state?.user?.name;
+    if (cookieValue && admin) {
       router.push('/');
     }
   }, []);
   const onSubmit: SubmitHandler<LoginSchema> = (data) => {
     setLoading(true);
     axios
-      .post(`${BaseApi}${Login}`, {
+      .post(`${BaseApi}${adminLogin}`, {
         username: data?.email,
         password: data?.password,
       })
@@ -52,7 +51,7 @@ export default function SignInForm() {
         if (res.data.status === 'SUCCESS') {
           const expirationDate = new Date();
           expirationDate.setDate(expirationDate.getDate() + 1);
-          setCookie('sellertoken', res.data.data.token, {
+          setCookie('admintoken', res.data.data.token, {
             path: '/',
             expires: expirationDate,
           });

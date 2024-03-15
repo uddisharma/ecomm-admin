@@ -8,7 +8,7 @@ const metadata = {
   ...metaObject('Events'),
 };
 
-export default function TicketTable({ data, onDeleteItem, onMark }: any) {
+export default function TicketTable({ data, onDeleteItem, onMark, user }: any) {
   const { openModal } = useModal();
 
   return (
@@ -26,6 +26,7 @@ export default function TicketTable({ data, onDeleteItem, onMark }: any) {
               onDeleteItem: onDeleteItem,
               openModal: openModal,
               onMark: onMark,
+              user: user,
             })
           }
           // enablePagination

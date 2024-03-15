@@ -7,11 +7,9 @@ import { PiEnvelopeSimple } from 'react-icons/pi';
 import { Form } from '@/component/ui/form';
 import { Text } from '@/component/ui/text';
 import { Input } from '@/component/ui/input';
-
 import AvatarUpload from '@/component/ui/file-upload/avatar-upload';
 import { FaPhoneAlt } from 'react-icons/fa';
 import {
-  defaultValues,
   profileFormSchema,
   ProfileFormTypes,
 } from '@/utils/validators/profile-settings.schema';
@@ -21,28 +19,37 @@ import cn from '@/utils/class-names';
 import { useLayout } from '@/hooks/use-layout';
 import { useBerylliumSidebars } from '@/layouts/beryllium/beryllium-utils';
 import { LAYOUT_OPTIONS } from '@/config/enums';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { UserContext } from '@/store/user/context';
 import { toast } from 'sonner';
 import axios from 'axios';
-import { BaseApi, updateSeller } from '@/constants';
+import { BaseApi, singleSeller, updateSeller } from '@/constants';
+import { useModal } from '../modal-views/use-modal';
+import { Button } from 'rizzui';
+import useSWR from 'swr';
+import { useParams } from 'next/navigation';
+import Spinner from '../ui/spinner';
+import { SellerContext } from '@/store/seller/context';
+import Link from 'next/link';
+import { PhoneNumber } from '../ui/phone-input';
 const QuillEditor = dynamic(() => import('@/component/ui/quill-editor'), {
   ssr: false,
 });
 
 export default function ProfileSettingsView() {
-  const { state, setUser } = useContext(UserContext);
+  // const { state, setUser } = useContext(UserContext);
+  const { state, setSeller } = useContext(SellerContext);
   const [loading, setLoading] = useState(false);
   const onSubmit: SubmitHandler<ProfileFormTypes> = (data) => {
     setLoading(true);
     axios
-      .patch(`${BaseApi}${updateSeller}/${state?.user?.id}`, {
+      .patch(`${BaseApi}${updateSeller}/${params?.seller}`, {
         ...data,
         cover: data?.cover?.url,
       })
       .then((res) => {
         if (res.data?.status == 'SUCCESS') {
-          setUser(res.data?.data);
+          setSeller(res.data?.data);
           return toast.success('Profile successfully updated!');
         } else {
           return toast.error('Something went wrong !');
@@ -57,9 +64,34 @@ export default function ProfileSettingsView() {
       });
   };
 
+  const params = useParams();
+
+  const fetcher = (url: any) => axios.get(url).then((res) => res.data);
+  let {
+    data: seller,
+    isLoading,
+    error,
+    mutate,
+  } = useSWR(`${BaseApi}${singleSeller}/${params?.seller}`, fetcher, {
+    refreshInterval: 3600000,
+    revalidateOnMount: true,
+    revalidateOnFocus: true,
+    onErrorRetry({ retrycount }: any) {
+      if (retrycount > 3) {
+        return false;
+      }
+    },
+  });
+
+  seller = seller?.data?.user;
+
   const data = {
-    ...state?.user,
-    cover: { name: state?.user?.username, url: state?.user?.cover, size: 1024 },
+    ...state?.seller,
+    cover: {
+      name: state?.seller?.username,
+      url: state?.seller?.cover,
+      size: 1024,
+    },
   };
 
   const defaultValues = {
@@ -72,156 +104,207 @@ export default function ProfileSettingsView() {
     cover: data?.cover ?? undefined,
     discount: data?.discount ?? '',
   };
+  // console.log(defaultValues);
 
-  return (
-    <>
-      <Form<ProfileFormTypes>
-        validationSchema={profileFormSchema}
-        onSubmit={onSubmit}
-        className="@container"
-        useFormProps={{
-          mode: 'onChange',
-          defaultValues,
-        }}
-      >
-        {({
-          register,
-          control,
-          getValues,
-          setValue,
-          formState: { errors },
-        }) => {
-          return (
-            <>
-              <ProfileHeader url={state?.user?.cover}>
-                <div className="w-full sm:w-auto md:ms-auto"></div>
-              </ProfileHeader>
+  const { openModal } = useModal();
 
-              <div className="mx-auto mb-10 grid w-full max-w-screen-2xl gap-7 divide-y divide-dashed divide-gray-200 @2xl:gap-9 @3xl:gap-11">
-                <FormGroup
-                  title="Username"
-                  className="pt-7 @2xl:pt-9 @3xl:grid-cols-12 @3xl:pt-11"
-                >
-                  <Input
-                    className="col-span-full"
-                    prefix="https://smallkart.com/@"
-                    placeholder="Username"
-                    disabled
-                    prefixClassName="relative pe-2.5 before:w-[1px] before:h-[38px] before:absolute before:bg-gray-300 before:-top-[9px] before:right-0"
-                    {...register('username')}
-                    error={errors.username?.message}
-                  />
-                </FormGroup>
+  useEffect(() => {
+    if (seller) {
+      setSeller(seller);
+    }
+    if (seller && !seller?.isOnboarded) {
+      openModal({
+        view: <Onboarded user={seller?.shopname} />,
+        customSize: '250px',
+      });
+    }
+  }, [seller]);
 
-                <FormGroup
-                  title="Shop Name"
-                  className="pt-7 @2xl:pt-9 @3xl:grid-cols-12 @3xl:pt-11"
-                >
-                  <Input
-                    type="text"
-                    className="col-span-full"
-                    prefixClassName="relative pe-2.5 before:w-[1px] before:h-[38px] before:absolute before:bg-gray-300 before:-top-[9px] before:right-0"
-                    placeholder="Enter your website url"
-                    {...register('shopname')}
-                    error={errors.shopname?.message}
-                  />
-                </FormGroup>
+  if (isLoading) {
+    return (
+      <div className="mt-10">
+        <Spinner />
+      </div>
+    );
+  }
+  if (error) {
+    return (
+      <div className="mt-10">
+        <Text className="text-center">Something went wrong !</Text>
+      </div>
+    );
+  }
+  if (seller) {
+    return (
+      <>
+        <Form<ProfileFormTypes>
+          validationSchema={profileFormSchema}
+          onSubmit={onSubmit}
+          className="@container"
+          useFormProps={{
+            mode: 'onChange',
+            defaultValues,
+          }}
+        >
+          {({
+            register,
+            control,
+            getValues,
+            setValue,
+            formState: { errors },
+          }) => {
+            return (
+              <>
+                <ProfileHeader url={state?.seller?.cover}>
+                  <div className="w-full sm:w-auto md:ms-auto"></div>
+                </ProfileHeader>
 
-                <FormGroup
-                  title="Cover Photo"
-                  description="This will be displayed on your profile."
-                  className="pt-7 @2xl:pt-9 @3xl:grid-cols-12 @3xl:pt-11"
-                >
-                  <div className="col-span-2 flex flex-col items-center gap-4 @xl:flex-row">
-                    <AvatarUpload
-                      name="cover"
-                      setValue={setValue}
-                      getValues={getValues}
-                      error={errors?.cover?.message as string}
+                <div className="mx-auto mb-10 grid w-full max-w-screen-2xl gap-7 divide-y divide-dashed divide-gray-200 @2xl:gap-9 @3xl:gap-11">
+                  <FormGroup
+                    title="Username"
+                    className="pt-7 @2xl:pt-9 @3xl:grid-cols-12 @3xl:pt-11"
+                  >
+                    <Input
+                      className="col-span-full"
+                      prefix="https://smallkart.com/@"
+                      placeholder="Username"
+                      // disabled
+                      prefixClassName="relative pe-2.5 before:w-[1px] before:h-[38px] before:absolute before:bg-gray-300 before:-top-[9px] before:right-0"
+                      {...register('username')}
+                      error={errors.username?.message}
                     />
-                  </div>
-                </FormGroup>
+                  </FormGroup>
 
-                <FormGroup
-                  title="Description"
-                  className="pt-7 @2xl:pt-9 @3xl:grid-cols-12 @3xl:pt-11"
-                >
-                  <div className="@3xl:col-span-2">
+                  <FormGroup
+                    title="Shop Name"
+                    className="pt-7 @2xl:pt-9 @3xl:grid-cols-12 @3xl:pt-11"
+                  >
+                    <Input
+                      type="text"
+                      className="col-span-full"
+                      prefixClassName="relative pe-2.5 before:w-[1px] before:h-[38px] before:absolute before:bg-gray-300 before:-top-[9px] before:right-0"
+                      placeholder="Enter your Shop Name"
+                      {...register('shopname')}
+                      error={errors.shopname?.message}
+                    />
+                  </FormGroup>
+
+                  <FormGroup
+                    title="Cover Photo"
+                    description="This will be displayed on your profile."
+                    className="pt-7 @2xl:pt-9 @3xl:grid-cols-12 @3xl:pt-11"
+                  >
+                    <div className="col-span-2 flex flex-col items-center gap-4 @xl:flex-row">
+                      <AvatarUpload
+                        name="cover"
+                        setValue={setValue}
+                        getValues={getValues}
+                        error={errors?.cover?.message as string}
+                      />
+                    </div>
+                  </FormGroup>
+
+                  <FormGroup
+                    title="Description"
+                    className="pt-7 @2xl:pt-9 @3xl:grid-cols-12 @3xl:pt-11"
+                  >
+                    <div className="@3xl:col-span-2">
+                      <Controller
+                        control={control}
+                        name="description"
+                        render={({ field: { onChange, value } }) => (
+                          <QuillEditor
+                            value={value}
+                            onChange={onChange}
+                            className="[&>.ql-container_.ql-editor]:min-h-[100px]"
+                          />
+                        )}
+                      />
+                    </div>
+                  </FormGroup>
+
+                  <FormGroup
+                    title="Contact Details"
+                    className="pt-7 @2xl:pt-9 @3xl:grid-cols-12 @3xl:pt-11"
+                    description="Enter an  email if you’d like to be contacted via a email."
+                  >
+                    <Input
+                      prefix={
+                        <PiEnvelopeSimple className="h-6 w-6 text-gray-500" />
+                      }
+                      type="email"
+                      // disabled
+                      className="col-span-full"
+                      placeholder="youremail@gmail.com"
+                      {...register('email')}
+                      error={errors.email?.message}
+                    />
+
+                    
                     <Controller
+                      name="mobileNo"
                       control={control}
-                      name="description"
-                      render={({ field: { onChange, value } }) => (
-                        <QuillEditor
+                      render={({ field: { value, onChange } }) => (
+                        <PhoneNumber
+                          label="Phone Number"
+                          country="in"
                           value={value}
                           onChange={onChange}
-                          className="[&>.ql-container_.ql-editor]:min-h-[100px]"
+                          placeholder="Phone Number"
+                          error={errors.mobileNo?.message}
                         />
                       )}
                     />
-                  </div>
-                </FormGroup>
+                    <Controller
+                      name="alternatemobileNo"
+                      control={control}
+                      render={({ field: { value, onChange } }) => (
+                        <PhoneNumber
+                          label="Altenate Phone Number"
+                          country="in"
+                          value={value}
+                          onChange={onChange}
+                          placeholder="Alternate Phone Number"
+                          error={errors.alternatemobileNo?.message}
+                        />
+                      )}
+                    />
+                    {/* <Input
+                      prefix={<FaPhoneAlt className="h-4 w-4 text-gray-500" />}
+                      type="text"
+                      className="col-span-full"
+                      placeholder="1234567890"
+                      {...register('alternatemobileNo')}
+                      error={errors.alternatemobileNo?.message}
+                    /> */}
+                  </FormGroup>
 
-                <FormGroup
-                  title="Contact email"
-                  className="pt-7 @2xl:pt-9 @3xl:grid-cols-12 @3xl:pt-11"
-                  description="Enter an  email if you’d like to be contacted via a  email."
-                >
-                  <Input
-                    prefix={
-                      <PiEnvelopeSimple className="h-6 w-6 text-gray-500" />
-                    }
-                    type="email"
-                    disabled
-                    className="col-span-full"
-                    placeholder="youremail@gmail.com"
-                    {...register('email')}
-                    error={errors.email?.message}
-                  />
-
-                  <Input
-                    prefix={<FaPhoneAlt className="h-4 w-4 text-gray-500" />}
-                    type="text"
-                    disabled
-                    className="col-span-full"
-                    placeholder="1234567890"
-                    {...register('mobileNo')}
-                    error={errors.mobileNo?.message}
-                  />
-                  <Input
-                    prefix={<FaPhoneAlt className="h-4 w-4 text-gray-500" />}
-                    type="text"
-                    className="col-span-full"
-                    placeholder="1234567890"
-                    {...register('alternatemobileNo')}
-                    error={errors.alternatemobileNo?.message}
-                  />
-                </FormGroup>
-
-                <FormGroup
-                  title="Discount"
-                  className="pt-7 @2xl:pt-9 @3xl:grid-cols-12 @3xl:pt-11"
-                >
-                  <Input
-                    type="text"
-                    className="col-span-full"
-                    prefixClassName="relative pe-2.5 before:w-[1px] before:h-[38px] before:absolute before:bg-gray-300 before:-top-[9px] before:right-0"
-                    placeholder="Discount"
-                    {...register('discount')}
-                    error={errors.discount?.message}
-                  />
-                </FormGroup>
-              </div>
-              <FormFooter
-                isLoading={loading}
-                altBtnText="Cancel"
-                submitBtnText="Save"
-              />
-            </>
-          );
-        }}
-      </Form>
-    </>
-  );
+                  <FormGroup
+                    title="Discount"
+                    className="pt-7 @2xl:pt-9 @3xl:grid-cols-12 @3xl:pt-11"
+                  >
+                    <Input
+                      type="text"
+                      className="col-span-full"
+                      prefixClassName="relative pe-2.5 before:w-[1px] before:h-[38px] before:absolute before:bg-gray-300 before:-top-[9px] before:right-0"
+                      placeholder="Discount"
+                      {...register('discount')}
+                      error={errors.discount?.message}
+                    />
+                  </FormGroup>
+                </div>
+                <FormFooter
+                  isLoading={loading}
+                  altBtnText="Cancel"
+                  submitBtnText="Save"
+                />
+              </>
+            );
+          }}
+        </Form>
+      </>
+    );
+  }
 }
 
 export function ProfileHeader({
@@ -278,3 +361,18 @@ export function ProfileHeader({
     </div>
   );
 }
+
+const Onboarded = ({ user }: any) => {
+  const params = useParams();
+  return (
+    <div className="p-10">
+      <Text className="text-center">{user} is not onboarded yet!</Text>
+      <br />
+      <Link href={`/${params?.seller}/shop/onboarding`}>
+        <Button className="m-auto block" variant="solid" color="danger">
+          Onboard Now
+        </Button>
+      </Link>
+    </div>
+  );
+};

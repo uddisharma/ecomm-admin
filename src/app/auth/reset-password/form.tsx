@@ -14,7 +14,7 @@ import {
 } from '@/utils/validators/reset.schema';
 
 import axios from 'axios';
-import { BaseApi, ResetPassword } from '@/constants';
+import { AdminResetPassword, BaseApi, ResetPassword } from '@/constants';
 import { useParams, useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
@@ -37,7 +37,7 @@ export default function ForgetPasswordForm() {
     } else {
       setLoading(true);
       axios
-        .put(`${BaseApi}${ResetPassword}`, {
+        .put(`${BaseApi}${AdminResetPassword}`, {
           code: path?.id,
           newPassword: data?.password,
         })

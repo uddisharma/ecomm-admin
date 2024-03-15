@@ -12,7 +12,7 @@ import {
   ForgetPasswordSchema,
 } from '@/utils/validators/forget-password.schema';
 import { useRouter } from 'next/navigation';
-import { BaseApi, ForgotPassword } from '@/constants';
+import { AdminForgotPassword, BaseApi, ForgotPassword } from '@/constants';
 import axios from 'axios';
 import { toast } from 'sonner';
 
@@ -29,7 +29,7 @@ export default function ForgetPasswordForm() {
   const onSubmit = (data: any) => {
     setLoading(true);
     axios
-      .post(`${BaseApi}${ForgotPassword}`, {
+      .post(`${BaseApi}${AdminForgotPassword}`, {
         email: data?.email,
       })
       .then((res) => {

@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef } from 'react';
 import { Title } from '@/component/ui/text';
 import { DotSeparator } from '@/component/chat/message-details';
-import { Empty } from 'rizzui';
+import { Avatar, Empty } from 'rizzui';
 import cn from '@/utils/class-names';
 import { UserContext } from '@/store/user/context';
 
@@ -42,13 +42,12 @@ export default function MessageBody({ chat }: any) {
     <div ref={chatContainerRef} className="max-h-[50rem] overflow-y-auto">
       {chat1?.map((e: any, i: any) => (
         <div style={{ marginTop: '20px' }} key={i}>
-          {chat?.data?.seller == e?.from ? (
+          {st?.user?.id == e?.from ? (
             <div className="grid grid-cols-[32px_1fr] items-start gap-3 lg:gap-4 xl:grid-cols-[48px_1fr]">
-              <img
-                className="!h-5 !w-5 bg-[#70C5E0] font-medium text-white xl:!h-8 xl:!w-8"
+              <Avatar
+                name={st?.user?.shopname}
                 src={st?.user?.cover}
-                alt=""
-                style={{ borderRadius: '50%' }}
+                className="!h-5 !w-5 bg-[#70C5E0] font-medium text-white xl:!h-8 xl:!w-8"
               />
 
               <div className="-mt-1.5 lg:mt-0">
@@ -64,11 +63,10 @@ export default function MessageBody({ chat }: any) {
             </div>
           ) : (
             <div className="grid grid-cols-[32px_1fr] items-start gap-3 lg:gap-4 xl:grid-cols-[48px_1fr]">
-              <img
+              <Avatar
+                name={chat?.data?.seller?.shopname}
+                src={chat?.data?.seller?.cover}
                 className="!h-5 !w-5 bg-[#70C5E0] font-medium text-white xl:!h-8 xl:!w-8"
-                src="https://isomorphic-furyroad.s3.amazonaws.com/public/avatars-blur/avatar-11.webp"
-                alt=""
-                style={{ borderRadius: '50%' }}
               />
 
               <div className="-mt-1.5 lg:mt-0">

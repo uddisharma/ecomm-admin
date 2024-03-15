@@ -21,7 +21,12 @@ import useSWR from 'swr';
 // import { BaseApi } from '@/constants/page';
 import { useParams } from 'next/navigation';
 import { FaTelegramPlane } from 'react-icons/fa';
-import { BaseApi, singleTicket, ticketReply } from '@/constants';
+import {
+  BaseApi,
+  singleAdminTicket,
+  singleTicket,
+  ticketReply,
+} from '@/constants';
 import { UserContext } from '@/store/user/context';
 import toast from 'react-hot-toast';
 
@@ -29,6 +34,7 @@ export default function ReplyDetails({ className }: { className?: string }) {
   const data = useAtomValue(dataAtom);
   const messageId = useAtomValue(messageIdAtom);
   const params = useParams();
+  const { state } = useContext(UserContext);
   const [ref, { width }] = useElementSize();
   const isWide = useMedia('(min-width: 1280px) and (max-width: 1440px)', false);
 
@@ -36,8 +42,6 @@ export default function ReplyDetails({ className }: { className?: string }) {
     if (isWide) return width - 64;
     return width - 44;
   }
-
-  const { state } = useContext(UserContext);
 
   const isMobile = useMedia('(max-width: 767px)', true);
 
@@ -47,7 +51,7 @@ export default function ReplyDetails({ className }: { className?: string }) {
     data: data2,
     isLoading,
     mutate,
-  } = useSWR(`${BaseApi}${singleTicket}/${params?.id}`, fetcher, {
+  } = useSWR(`${BaseApi}${singleAdminTicket}/${params?.id}`, fetcher, {
     refreshInterval: 3600000,
   });
 
@@ -76,6 +80,7 @@ export default function ReplyDetails({ className }: { className?: string }) {
     return formattedDateTime;
   }
   const [r_message, setRMessage] = useState('');
+
   const sendReply = async () => {
     try {
       if (r_message == '') {
@@ -106,39 +111,39 @@ export default function ReplyDetails({ className }: { className?: string }) {
       </div>
     );
   }
-  if (data2?.data?.closed) {
-    return (
-      <>
-        <header className="flex flex-col justify-between gap-4 border-b border-gray-200 pb-5 3xl:flex-row 3xl:items-center">
-          <div className="flex flex-row flex-wrap items-start justify-between gap-3 xs:flex-row xs:items-center xs:gap-6 lg:justify-normal">
-            <Title as="h4" className="font-semibold">
-              {data2?.data?.subject}
-            </Title>
-            <Badge variant="outline" color="primary" size="sm">
-              {data2?.data?.type}
-            </Badge>
-            {data2?.data?.closed === false ? (
-              <Badge variant="outline" color="success" size="sm">
-                Active
-              </Badge>
-            ) : (
-              <Badge variant="outline" color="danger" size="sm">
-                Closed
-              </Badge>
-            )}
-          </div>
-          <div dangerouslySetInnerHTML={{ __html: data2?.data?.description }} />
-        </header>
-        <div style={{ paddingBottom: '100px' }}>
-          <Empty
-            image={<SearchNotFoundIcon />}
-            text="This ticket is closed !"
-            className="h-full justify-center"
-          />
-        </div>
-      </>
-    );
-  }
+  // if (data2?.data?.closed) {
+  //   return (
+  //     <>
+  //       <header className="flex flex-col justify-between gap-4 border-b border-gray-200 pb-5 3xl:flex-row 3xl:items-center">
+  //         <div className="flex flex-row flex-wrap items-start justify-between gap-3 xs:flex-row xs:items-center xs:gap-6 lg:justify-normal">
+  //           <Title as="h4" className="font-semibold">
+  //             {data2?.data?.subject}
+  //           </Title>
+  //           <Badge variant="outline" color="primary" size="sm">
+  //             {data2?.data?.type}
+  //           </Badge>
+  //           {data2?.data?.closed === false ? (
+  //             <Badge variant="outline" color="success" size="sm">
+  //               Active
+  //             </Badge>
+  //           ) : (
+  //             <Badge variant="outline" color="danger" size="sm">
+  //               Closed
+  //             </Badge>
+  //           )}
+  //         </div>
+  //         <div dangerouslySetInnerHTML={{ __html: data2?.data?.description }} />
+  //       </header>
+  //       <div style={{ paddingBottom: '100px' }}>
+  //         <Empty
+  //           image={<SearchNotFoundIcon />}
+  //           text="This ticket is closed !"
+  //           className="h-full justify-center"
+  //         />
+  //       </div>
+  //     </>
+  //   );
+  // }
 
   return (
     <div
@@ -191,7 +196,7 @@ export default function ReplyDetails({ className }: { className?: string }) {
         >
           <figure className="dark:mt-4">
             <Avatar
-              name={state?.user?.name}
+              name={state?.user?.shopname}
               initials={initials}
               src={state?.user?.cover}
               className="!h-5 !w-5 bg-[#70C5E0] font-medium text-white xl:!h-8 xl:!w-8"

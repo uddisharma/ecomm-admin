@@ -3,10 +3,11 @@ import React, { createContext, useContext, useReducer, useEffect } from 'react';
 // const initialState: any = {
 //   user: JSON.parse(localStorage.getItem('seller') as string) || null,
 // };
+
 const initialState: any = {
   user:
     typeof window !== 'undefined'
-      ? JSON.parse(localStorage.getItem('seller') as string) || null
+      ? JSON.parse(localStorage.getItem('admin') as string) || null
       : null,
 };
 
@@ -33,7 +34,7 @@ const UserProvider = ({ children }: any) => {
   const [state, dispatch] = useReducer(userReducer, initialState);
 
   useEffect(() => {
-    localStorage.setItem('seller', JSON.stringify(state.user));
+    localStorage.setItem('admin', JSON.stringify(state.user));
   }, [state.user]);
 
   const setUser = (user: any) => {
@@ -42,7 +43,7 @@ const UserProvider = ({ children }: any) => {
 
   const logout = () => {
     dispatch({ type: 'LOGOUT' });
-    localStorage.removeItem('user');
+    localStorage.removeItem('admin');
   };
 
   const value = { state, setUser, logout };

@@ -20,23 +20,11 @@ export default function DefaultLayout({
   }
 
   if (layout === LAYOUT_OPTIONS.HELIUM) {
-    return (
-      // <UserProvider>
-      <HeliumLayout>{children}</HeliumLayout>
-      // </UserProvider>
-    );
+    return <HeliumLayout>{children}</HeliumLayout>;
   }
   if (layout === LAYOUT_OPTIONS.LITHIUM) {
-    return (
-      // <UserProvider>
-      <LithiumLayout>{children}</LithiumLayout>
-      // </UserProvider>
-    );
+    return <LithiumLayout>{children}</LithiumLayout>;
   }
 
-  return (
-    // <UserProvider>
-    <HydrogenLayout>{children}</HydrogenLayout>
-    // </UserProvider>
-  );
+  return <HydrogenLayout>{children}</HydrogenLayout>;
 }

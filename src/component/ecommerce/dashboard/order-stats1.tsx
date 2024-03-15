@@ -18,24 +18,21 @@ import { CustomTooltip } from '@/component/charts/custom-tooltip';
 import SimpleBar from '@/component/ui/simplebar';
 import { formatNumber } from '@/utils/format-number';
 import Spinner from '@/component/ui/spinner';
-import { BaseApi, monthwiseOrders, monthwiseRevenue } from '@/constants';
+import { BaseApi, adminmonthwiseOrders } from '@/constants';
 import useSWR from 'swr';
-import { UserContext } from '@/store/user/context';
 import axios from 'axios';
 import { Empty, SearchNotFoundIcon } from 'rizzui';
 
 export default function OrderStats({ className }: { className?: string }) {
   const isTablet = useMedia('(max-width: 820px)', false);
   const [startDate, setStartDate] = useState<Date>(new Date());
-  const { state } = useContext(UserContext);
   const fetcher = (url: any) => axios.get(url).then((res) => res.data);
   let {
     data: newdata,
     isLoading,
     error,
   } = useSWR(
-    `${BaseApi}${monthwiseOrders}/${state?.user
-      ?.id}?year=${startDate?.getFullYear()}`,
+    `${BaseApi}${adminmonthwiseOrders}?year=${startDate?.getFullYear()}`,
     fetcher,
     {
       refreshInterval: 3600000,

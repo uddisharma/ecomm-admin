@@ -10,8 +10,8 @@ enum MODE {
 }
 
 export const siteConfig = {
-  title: 'Seller Panel | The Small Cart',
-  description: `Seller Panel | The Small Cart`,
+  title: 'Admin Panel | The Small Cart',
+  description: `Admin Panel | The Small Cart`,
   logo: logoImg,
   icon: logoIconImg,
   mode: MODE.LIGHT,
@@ -25,13 +25,13 @@ export const metaObject = (
   description: string = siteConfig.description
 ): Metadata => {
   return {
-    title: 'Seller Panel | The Small Cart',
+    title: 'Admin Panel | The Small Cart',
     description,
     openGraph: openGraph ?? {
-      title: 'Seller Panel | The Small Cart',
+      title: 'Admin Panel | The Small Cart',
       description,
       url: '',
-      siteName: 'Seller Panel | The Small Cart', // https://developers.google.com/search/docs/appearance/site-names
+      siteName: 'Admin Panel | The Small Cart', // https://developers.google.com/search/docs/appearance/site-names
       images: {
         url: '',
         width: 1200,

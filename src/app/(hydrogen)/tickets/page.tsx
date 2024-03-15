@@ -1,19 +1,19 @@
 'use client';
-import ProductLoadingPage from '@/component/loading/products';
 import TicketsLoadingPage from '@/component/loading/tickets';
 import ExportButton from '@/component/others/export-button';
 import PageHeader from '@/component/others/pageHeader';
-import TicketTable from '@/component/tickets/EventsTable';
+import TicketTable from '@/component/admintickets/EventsTable';
 import Pagination from '@/component/ui/pagination';
-import { metaObject } from '@/config/site.config';
 import {
   BaseApi,
+  admintickets,
+  deleteTicket,
   markTicket,
   sellerAllTickets,
   ticketPerPage,
+  updateTicket,
 } from '@/constants';
 import { useFilterControls } from '@/hooks/use-filter-control';
-import { UserContext } from '@/store/user/context';
 import axios from 'axios';
 import Link from 'next/link';
 import { useContext, useState } from 'react';
@@ -21,10 +21,8 @@ import { PiPlusBold } from 'react-icons/pi';
 import { Button, Empty, SearchNotFoundIcon } from 'rizzui';
 import { toast } from 'sonner';
 import useSWR from 'swr';
-
-const metadata = {
-  ...metaObject('Events'),
-};
+import { UserContext } from '@/store/user/context';
+import { MdOutlineAutoDelete } from 'react-icons/md';
 
 const pageHeader = {
   title: 'Tickets',
@@ -57,7 +55,7 @@ export default function BlankPage() {
   const fetcher = (url: any) => axios.get(url).then((res) => res.data);
 
   let { data, error, isLoading, mutate } = useSWR(
-    `${BaseApi}${sellerAllTickets}/${state?.user?.id}?page=${page}&limit=${ticketPerPage}`,
+    `${BaseApi}${admintickets}?page=${page}&limit=${ticketPerPage}&isDeleted=${false}`,
     fetcher,
     {
       refreshInterval: 3600000,
@@ -72,21 +70,40 @@ export default function BlankPage() {
   );
   const pagininator = data?.data?.paginator;
   data = data?.data?.data;
+  // console.log(data);
 
   const onDeleteItem = async (id: any) => {
-    console.log(id);
-    // axios.delete(`${BaseApi}`);
-  };
-  const onMark = async (id: any) => {
     try {
-      await axios.patch(`${BaseApi}${markTicket}/${id}`);
+      const res = await axios.patch(`${BaseApi}${updateTicket}/${id}`, {
+        isDeleted: true,
+      });
+
+      if (res.data?.status == 'SUCCESS') {
+        await mutate();
+        return toast.success(`Ticket is Temperory Deleted Successfully`);
+      } else {
+        return toast.error('Something went wrong !');
+      }
+    } catch (error) {
+      console.log(error);
+      return toast.error('Something went wrong !');
+    }
+  };
+  const onMark = async (id: any, closed: any) => {
+    try {
+      await axios.patch(`${BaseApi}${markTicket}/${id}`, {
+        closed: closed,
+      });
       await mutate();
-      return toast.success('Ticket Marked as Resolved');
+      return toast.success(
+        `Ticket Marked as ${closed ? 'Resolved' : 'Active'}`
+      );
     } catch (error) {
       console.log(error);
       return toast.error('Something went wrong');
     }
   };
+
   const tickets: any = [];
 
   return (
@@ -95,13 +112,19 @@ export default function BlankPage() {
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
         <div className="mt-4 flex items-center gap-3 @lg:mt-0">
           <ExportButton data={data} fileName="tickets_data" header="" />
-          <Link href={'tickets/create'} className="w-full @lg:w-auto">
+          <Link href={'/tickets/create'} className="w-full @lg:w-auto">
             <Button
               tag="span"
               className="w-full @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
             >
               <PiPlusBold className="me-1.5 h-[17px] w-[17px]" />
               Create Ticket
+            </Button>
+          </Link>
+          <Link href={`/tickets/deleted`}>
+            <Button className=" w-full gap-2 @lg:w-auto" variant="outline">
+              <MdOutlineAutoDelete className="h-4 w-4" />
+              Deleted
             </Button>
           </Link>
         </div>
@@ -122,15 +145,16 @@ export default function BlankPage() {
           onMark={onMark}
           key={Math.random()}
           data={data}
+          user={state?.user?.id}
         />
       )}
-
       {data == null && (
         <TicketTable
           onDeleteItem={onDeleteItem}
           onMark={onMark}
           key={Math.random()}
           data={tickets}
+          user={state?.user?.id}
         />
       )}
 

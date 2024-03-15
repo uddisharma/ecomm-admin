@@ -17,6 +17,7 @@ import axios from 'axios';
 import { BaseApi, changePassword } from '@/constants';
 import { UserContext } from '@/store/user/context';
 import { toast } from 'sonner';
+import { useParams } from 'next/navigation';
 
 export default function PasswordSettingsView({
   settings,
@@ -25,11 +26,11 @@ export default function PasswordSettingsView({
 }) {
   const [isLoading, setLoading] = useState(false);
   const [reset, setReset] = useState({});
-  const { state } = useContext(UserContext);
+  const params = useParams();
   const onSubmit: SubmitHandler<PasswordFormTypes> = (data) => {
     setLoading(true);
     axios
-      .patch(`${BaseApi}${changePassword}/${state?.user?.id}`, {
+      .patch(`${BaseApi}${changePassword}/${params?.seller}`, {
         oldPassword: data?.currentPassword,
         newPassword: data?.newPassword,
       })

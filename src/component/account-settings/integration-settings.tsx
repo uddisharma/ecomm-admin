@@ -12,10 +12,12 @@ import { UserContext } from '@/store/user/context';
 import { toast } from 'sonner';
 import axios from 'axios';
 import { BaseApi, updateSeller } from '@/constants';
+import { SellerContext } from '@/store/seller/context';
+import { useParams } from 'next/navigation';
 const profileFormSchema = z.object({
-  facebook: z.string().min(1, { message: 'Facebook link is required' }),
+  facebook: z.string().optional(),
   instagram: z.string().min(1, { message: 'Instagram link is required' }),
-  youtube: z.string().min(1, { message: 'Youtube link is required' }),
+  youtube: z.string().optional(),
 });
 
 // generate form types from zod validation schema
@@ -23,17 +25,18 @@ export type ProfileFormTypes = z.infer<typeof profileFormSchema>;
 
 export default function ProfileSettingsView() {
   const [Loading, setLoading] = useState(false);
-  const { state, setUser } = useContext(UserContext);
+  const { state, setSeller } = useContext(SellerContext);
+  const params = useParams();
   const onSubmit: SubmitHandler<ProfileFormTypes> = (data) => {
     setLoading(true);
     axios
-      .patch(`${BaseApi}${updateSeller}/${state?.user?.id}`, {
+      .patch(`${BaseApi}${updateSeller}/${params?.seller}`, {
         socialLinks: data,
       })
       .then((res) => {
         if (res.data?.status == 'SUCCESS') {
-          setUser(res.data?.data);
-          return toast.success('Social Links successfully updated!');
+          setSeller(res.data?.data);
+          return toast.success('Profile Updated successfully !');
         } else {
           return toast.error('Something went wrong !');
         }
@@ -48,9 +51,9 @@ export default function ProfileSettingsView() {
   };
 
   const defaultValues = {
-    facebook: state?.user?.socialLinks?.facebook ?? '',
-    instagram: state?.user?.socialLinks?.instagram ?? '',
-    youtube: state?.user?.socialLinks?.youtube ?? '',
+    facebook: state?.seller?.socialLinks?.facebook ?? '',
+    instagram: state?.seller?.socialLinks?.instagram ?? '',
+    youtube: state?.seller?.socialLinks?.youtube ?? '',
   };
 
   return (

@@ -1,5 +1,5 @@
 'use client';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Controller, SubmitHandler } from 'react-hook-form';
 import { Input } from '@/component/ui/input';
 import { Form } from '@/component/ui/form';
@@ -15,10 +15,12 @@ import Link from 'next/link';
 import { Button } from 'rizzui';
 import { UserContext } from '@/store/user/context';
 import axios from 'axios';
-import { BaseApi, createTicket } from '@/constants';
+import { BaseApi, createTicket, findSingleSeller } from '@/constants';
 import { toast } from 'sonner';
+import { useParams } from 'next/navigation';
+import { IoIosSearch } from 'react-icons/io';
+import { GoArrowRight } from 'react-icons/go';
 const schema = z.object({
-  seller: z.string().optional(),
   type: z.string().min(1, { message: 'Type is Required' }),
   subject: z.string().min(1, { message: 'Subject is Required' }),
   description: z.string().min(1, { message: 'Description is Required' }),
@@ -52,19 +54,81 @@ const types = [
 ];
 
 export default function NewsLetterForm() {
-  const { state } = useContext(UserContext);
+  const params = useParams();
   const initialValues = {
-    seller: state?.user?.id,
     type: '',
     subject: '',
     description: '',
   };
   const [reset, setReset] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [inputValue, setInputValue] = useState('');
+  const [filteredSuggestions, setFilteredSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [searchedData, setSearchedData] = useState<any>([]);
+
+  const handleChange = (e: any) => {
+    const inputValue = e.target.value;
+    setInputValue(inputValue);
+  };
+
+  const handleSelectSuggestion = (suggestion: any) => {
+    setInputValue(suggestion);
+    setFilteredSuggestions([]);
+    setShowSuggestions(false);
+  };
+  useEffect(() => {
+    if (inputValue == '') {
+      setFilteredSuggestions([]);
+      setShowSuggestions(false);
+    }
+  }, [inputValue]);
+
+  const findSeller = () => {
+    if (inputValue == '') {
+      return toast.warning('Please enter a keyword');
+    }
+    setLoading(true);
+    axios
+      .get(`${BaseApi}${findSingleSeller}?term=${inputValue}`)
+      .then((res) => {
+        if (res?.data?.data) {
+          setSearchedData(res?.data?.data);
+          let sellers = res?.data?.data?.map((e: any) => {
+            return `${e?.shopname} ${e?.username}`;
+          });
+          setFilteredSuggestions(sellers);
+          setShowSuggestions(true);
+        } else {
+          setFilteredSuggestions([]);
+          return toast.warning('Seller Not found');
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        return toast.error('Something went wrong');
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  const seller =
+    searchedData &&
+    searchedData?.filter((e: any) => {
+      return `${e?.shopname} ${e?.username}` == inputValue;
+    });
   const onSubmit: SubmitHandler<Schema> = (data) => {
+    if (seller && seller?.length <= 0) {
+      return toast.error('Unable to get details of seller');
+    }
     setIsLoading(true);
     axios
-      .post(`${BaseApi}${createTicket}`, data)
+      .post(`${BaseApi}${createTicket}`, {
+        ...data,
+        seller: seller && seller[0]?.id,
+      })
       .then((res) => {
         if (res?.data?.status == 'SUCCESS') {
           setReset(initialValues);
@@ -97,19 +161,15 @@ export default function NewsLetterForm() {
       },
     ],
   };
-  // const fetcher = (url: any) => axios.get(url).then((res) => res.data);
 
-  // const { data } = useSWR(`${BaseApi}/api/employees`, fetcher, {
-  //   refreshInterval: 3600000,
-  // });
-  // const employees = data?.employees?.map((e: any) => {
-  //   return { name: `${e.name}-${e._id}`, value: e._id };
-  // });
   return (
     <>
       <br />
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
-        <Link href={'/tickets'} className="mt-4 w-full @lg:mt-0 @lg:w-auto">
+        <Link
+          href={`/${params?.seller}/tickets`}
+          className="mt-4 w-full @lg:mt-0 @lg:w-auto"
+        >
           <Button
             tag="span"
             className="w-full @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
@@ -145,22 +205,39 @@ export default function NewsLetterForm() {
                     title="Ticket Type"
                     className="pt-7 @2xl:pt-9 @3xl:grid-cols-12 @3xl:pt-11"
                   >
-                    {/* <div className="mb-5 @3xl:col-span-2">
-                      <Controller
-                        name="employeeId"
-                        control={control}
-                        render={({ field: { onChange, value } }) => (
-                          <Select
-                            options={employees}
-                            value={value}
-                            onChange={onChange}
-                            label="Employee"
-                            error={errors?.employeeId?.message as string}
-                            getOptionValue={(option) => option.name}
-                          />
-                        )}
+                    <div className="relative col-span-full">
+                      <Input
+                        prefix={<IoIosSearch className="h-5 w-5" />}
+                        suffix={
+                          loading ? (
+                            <Spinner className="h-5 w-5 cursor-not-allowed" />
+                          ) : (
+                            <GoArrowRight
+                              onClick={findSeller}
+                              className="h-5 w-5 cursor-pointer"
+                            />
+                          )
+                        }
+                        label="Seller"
+                        className="col-span-full"
+                        placeholder="Seller"
+                        value={inputValue}
+                        onChange={handleChange}
                       />
-                    </div> */}
+                      {showSuggestions && (
+                        <ul className="absolute z-10 mt-2 w-full rounded-md border border-gray-300  bg-white shadow-md dark:bg-gray-100">
+                          {filteredSuggestions.map((suggestion, index) => (
+                            <li
+                              key={index}
+                              onClick={() => handleSelectSuggestion(suggestion)}
+                              className="cursor-pointer px-4 py-2 hover:bg-gray-200"
+                            >
+                              {suggestion}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
                     <div className="mb-5 @3xl:col-span-2">
                       <Controller
                         name="type"

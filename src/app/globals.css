@@ -1234,7 +1234,6 @@ div[style='z-index: 1000001;'],
 
 .section-12 {
   margin-bottom: 5px;
-  
 }
 
 /* .section-12 h2 {
@@ -1282,7 +1281,6 @@ div[style='z-index: 1000001;'],
 }
 .heading-12 {
   text-align: center;
-  
 }
 
 .invoice {
@@ -1370,4 +1368,21 @@ div[style='z-index: 1000001;'],
   width: 100px;
   /* Adjust the width as needed */
   height: auto;
+}
+
+.grid-container1 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+@media only screen and (max-width: 767px) {
+  .grid-container1 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+
+.grid-item {
 }

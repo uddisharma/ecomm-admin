@@ -12,6 +12,8 @@ import AddressCard from '@/component/ui/address-card';
 import { AiOutlineCloudDownload } from 'react-icons/ai';
 import { MdOutlineFileDownloadOff } from 'react-icons/md';
 import StatusPopover from '@/component/others/orderStatusPopover';
+import DeletePopover from '@/component/others/delete-popover';
+import TemperoryDeletePopover from '@/component/others/temperory-delete-popover';
 function getStatusBadge(status: string) {
   switch (status.toLowerCase()) {
     case 'received':
@@ -50,6 +52,8 @@ type Columns = {
   onDeleteItem: (id: string, status: string) => void;
   onHeaderCellClick: (value: string) => void;
   onChecked?: (event: React.ChangeEvent<HTMLInputElement>, id: string) => void;
+  temperoryDelete: any;
+  updateStatus: any;
 };
 const calculateTotalQuantity = (orderItems: any) => {
   let totalQuantity = 0;
@@ -76,6 +80,8 @@ export const getColumns = ({
   sortConfig,
   onDeleteItem,
   onHeaderCellClick,
+  temperoryDelete,
+  updateStatus,
 }: Columns) => [
   {
     title: <HeaderCell title="Order ID" />,
@@ -83,7 +89,7 @@ export const getColumns = ({
     key: 'id',
     width: 90,
     render: (_: any, row: any) => (
-      <Link href={`/orders/${row.id}`}>
+      <Link href={`/${row?.sellerId}/orders/${row.id}`}>
         <Text className="text-blue-900">
           #
           {row?.order && row?.courior != 'Local'
@@ -259,7 +265,7 @@ export const getColumns = ({
           placement="top"
           color="invert"
         >
-          <Link href={`/orders/${row.id}`}>
+          <Link href={`/${row?.sellerId}/orders/${row.id}`}>
             <ActionIcon
               tag="span"
               size="sm"
@@ -279,11 +285,16 @@ export const getColumns = ({
           }
           description={`Are you sure you want to mark this order?`}
           onDelete={() =>
-            onDeleteItem(
+            updateStatus(
               row?.id,
               row?.status == 'Dispatched' ? 'Received' : 'Dispatched'
             )
           }
+        />
+        <TemperoryDeletePopover
+          title={'Temperory delete order'}
+          description={`Are you sure you want to temperory delete this order?`}
+          onDelete={() => temperoryDelete(row?.id)}
         />
       </div>
     ),

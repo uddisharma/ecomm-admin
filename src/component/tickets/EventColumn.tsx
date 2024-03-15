@@ -1,5 +1,4 @@
 'use client';
-
 import Link from 'next/link';
 import { HeaderCell } from '@/component/ui/table';
 import { Badge } from '@/component/ui/badge';
@@ -13,6 +12,8 @@ import InfoModal from './InfoModal';
 import { CgMailReply } from 'react-icons/cg';
 import { IoCheckmarkDoneOutline } from 'react-icons/io5';
 import MarkPopover from '../others/popover';
+import PencilIcon from '../icons/pencil';
+import TemperoryDeletePopover from '../others/temperory-delete-popover';
 
 type Columns = {
   sortConfig?: any;
@@ -20,13 +21,13 @@ type Columns = {
   onHeaderCellClick: (value: string) => void;
   onChecked?: (event: React.ChangeEvent<HTMLInputElement>, id: string) => void;
   openModal: any;
-  onMark: (id: string) => void;
+  onMark: (id: string, closed: boolean) => void;
+  user: any;
 };
 
-function checkLastMessage(data: any) {
+function checkLastMessage(data: any, user: any) {
   const lastMessage = data.replies[data.replies.length - 1];
-  // console.log(lastMessage?.from, data?.seller);
-  if (lastMessage.from === data.seller?.id) {
+  if (lastMessage.from === user) {
     return '';
   } else {
     return 'Waiting for your response';
@@ -39,6 +40,7 @@ export const EventsColumn = ({
   onHeaderCellClick,
   openModal,
   onMark,
+  user,
 }: Columns) => [
   {
     title: <HeaderCell title="Type" />,
@@ -119,7 +121,9 @@ export const EventsColumn = ({
     width: 150,
     render: (_: any, row: any) => (
       <Text className="text-red-dark">
-        {!row?.closed ? row?.replies?.length > 0 && checkLastMessage(row) : ''}
+        {!row?.closed
+          ? row?.replies?.length > 0 && checkLastMessage(row, user)
+          : ''}
       </Text>
     ),
   },
@@ -136,31 +140,29 @@ export const EventsColumn = ({
           placement="top"
           color="invert"
         >
-          {row?.closed ? (
+          <Link href={`/${row?.seller?.id}/tickets/reply/${row?.id}`}>
             <ActionIcon
               tag="span"
               size="sm"
-              disabled={row?.closed}
               variant="outline"
               className="hover:text-gray-700"
             >
               <CgMailReply className="h-4 w-4" />
             </ActionIcon>
-          ) : (
-            <Link href={`/tickets/reply/${row?.id}`}>
-              <ActionIcon
-                tag="span"
-                size="sm"
-                disabled={row?.closed}
-                variant="outline"
-                className="hover:text-gray-700"
-              >
-                <CgMailReply className="h-4 w-4" />
-              </ActionIcon>
-            </Link>
-          )}
+          </Link>
         </Tooltip>
-
+        <Tooltip
+          size="sm"
+          content={() => 'Edit Ticket'}
+          placement="top"
+          color="invert"
+        >
+          <Link href={`/${row?.seller?.id}/tickets/${row?.id}/edit`}>
+            <ActionIcon size="sm" variant="outline" aria-label={'Edit Ticket'}>
+              <PencilIcon className="h-4 w-4" />
+            </ActionIcon>
+          </Link>
+        </Tooltip>
         <Tooltip
           size="sm"
           content={() => 'View ticket'}
@@ -197,24 +199,23 @@ export const EventsColumn = ({
           placement="top"
           color="invert"
         >
-          {row?.closed ? (
-            <ActionIcon
-              tag="span"
-              size="sm"
-              disabled={row?.closed}
-              style={{ cursor: 'not-allowed' }}
-              variant="outline"
-              className="hover:text-gray-700"
-            >
-              <IoCheckmarkDoneOutline className="h-4 w-4" />
-            </ActionIcon>
-          ) : (
-            <MarkPopover
-              title={`Mark as Resolved`}
-              description={`Are you sure you want to mark this ticket? (Not Reversible task)`}
-              onDelete={() => onMark(row.id)}
-            />
-          )}
+          <MarkPopover
+            title={`Mark as ${row?.closed ? 'Active' : 'Resolved'}`}
+            description={`Are you sure you want to mark this ticket? `}
+            onDelete={() => onMark(row.id, !row?.closed)}
+          />
+        </Tooltip>
+        <Tooltip
+          size="sm"
+          content={() => 'Delete this Ticket'}
+          placement="top"
+          color="invert"
+        >
+          <TemperoryDeletePopover
+            title={`Temperory Delete this Ticket`}
+            description={`Are you sure you want to temperory delete this ticket? `}
+            onDelete={() => onDeleteItem(row.id)}
+          />
         </Tooltip>
       </div>
     ),
