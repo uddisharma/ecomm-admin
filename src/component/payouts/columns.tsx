@@ -30,7 +30,7 @@ export const getColumns = ({
   onChecked,
 }: Columns) => [
   {
-    title: <HeaderCell title="Amount" />,
+    title: <HeaderCell title="Seller" />,
     dataIndex: 'amount',
     key: 'amount',
     width: 80,

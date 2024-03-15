@@ -61,7 +61,6 @@ export default function Transactions() {
   );
   const pagininator = data?.data?.paginator;
   data = data?.data?.data;
-  // console.log(data)
 
   const onDelete = async (id: any) => {
     try {

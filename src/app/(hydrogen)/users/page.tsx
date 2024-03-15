@@ -1,6 +1,5 @@
 'use client';
 import { Button } from '@/component/ui/button';
-import PageHeader from '@/component/others/pageHeader';
 import ExportButton from '@/component/others/export-button';
 import ProductLoadingPage from '@/component/loading/products';
 import Pagination from '@/component/ui/pagination';
@@ -8,9 +7,7 @@ import axios from 'axios';
 import useSWR from 'swr';
 import {
   BaseApi,
-  deleteUser,
   findUsers,
-  temperoryDeleteUser,
   updateUser,
   userList,
   userPerPage,
@@ -21,6 +18,10 @@ import { Empty, Input, SearchNotFoundIcon } from 'rizzui';
 import { toast } from 'sonner';
 import UserTable from '@/component/users/user-list/table';
 import { CiSearch } from 'react-icons/ci';
+import cn from '@/utils/class-names';
+import Link from 'next/link';
+import { MdOutlineAutoDelete } from 'react-icons/md';
+import { FiUserPlus } from 'react-icons/fi';
 
 const pageHeader = {
   title: 'Users',
@@ -113,28 +114,51 @@ export default function ProductsPage() {
   const users: any = [];
   return (
     <>
-      <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
-        <div className="mt-4 flex items-center gap-3 @lg:mt-0">
-          <ExportButton data={data} fileName="product_data" header="" />
-          <Input
-            prefix={<CiSearch className="h-auto w-5" />}
-            type="text"
-            value={term}
-            onChange={(e) => {
-              setTerm(e.target?.value);
-            }}
-            placeholder="Search for Users..."
-          />
-          <Button
-            isLoading={loading}
-            disabled={!term}
-            onClick={() => findUser()}
-            className="w-full gap-2 @lg:w-auto"
-          >
-            Search
-          </Button>
+      <header className={cn('mb-3 @container xs:-mt-2 lg:mb-7')}>
+        <div className="flex flex-col @lg:flex-row @lg:items-end @lg:justify-between">
+          <div className="mt-4 flex items-center gap-3 @lg:mt-0">
+            <Link href={`/users/create`}>
+              <Button
+                tag="span"
+                variant="outline"
+                className="mt-4 w-full cursor-pointer @lg:mt-0 @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+              >
+                <FiUserPlus className="me-1 h-4 w-4" />
+                New User
+              </Button>
+            </Link>
+
+            <Link href={`/users/deleted`}>
+              <Button
+                tag="span"
+                variant="outline"
+                className="mt-4 w-full cursor-pointer @lg:mt-0 @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+              >
+                <MdOutlineAutoDelete className="me-1 h-4 w-4" />
+                Deleted
+              </Button>
+            </Link>
+            <ExportButton data={data} fileName="product_data" header="" />
+            <Input
+              prefix={<CiSearch className="h-auto w-5" />}
+              type="text"
+              value={term}
+              onChange={(e) => {
+                setTerm(e.target?.value);
+              }}
+              placeholder="Search for Users..."
+            />
+            <Button
+              isLoading={loading}
+              disabled={!term}
+              onClick={() => findUser()}
+              className="w-full gap-2 @lg:w-auto"
+            >
+              Search
+            </Button>
+          </div>
         </div>
-      </PageHeader>
+      </header>
       {isLoading && <ProductLoadingPage />}
       {error && (
         <div style={{ paddingBottom: '100px' }}>

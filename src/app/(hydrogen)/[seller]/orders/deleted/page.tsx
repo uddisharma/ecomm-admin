@@ -219,7 +219,10 @@ export default function OrdersPage() {
           </Link>
         </div>
       </PageHeader>
-      {error && (
+
+      {isLoading ? (
+        <OrderLoading />
+      ) : error ? (
         <div style={{ paddingBottom: '100px' }}>
           <Empty
             image={<SearchNotFoundIcon />}
@@ -227,9 +230,15 @@ export default function OrdersPage() {
             className="h-full justify-center"
           />
         </div>
-      )}
-      {isLoading && <OrderLoading />}
-      {data == null && (
+      ) : data ? (
+        <DeletedOrderTable
+          key={Math.random()}
+          data={data}
+          updateStatus={updateStatus}
+          temperoryDelete={temperoryDelete}
+          deleteOrder={deleteOrder}
+        />
+      ) : (
         <DeletedOrderTable
           key={Math.random()}
           data={orders}
@@ -238,15 +247,7 @@ export default function OrdersPage() {
           deleteOrder={deleteOrder}
         />
       )}
-      {data && (
-        <DeletedOrderTable
-          key={Math.random()}
-          data={data}
-          updateStatus={updateStatus}
-          temperoryDelete={temperoryDelete}
-          deleteOrder={deleteOrder}
-        />
-      )}
+
       <div
         style={{
           display: 'flex',

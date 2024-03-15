@@ -122,7 +122,10 @@ export default function Coupons() {
           </Link>
         </div>
       </PageHeader>
-      {error && (
+
+      {isLoading ? (
+        <CouponLoadingPage />
+      ) : error ? (
         <div style={{ paddingBottom: '100px' }}>
           <Empty
             image={<SearchNotFoundIcon />}
@@ -130,17 +133,14 @@ export default function Coupons() {
             className="h-full justify-center"
           />
         </div>
-      )}
-      {isLoading && <CouponLoadingPage />}
-      {data && (
+      ) : data ? (
         <CouponsTable
           key={Math.random()}
           data={data}
           onDeleteItem={onDelete}
           temperoryDelete={temperoryDelete}
         />
-      )}
-      {data == null && (
+      ) : (
         <CouponsTable
           key={Math.random()}
           data={coupons1}

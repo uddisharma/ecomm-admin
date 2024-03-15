@@ -70,8 +70,9 @@ export default function CategoriesPage() {
         breadcrumb={pageHeader.breadcrumb}
         data={data?.data?.sellingCategory}
       />
-      {isLoading && <CategoryLoadingPage />}
-      {error && (
+      {isLoading ? (
+        <CategoryLoadingPage />
+      ) : error ? (
         <div style={{ paddingBottom: '100px' }}>
           <Empty
             image={<SearchNotFoundIcon />}
@@ -79,13 +80,13 @@ export default function CategoriesPage() {
             className="h-full justify-center"
           />
         </div>
-      )}
-
-      {data && (
+      ) : data ? (
         <CategoryTable
           deleteCategory={deleteCategory}
           data={data?.data?.sellingCategory}
         />
+      ) : (
+        <CategoryTable deleteCategory={deleteCategory} data={[]} />
       )}
     </>
   );

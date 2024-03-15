@@ -109,8 +109,9 @@ export default function ProductsPage() {
           </Link>
         </div>
       </PageHeader>
-      {isLoading && <ProductLoadingPage />}
-      {error && (
+      {isLoading ? (
+        <ProductLoadingPage />
+      ) : error ? (
         <div style={{ paddingBottom: '100px' }}>
           <Empty
             image={<SearchNotFoundIcon />}
@@ -118,12 +119,9 @@ export default function ProductsPage() {
             className="h-full justify-center"
           />
         </div>
-      )}
-
-      {data && (
+      ) : data ? (
         <ProductsTable key={Math.random()} data={data} onDelete={onDelete} />
-      )}
-      {data == null && (
+      ) : (
         <ProductsTable
           key={Math.random()}
           data={products}

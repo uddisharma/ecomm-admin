@@ -85,7 +85,6 @@ export default function Coupons() {
   };
 
   const temperoryDelete = async (id: string) => {
-    // console.log(id);
     try {
       await axios.patch(`${BaseApi}${updateCoupon}/${id}`, {
         isDeleted: false,
@@ -130,7 +129,10 @@ export default function Coupons() {
           </Link>
         </div>
       </PageHeader>
-      {error && (
+
+      {isLoading ? (
+        <CouponLoadingPage />
+      ) : error ? (
         <div style={{ paddingBottom: '100px' }}>
           <Empty
             image={<SearchNotFoundIcon />}
@@ -138,17 +140,14 @@ export default function Coupons() {
             className="h-full justify-center"
           />
         </div>
-      )}
-      {isLoading && <CouponLoadingPage />}
-      {data && (
+      ) : data ? (
         <DeletedCouponsTable
           key={Math.random()}
           data={data}
           onDeleteItem={onDelete}
           temperoryDelete={temperoryDelete}
         />
-      )}
-      {data == null && (
+      ) : (
         <DeletedCouponsTable
           key={Math.random()}
           data={coupons1}

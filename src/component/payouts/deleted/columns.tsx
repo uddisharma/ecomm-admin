@@ -32,7 +32,7 @@ export const getColumns = ({
   temperoryDelete,
 }: Columns) => [
   {
-    title: <HeaderCell title="Amount" />,
+    title: <HeaderCell title="Seller" />,
     dataIndex: 'amount',
     key: 'amount',
     width: 80,

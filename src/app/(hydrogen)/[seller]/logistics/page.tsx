@@ -35,6 +35,7 @@ import { toast } from 'sonner';
 import useSWR, { mutate } from 'swr';
 import { useParams } from 'next/navigation';
 import { Skeleton } from '@/component/ui/skeleton';
+import Image from 'next/image';
 
 const schema = z.object({
   name: z.string().min(1),
@@ -76,16 +77,8 @@ function PromoBanner() {
     <>
       <br />
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb} />
-      {error && (
-        <div style={{ paddingBottom: '100px' }}>
-          <Empty
-            image={<SearchNotFoundIcon />}
-            text="Something Went Wrong !"
-            className="h-full justify-center"
-          />
-        </div>
-      )}
-      {loading && (
+
+      {loading ? (
         <div style={{ height: '100vh' }}>
           <Skeleton style={{ height: '200px' }} className="h-30 w-full" />
           <Skeleton
@@ -93,8 +86,15 @@ function PromoBanner() {
             className="h-30 w-full"
           />
         </div>
-      )}
-      {data && (
+      ) : error ? (
+        <div style={{ paddingBottom: '100px' }}>
+          <Empty
+            image={<SearchNotFoundIcon />}
+            text="Something Went Wrong !"
+            className="h-full justify-center"
+          />
+        </div>
+      ) : data ? (
         <>
           {seller?.deliverypartner?.personal?.name && (
             <div
@@ -103,14 +103,17 @@ function PromoBanner() {
               )}
             >
               <div className="relative h-full min-h-[200px] w-full sm:max-w-[223px]">
-                <img
+                <Image
                   className=" rounded-t-xl object-cover xs:rounded-none xs:rounded-s-xl"
-                  src="https://cdn-icons-png.flaticon.com/128/870/870181.png"
+                  src="/logistics/truck.png"
                   style={{
                     display: 'block',
                     margin: 'auto',
                     marginTop: '40px',
+                    scale: '0.7',
                   }}
+                  height={1000}
+                  width={1000}
                   alt=""
                 />
               </div>
@@ -182,10 +185,12 @@ function PromoBanner() {
               )}
             >
               <div className="relative h-full min-h-[200px] w-full sm:max-w-[223px]">
-                <img
+                <Image
                   className=" rounded-t-xl object-cover xs:rounded-none xs:rounded-s-xl"
-                  src="https://media.licdn.com/dms/image/C4E0BAQF3mKyUuIQVGQ/company-logo_200_200/0/1630636484659/nimbus_post_logo?e=1712188800&v=beta&t=YTaFEZq9Zi-vqsLL9wdggbQ0eOPaga6b5KSPTDULiUA"
-                  style={{ display: 'block', margin: 'auto' }}
+                  src="/logistics/nimbus.jpeg"
+                  width={1000}
+                  height={1000}
+                  style={{ display: 'block', margin: 'auto', scale: '0.8' }}
                   //   style={{ width: '100%', height: '200px' }}
                   alt=""
                 />
@@ -248,6 +253,8 @@ function PromoBanner() {
               </div>
             )}
         </>
+      ) : (
+        ''
       )}
     </>
   );
@@ -261,6 +268,7 @@ const WareHouses = ({ data, data1, mutate }: any) => {
   const params = useParams();
   useEffect(() => {
     setWarehouses(data);
+    
   }, []);
 
   const handleSetDefault = async (selectedWarehouse: any) => {

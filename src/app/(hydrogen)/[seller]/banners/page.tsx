@@ -109,7 +109,14 @@ export default function Coupons() {
           </Link>
         </div>
       </PageHeader>
-      {error && (
+
+      {isLoading ? (
+        [1, 2, 3, 4, 5]?.map((e) => (
+          <div key={e} className="mt-4">
+            <BannerLoading />
+          </div>
+        ))
+      ) : error ? (
         <div style={{ paddingBottom: '100px' }}>
           <Empty
             image={<SearchNotFoundIcon />}
@@ -117,16 +124,9 @@ export default function Coupons() {
             className="h-full justify-center"
           />
         </div>
-      )}
-      {isLoading &&
-        [1, 2, 3, 4, 5]?.map((e) => (
-          <div key={e} className="mt-4">
-            <BannerLoading />
-          </div>
-        ))}
-      {data &&
-        data.map((e: any) => <Card1 data={e} onDelete={onDelete} key={e} />)}
-      {data == null && (
+      ) : data ? (
+        data.map((e: any) => <Card1 data={e} onDelete={onDelete} key={e} />)
+      ) : (
         <div style={{ paddingBottom: '100px' }}>
           <Empty
             image={<SearchNotFoundIcon />}
@@ -135,6 +135,7 @@ export default function Coupons() {
           />
         </div>
       )}
+
       <div
         style={{
           display: 'flex',

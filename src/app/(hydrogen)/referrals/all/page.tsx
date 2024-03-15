@@ -4,38 +4,36 @@ import { metaObject } from '@/config/site.config';
 import ExportButton from '@/component/others/export-button';
 import Pagination from '@/component/ui/pagination';
 import { useFilterControls } from '@/hooks/use-filter-control';
-import { useContext, useState } from 'react';
-import { UserContext } from '@/store/user/context';
+import { useState } from 'react';
 import axios from 'axios';
 import useSWR from 'swr';
 import {
   BaseApi,
-  transactionPerPage,
-  allTransactions,
-  adminSoftDeleteTransactions,
+  getAllReferrals,
+  referralsPerPage,
+  updateReferral,
 } from '@/constants';
 import TransactionLoadingPage from '@/component/loading/transactions';
 import { Button, Empty, SearchNotFoundIcon } from 'rizzui';
 import { toast } from 'sonner';
-import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { PiPlusBold } from 'react-icons/pi';
-import PayoutsTable from '@/component/payouts/table';
 import { MdOutlineAutoDelete } from 'react-icons/md';
+import ReferralTable from '@/component/referrals/table';
 const metadata = {
   ...metaObject('Transactions'),
 };
 
 const pageHeader = {
-  title: 'Transactions',
+  title: 'Referrals',
   breadcrumb: [
     {
       href: '/',
       name: 'Home',
     },
     {
-      href: '/transactions',
-      name: 'Transactions',
+      href: '/referrals/all',
+      name: 'Referrals',
     },
     {
       name: 'List',
@@ -51,11 +49,9 @@ export default function Transactions() {
     initialState
   );
   const [page, setPage] = useState(st?.page ? st?.page : 1);
-  const { state } = useContext(UserContext);
-  const params = useParams();
   const fetcher = (url: any) => axios.get(url).then((res) => res.data);
   let { data, isLoading, error, mutate } = useSWR(
-    `${BaseApi}${allTransactions}?page=${page}&limit=${transactionPerPage}&isDeleted=${false}`,
+    `${BaseApi}${getAllReferrals}?page=${page}&limit=${referralsPerPage}&isDeleted=${false}`,
     fetcher,
     {
       refreshInterval: 3600000,
@@ -66,15 +62,46 @@ export default function Transactions() {
 
   const onDelete = async (id: any) => {
     try {
-      const res = await axios.patch(
-        `${BaseApi}${adminSoftDeleteTransactions}/${id}`,
-        {
-          isDeleted: true,
-        }
-      );
+      const res = await axios.patch(`${BaseApi}${updateReferral}/${id}`, {
+        isDeleted: true,
+      });
       if (res.data?.status == 'SUCCESS') {
         await mutate();
-        toast.success('Transaction is Temperory Deleted Success');
+        toast.success('Referral is Temperory Deleted Success');
+      } else {
+        return toast.error('Something went wrong');
+      }
+    } catch (error) {
+      console.log(error);
+      return toast.error('Something went wrong');
+    }
+  };
+
+  const updateOnboard = async (id: any, status: boolean) => {
+    try {
+      const res = await axios.patch(`${BaseApi}${updateReferral}/${id}`, {
+        onboarded: status,
+      });
+      if (res.data?.status == 'SUCCESS') {
+        await mutate();
+        toast.success('Onboarded Status Changed Successfully !');
+      } else {
+        return toast.error('Something went wrong');
+      }
+    } catch (error) {
+      console.log(error);
+      return toast.error('Something went wrong');
+    }
+  };
+
+  const updatePaid = async (id: any, status: boolean) => {
+    try {
+      const res = await axios.patch(`${BaseApi}${updateReferral}/${id}`, {
+        status: status,
+      });
+      if (res.data?.status == 'SUCCESS') {
+        await mutate();
+        toast.success('Paid Status Changed Successfully !');
       } else {
         return toast.error('Something went wrong');
       }
@@ -90,16 +117,16 @@ export default function Transactions() {
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
         <div className="mt-4 flex items-center gap-3 @lg:mt-0">
           <ExportButton data={data} fileName="payout_data" header="" />
-          <Link href={`/payouts/create`}>
+          <Link href={`/referrals/create`}>
             <Button
               tag="span"
               className="mt-4 w-full cursor-pointer @lg:mt-0 @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
             >
               <PiPlusBold className="me-1 h-4 w-4" />
-              Create Transaction
+              Add Referrals
             </Button>
           </Link>
-          <Link href={`/payouts/deleted`}>
+          <Link href={`/referrals/deleted`}>
             <Button className=" w-full gap-2 @lg:w-auto" variant="outline">
               <MdOutlineAutoDelete className="h-4 w-4" />
               Deleted
@@ -118,13 +145,21 @@ export default function Transactions() {
       )}
       {isLoading && <TransactionLoadingPage />}
       {data && (
-        <PayoutsTable onDeleteItem={onDelete} key={Math.random()} data={data} />
+        <ReferralTable
+          onDeleteItem={onDelete}
+          key={Math.random()}
+          data={data}
+          updatePaid={updatePaid}
+          updateOnboard={updateOnboard}
+        />
       )}
       {data == null && (
-        <PayoutsTable
+        <ReferralTable
           onDeleteItem={onDelete}
           key={Math.random()}
           data={transactions}
+          updatePaid={updatePaid}
+          updateOnboard={updateOnboard}
         />
       )}
       <div
@@ -139,7 +174,7 @@ export default function Transactions() {
         {pagininator && (
           <Pagination
             total={Number(pagininator?.itemCount)}
-            pageSize={transactionPerPage}
+            pageSize={referralsPerPage}
             defaultCurrent={page}
             showLessItems={true}
             prevIconClassName="py-0 text-gray-500 !leading-[26px]"

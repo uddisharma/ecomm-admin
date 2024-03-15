@@ -1,11 +1,6 @@
-import {
-  PiShoppingCartDuotone,
-  PiPackageDuotone,
-  PiCreditCardDuotone,
-  PiHouseLine,
-} from 'react-icons/pi';
-import { CiDeliveryTruck, CiMoneyCheck1 } from 'react-icons/ci';
-import { TiTicket } from 'react-icons/ti';
+import { PiHouseLine } from 'react-icons/pi';
+import { CiMoneyCheck1 } from 'react-icons/ci';
+import { LuScreenShare } from 'react-icons/lu';
 import { VscGitPullRequestCreate } from 'react-icons/vsc';
 import {
   MdConnectWithoutContact,
@@ -13,10 +8,9 @@ import {
   MdOutlineAutoDelete,
   MdOutlineCreateNewFolder,
   MdOutlineFileDownload,
-  MdOutlinePendingActions,
   MdOutlinePhotoLibrary,
 } from 'react-icons/md';
-import { RiCoupon2Line, RiUserStarLine } from 'react-icons/ri';
+import { RiUserStarLine } from 'react-icons/ri';
 import { FiUser, FiUserPlus } from 'react-icons/fi';
 import { IoTicketOutline } from 'react-icons/io5';
 export const menuItems = [
@@ -30,24 +24,24 @@ export const menuItems = [
     href: '/sellers',
     icon: <RiUserStarLine />,
   },
-  {
-    name: 'Onboard',
-    href: '/seller/onboarding',
-    icon: <FiUserPlus />,
-  },
-  {
-    name: 'Pending ',
-    href: '/onboarding/pending',
-    icon: <MdOutlinePendingActions />,
-    badge: '',
-  },
+  // {
+  //   name: 'Onboard',
+  //   href: '/seller/onboarding',
+  //   icon: <FiUserPlus />,
+  // },
+  // {
+  //   name: 'Pending ',
+  //   href: '/onboarding/pending',
+  //   icon: <MdOutlinePendingActions />,
+  //   badge: '',
+  // },
 
-  {
-    name: 'Deleted',
-    href: '/sellers/deleted',
-    icon: <MdOutlineAutoDelete />,
-    badge: '',
-  },
+  // {
+  //   name: 'Deleted',
+  //   href: '/sellers/deleted',
+  //   icon: <MdOutlineAutoDelete />,
+  //   badge: '',
+  // },
 
   {
     name: 'Requests',
@@ -62,17 +56,17 @@ export const menuItems = [
     icon: <FiUser />,
   },
 
-  {
-    name: 'Deleted',
-    href: '/users/deleted',
-    icon: <MdOutlineAutoDelete />,
-  },
+  // {
+  //   name: 'Deleted',
+  //   href: '/users/deleted',
+  //   icon: <MdOutlineAutoDelete />,
+  // },
 
-  {
-    name: 'New User',
-    href: '/users/create',
-    icon: <FiUserPlus />,
-  },
+  // {
+  //   name: 'New User',
+  //   href: '/users/create',
+  //   icon: <FiUserPlus />,
+  // },
 
   {
     name: 'Payouts',
@@ -102,13 +96,6 @@ export const menuItems = [
   },
 
   {
-    name: 'Contacts',
-    href: '/contacts',
-    icon: <MdConnectWithoutContact />,
-    badge: '',
-  },
-
-  {
     name: 'Banners',
     href: '/banners',
     icon: <MdOutlinePhotoLibrary />,
@@ -119,6 +106,26 @@ export const menuItems = [
     name: 'Add Banner',
     href: '/banners/create',
     icon: <MdOutlineAddPhotoAlternate />,
+    badge: '',
+  },
+
+  {
+    name: 'Referrals',
+    href: '/referrals/all',
+    icon: <LuScreenShare />,
+    badge: '',
+  },
+
+  {
+    name: 'Add Referral',
+    href: '/referrals/create',
+    icon: <MdOutlineCreateNewFolder />,
+    badge: '',
+  },
+  {
+    name: 'Contacts',
+    href: '/contacts',
+    icon: <MdConnectWithoutContact />,
     badge: '',
   },
 

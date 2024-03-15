@@ -13,26 +13,29 @@ import {
 import { useFilterControls } from '@/hooks/use-filter-control';
 import cn from '@/utils/class-names';
 import axios from 'axios';
+import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
-import { CiSearch } from 'react-icons/ci';
+import { CiMoneyCheck1, CiSearch } from 'react-icons/ci';
+import { FiUserPlus } from 'react-icons/fi';
+import { MdOutlineAutoDelete, MdOutlinePendingActions } from 'react-icons/md';
 import { Button, Empty, Input, SearchNotFoundIcon, Title } from 'rizzui';
 import { toast } from 'sonner';
 import useSWR from 'swr';
 
 const Page = () => {
   const pageHeader = {
-    title: 'Sellers',
+    title: '',
     breadcrumb: [
       {
         href: '/',
-        name: 'Home',
+        name: '',
       },
       {
         href: '/',
-        name: 'Sellers',
+        name: '',
       },
       {
-        name: 'List',
+        name: '',
       },
     ],
   };
@@ -89,28 +92,60 @@ const Page = () => {
 
   return (
     <div>
-      <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
-        <div className="mt-4 flex items-center gap-3 @lg:mt-0">
-          <ExportButton data={data} fileName="product_data" header="" />
-          <Input
-            prefix={<CiSearch className="h-auto w-5" />}
-            type="text"
-            value={term}
-            onChange={(e) => {
-              setTerm(e.target?.value);
-            }}
-            placeholder="Search for Seller..."
-          />
-          <Button
-            isLoading={loading}
-            disabled={!term}
-            onClick={() => findSeller()}
-            className=" ml-5 w-full gap-2 @lg:w-auto"
-          >
-            Search
-          </Button>
+      <header className={cn('mb-3 @container xs:-mt-2 lg:mb-7')}>
+        <div className="flex flex-col @lg:flex-row @lg:items-center @lg:justify-between">
+          <div className="mt-4 flex items-center gap-3 @lg:mt-0">
+            <Link href={`/seller/onboarding`}>
+              <Button
+                tag="span"
+                variant="outline"
+                className="mt-4 w-full cursor-pointer @lg:mt-0 @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+              >
+                <FiUserPlus className="me-1 h-4 w-4" />
+                Onboard New
+              </Button>
+            </Link>
+            <Link href={`/onboarding/pending`}>
+              <Button
+                tag="span"
+                variant="outline"
+                className="mt-4 w-full cursor-pointer @lg:mt-0 @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+              >
+                <MdOutlinePendingActions className="me-1 h-4 w-4" />
+                Onboarding Pending
+              </Button>
+            </Link>
+            <Link href={`/sellers/deleted`}>
+              <Button
+                tag="span"
+                variant="outline"
+                className="mt-4 w-full cursor-pointer @lg:mt-0 @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+              >
+                <MdOutlineAutoDelete className="me-1 h-4 w-4" />
+                Deleted
+              </Button>
+            </Link>
+            <ExportButton data={data} fileName="product_data" header="" />
+            <Input
+              prefix={<CiSearch className="h-auto w-5" />}
+              type="text"
+              value={term}
+              onChange={(e) => {
+                setTerm(e.target?.value);
+              }}
+              placeholder="Search for Seller..."
+            />
+            <Button
+              isLoading={loading}
+              disabled={!term}
+              onClick={() => findSeller()}
+              className=" ml-0 w-full gap-2 @lg:w-auto"
+            >
+              Search
+            </Button>
+          </div>
         </div>
-      </PageHeader>
+      </header>
       {searchedData && searchedData?.length > 0 ? (
         <div className="grid grid-cols-1 gap-6 @container 3xl:gap-8">
           <SectionBlock title={''}>

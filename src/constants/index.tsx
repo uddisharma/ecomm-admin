@@ -246,3 +246,13 @@ export const contacts = '/admin/contacts';
 export const contactsPerPage = 1;
 
 export const deleteContact = '/admin/contact';
+
+export const getAllReferrals = '/admin/referrals';
+
+export const referralsPerPage = 1;
+
+export const updateReferral = '/admin/referrals';
+
+export const deleteReferral = '/admin/referrals';
+
+export const addReferral = '/admin/referrals';
