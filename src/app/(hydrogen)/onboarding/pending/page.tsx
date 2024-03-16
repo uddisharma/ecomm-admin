@@ -153,7 +153,7 @@ const Page = () => {
           ) : (
             <div className="grid grid-cols-1 gap-6 @container 3xl:gap-8">
               <SectionBlock title={''}>
-                {error && (
+                {error ? (
                   <div style={{ paddingBottom: '100px' }}>
                     <Empty
                       image={<SearchNotFoundIcon />}
@@ -161,17 +161,13 @@ const Page = () => {
                       className="h-full justify-center"
                     />
                   </div>
-                )}
-
-                {data && (
+                ) : data ? (
                   <OnboardingPendingTable
                     onDelete={onDeleteItem}
                     key={Math.random()}
                     data={data}
                   />
-                )}
-
-                {data == null && (
+                ) : (
                   <OnboardingPendingTable
                     onDelete={onDeleteItem}
                     key={Math.random()}

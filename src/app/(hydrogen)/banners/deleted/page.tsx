@@ -6,23 +6,18 @@ import Link from 'next/link';
 import { Button, Empty, SearchNotFoundIcon } from 'rizzui';
 import { PiPlusBold } from 'react-icons/pi';
 import { useFilterControls } from '@/hooks/use-filter-control';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import useSWR from 'swr';
 import {
   BaseApi,
   adminBanners,
   bannerPerPage,
-  banners,
   deleteBanner,
-  deleteCoupon,
   softDeleteBanner,
 } from '@/constants';
 import { toast } from 'sonner';
-import { useParams } from 'next/navigation';
-import Card1 from '@/component/banner/cards';
 import BannerLoading from '@/component/loading/bannerLoading';
-import Card2 from '@/component/banner/card';
 import Card4 from '@/component/banner/card4';
 import { MdOutlinePhotoLibrary } from 'react-icons/md';
 
@@ -97,7 +92,6 @@ export default function Coupons() {
     }
   };
 
-  //  console.log(data)
   return (
     <>
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
@@ -123,7 +117,14 @@ export default function Coupons() {
           </Link>
         </div>
       </PageHeader>
-      {error && (
+
+      {isLoading ? (
+        [1, 2, 3, 4, 5]?.map((e) => (
+          <div key={e} className="mt-4">
+            <BannerLoading />
+          </div>
+        ))
+      ) : error ? (
         <div style={{ paddingBottom: '100px' }}>
           <Empty
             image={<SearchNotFoundIcon />}
@@ -131,14 +132,7 @@ export default function Coupons() {
             className="h-full justify-center"
           />
         </div>
-      )}
-      {isLoading &&
-        [1, 2, 3, 4, 5]?.map((e) => (
-          <div key={e} className="mt-4">
-            <BannerLoading />
-          </div>
-        ))}
-      {data &&
+      ) : data ? (
         data.map((e: any) => (
           <Card4
             data={e}
@@ -146,8 +140,8 @@ export default function Coupons() {
             onDelete={onDelete}
             key={e}
           />
-        ))}
-      {data == null && (
+        ))
+      ) : (
         <div style={{ paddingBottom: '100px' }}>
           <Empty
             image={<SearchNotFoundIcon />}

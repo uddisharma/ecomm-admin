@@ -1,13 +1,10 @@
 'use client';
 import PageHeader from '@/component/others/pageHeader';
-import { productsData } from '@/data/products-data';
 import { metaObject } from '@/config/site.config';
 import ExportButton from '@/component/others/export-button';
-import TransactionTable from '@/component/transactions/table';
 import Pagination from '@/component/ui/pagination';
 import { useFilterControls } from '@/hooks/use-filter-control';
-import { useContext, useState } from 'react';
-import { UserContext } from '@/store/user/context';
+import { useState } from 'react';
 import axios from 'axios';
 import useSWR from 'swr';
 import {
@@ -53,7 +50,7 @@ export default function Transactions() {
     initialState
   );
   const [page, setPage] = useState(st?.page ? st?.page : 1);
-  const { state } = useContext(UserContext);
+
   const params = useParams();
   const fetcher = (url: any) => axios.get(url).then((res) => res.data);
   let { data, isLoading, error, mutate } = useSWR(
@@ -127,7 +124,10 @@ export default function Transactions() {
           </Link>
         </div>
       </PageHeader>
-      {error && (
+
+      {isLoading ? (
+        <TransactionLoadingPage />
+      ) : error ? (
         <div style={{ paddingBottom: '100px' }}>
           <Empty
             image={<SearchNotFoundIcon />}
@@ -135,17 +135,14 @@ export default function Transactions() {
             className="h-full justify-center"
           />
         </div>
-      )}
-      {isLoading && <TransactionLoadingPage />}
-      {data && (
+      ) : data ? (
         <DeletedTransactionsTable
           temperoryDelete={temperoryDelete}
           onDelete={onDelete}
           key={Math.random()}
           data={data}
         />
-      )}
-      {data == null && (
+      ) : (
         <DeletedTransactionsTable
           onDelete={onDelete}
           temperoryDelete={temperoryDelete}

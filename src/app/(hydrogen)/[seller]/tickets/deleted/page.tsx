@@ -157,8 +157,9 @@ export default function BlankPage() {
           </Link>
         </div>
       </PageHeader>
-      {isLoading && <TicketsLoadingPage />}
-      {error && (
+      {isLoading ? (
+        <TicketsLoadingPage />
+      ) : error ? (
         <div style={{ paddingBottom: '100px' }}>
           <Empty
             image={<SearchNotFoundIcon />}
@@ -166,8 +167,7 @@ export default function BlankPage() {
             className="h-full justify-center"
           />
         </div>
-      )}
-      {data && (
+      ) : data ? (
         <DeletedTicketTable
           onDeleteItem={onDeleteItem}
           onMark={onMark}
@@ -176,8 +176,7 @@ export default function BlankPage() {
           user={user}
           temperoryDelete={temperoryDelete}
         />
-      )}
-      {data == null && (
+      ) : (
         <DeletedTicketTable
           onDeleteItem={onDeleteItem}
           onMark={onMark}

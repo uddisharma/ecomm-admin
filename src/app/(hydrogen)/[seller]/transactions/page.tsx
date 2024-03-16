@@ -14,7 +14,6 @@ import {
   BaseApi,
   sellerTransactions,
   transactionPerPage,
-  deleteTransaction,
   softDeleteTransaction,
 } from '@/constants';
 import TransactionLoadingPage from '@/component/loading/transactions';
@@ -53,7 +52,6 @@ export default function Transactions() {
     initialState
   );
   const [page, setPage] = useState(st?.page ? st?.page : 1);
-  const { state } = useContext(UserContext);
   const params = useParams();
   const fetcher = (url: any) => axios.get(url).then((res) => res.data);
   let { data, isLoading, error, mutate } = useSWR(
@@ -109,7 +107,10 @@ export default function Transactions() {
           </Link>
         </div>
       </PageHeader>
-      {error && (
+
+      {isLoading ? (
+        <TransactionLoadingPage />
+      ) : error ? (
         <div style={{ paddingBottom: '100px' }}>
           <Empty
             image={<SearchNotFoundIcon />}
@@ -117,17 +118,14 @@ export default function Transactions() {
             className="h-full justify-center"
           />
         </div>
-      )}
-      {isLoading && <TransactionLoadingPage />}
-      {data && (
+      ) : data ? (
         <TransactionTable
           temperoryDelete={onDelete}
           onDelete={onDelete}
           key={Math.random()}
           data={data}
         />
-      )}
-      {data == null && (
+      ) : (
         <TransactionTable
           onDelete={onDelete}
           temperoryDelete={onDelete}

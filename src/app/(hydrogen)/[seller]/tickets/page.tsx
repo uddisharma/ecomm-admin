@@ -19,7 +19,7 @@ import { UserContext } from '@/store/user/context';
 import axios from 'axios';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { MdOutlineAutoDelete } from 'react-icons/md';
 import { PiPlusBold } from 'react-icons/pi';
 import { Button, Empty, SearchNotFoundIcon } from 'rizzui';
@@ -138,8 +138,9 @@ export default function BlankPage() {
           </Link>
         </div>
       </PageHeader>
-      {isLoading && <TicketsLoadingPage />}
-      {error && (
+      {isLoading ? (
+        <TicketsLoadingPage />
+      ) : error ? (
         <div style={{ paddingBottom: '100px' }}>
           <Empty
             image={<SearchNotFoundIcon />}
@@ -147,8 +148,7 @@ export default function BlankPage() {
             className="h-full justify-center"
           />
         </div>
-      )}
-      {data && (
+      ) : data ? (
         <TicketTable
           onDeleteItem={onDeleteItem}
           onMark={onMark}
@@ -156,8 +156,7 @@ export default function BlankPage() {
           data={data}
           user={user}
         />
-      )}
-      {data == null && (
+      ) : (
         <TicketTable
           onDeleteItem={onDeleteItem}
           onMark={onMark}

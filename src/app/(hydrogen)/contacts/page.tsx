@@ -1,35 +1,16 @@
 'use client';
-import StatCards from '@/component/cards/stat-cards';
 import ContactTable from '@/component/contacts/table';
 import SellerLoading from '@/component/loading/sellerLoading';
 import OnboardingPendingTable from '@/component/onboarding/pending/table';
-import OnboardingRequestTable from '@/component/onboarding/requests/table';
 import ExportButton from '@/component/others/export-button';
 import PageHeader from '@/component/others/pageHeader';
-import TicketTable from '@/component/tickets/EventsTable';
 import Pagination from '@/component/ui/pagination';
-import {
-  BaseApi,
-  allsellers,
-  contacts,
-  contactsPerPage,
-  deleteContact,
-  deleteRequest,
-  findPendingSellers,
-  findSingleSeller,
-  onboardingReqLimit,
-  onboardingRequest,
-  pendingOnboarding,
-  pendingOnboardingLimit,
-  sellerLimit,
-  updateAdminSeller,
-} from '@/constants';
+import { BaseApi, contacts, contactsPerPage, deleteContact } from '@/constants';
 import { useFilterControls } from '@/hooks/use-filter-control';
 import cn from '@/utils/class-names';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { CiSearch } from 'react-icons/ci';
-import { Button, Empty, Input, SearchNotFoundIcon, Title } from 'rizzui';
+import React, { useState } from 'react';
+import { Empty, SearchNotFoundIcon } from 'rizzui';
 import { toast } from 'sonner';
 import useSWR from 'swr';
 
@@ -50,9 +31,9 @@ const Page = () => {
       },
     ],
   };
-  const [loading, setLoading] = useState(false);
+
   const [searchedData, setSearchedData] = useState<any>([]);
-  const [term, setTerm] = useState<string>('');
+
   const initialState = {
     page: '',
   };
@@ -139,7 +120,7 @@ const Page = () => {
           ) : (
             <div className="grid grid-cols-1 gap-6 @container 3xl:gap-8">
               <SectionBlock title={''}>
-                {error && (
+                {error ? (
                   <div style={{ paddingBottom: '100px' }}>
                     <Empty
                       image={<SearchNotFoundIcon />}
@@ -147,18 +128,14 @@ const Page = () => {
                       className="h-full justify-center"
                     />
                   </div>
-                )}
-
-                {data && (
+                ) : data ? (
                   <ContactTable
                     onDelete={onDeleteItem}
                     onMark={onMark}
                     key={Math.random()}
                     data={data}
                   />
-                )}
-
-                {data == null && (
+                ) : (
                   <ContactTable
                     onDelete={onDeleteItem}
                     onMark={onMark}
