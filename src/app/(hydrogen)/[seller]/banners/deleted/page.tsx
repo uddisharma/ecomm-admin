@@ -1,14 +1,12 @@
 'use client';
 import PageHeader from '@/component/others/pageHeader';
-import { metaObject } from '@/config/site.config';
 import ExportButton from '@/component/others/export-button';
 import Pagination from '@/component/ui/pagination';
 import Link from 'next/link';
 import { Button, Empty, SearchNotFoundIcon } from 'rizzui';
 import { PiPlusBold } from 'react-icons/pi';
 import { useFilterControls } from '@/hooks/use-filter-control';
-import { useContext, useState } from 'react';
-import { UserContext } from '@/store/user/context';
+import { useState } from 'react';
 import axios from 'axios';
 import useSWR from 'swr';
 import {
@@ -16,15 +14,12 @@ import {
   bannerPerPage,
   banners,
   deleteBanner,
-  deleteCoupon,
   softDeleteBanner,
 } from '@/constants';
 import { toast } from 'sonner';
 import { useParams } from 'next/navigation';
-import Card1 from '@/component/banner/cards';
 import BannerLoading from '@/component/loading/bannerLoading';
 import { AiFillPicture } from 'react-icons/ai';
-import Card2 from '@/component/banner/card';
 import Card3 from '@/component/banner/card2';
 
 const pageHeader = {
@@ -53,7 +48,7 @@ export default function Coupons() {
   );
   const params = useParams();
   const [page, setPage] = useState(st?.page ? st?.page : 1);
-  const { state } = useContext(UserContext);
+
   const fetcher = (url: any) => axios.get(url).then((res) => res.data);
   let { data, isLoading, error, mutate } = useSWR(
     `${BaseApi}${banners}/${params?.seller}?page=${page}&limit=${bannerPerPage}&isDeleted=${true}`,
@@ -94,7 +89,6 @@ export default function Coupons() {
       return toast.error('Something went wrong');
     }
   };
-  //  console.log(data)
   return (
     <>
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>

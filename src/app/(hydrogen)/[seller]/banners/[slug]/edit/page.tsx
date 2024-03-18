@@ -9,7 +9,6 @@ import cn from '@/utils/class-names';
 import { z } from 'zod';
 import axios from 'axios';
 import { fileSchema } from '@/utils/validators/common-rules';
-import UploadZone from '@/component/ui/file-upload/upload-zone1';
 import PageHeader from '@/component/others/pageHeader';
 import Link from 'next/link';
 import { Button, Empty, SearchNotFoundIcon } from 'rizzui';
@@ -18,6 +17,7 @@ import { toast } from 'sonner';
 import { BaseApi, singleBanner, updateBanner } from '@/constants';
 import useSWR from 'swr';
 import Spinner from '@/component/ui/spinner';
+import UploadZoneS3 from '@/component/ui/file-upload/upload-zone-s3';
 const schema = z.object({
   desktop: z.array(fileSchema).optional(),
   mobile: z.array(fileSchema).optional(),
@@ -68,7 +68,7 @@ export default function AssetInit() {
     mobile: [mobileBanner] ?? undefined,
     link: redirectLink ?? '',
   };
-  
+
   const onSubmit: SubmitHandler<Schema> = (data) => {
     if (!validateData(data?.desktop, data?.mobile, data?.link)) {
       return toast.warning('All fields are required');
@@ -223,7 +223,7 @@ export default function AssetInit() {
                       description="This will shown in big screens"
                       className="pt-7 @2xl:pt-9 @3xl:grid-cols-12 @3xl:pt-11"
                     >
-                      <UploadZone
+                      <UploadZoneS3
                         className="col-span-full"
                         name="desktop"
                         getValues={getValues}
@@ -236,7 +236,7 @@ export default function AssetInit() {
                       description="This will shown in small screens"
                       className="pt-7 @2xl:pt-9 @3xl:grid-cols-12 @3xl:pt-11"
                     >
-                      <UploadZone
+                      <UploadZoneS3
                         className="col-span-full"
                         name="mobile"
                         getValues={getValues}

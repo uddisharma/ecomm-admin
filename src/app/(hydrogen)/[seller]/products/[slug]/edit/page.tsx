@@ -62,14 +62,11 @@ export default function EditProductPage({
       revalidateOnMount: true,
     }
   );
+
   const product = {
     ...data?.data,
     instaId: generateInstagramPostLink(data?.data?.instaId),
-    images: {
-      name: data?.data?.name,
-      size: 1024,
-      url: data?.data?.images,
-    },
+    images: data?.data?.images,
     stock: data?.data?.stock?.toString(),
     category: `${data?.data?.category?.name} in ${data?.data?.category?.parentCategoryId?.parentCategoryId?.name} ${data?.data?.category?.parentCategoryId?.name} Wear`,
   };

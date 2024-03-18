@@ -15,6 +15,7 @@ import { FieldError } from '@/component/ui/field-error';
 import { endsWith } from 'lodash';
 import { toast } from 'sonner';
 import axios from 'axios';
+import { BaseApi } from '@/constants';
 
 interface UploadZoneProps {
   label?: string;
@@ -86,7 +87,7 @@ export default function UploadZoneS3({
       setIsUploading(true);
       const response: any = await axios.post<{
         data: { uploadSuccess: { path: string }[] };
-      }>('http://localhost:5000/seller/upload', formData, {
+      }>(`${BaseApi}/seller/upload`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

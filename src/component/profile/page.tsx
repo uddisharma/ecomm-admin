@@ -1,13 +1,11 @@
 'use client';
 
 import Image from 'next/image';
-import dynamic from 'next/dynamic';
 import { SubmitHandler, Controller } from 'react-hook-form';
 import { PiEnvelopeSimple } from 'react-icons/pi';
 import { Form } from '@/component/ui/form';
 import { Text } from '@/component/ui/text';
 import { Input } from '@/component/ui/input';
-import AvatarUpload from '@/component/ui/file-upload/avatar-upload';
 import FormGroup from '../others/form-group';
 import FormFooter from '../others/form-footer';
 import cn from '@/utils/class-names';
@@ -25,6 +23,7 @@ import Link from 'next/link';
 import { PhoneNumber } from '../ui/phone-input';
 import { z } from 'zod';
 import { fileSchema, validateEmail } from '@/utils/validators/common-rules';
+import AvatarUploadS3 from '../ui/file-upload/avatar-upload-s3';
 
 const profileFormSchema = z.object({
   name: z.string().min(1, { message: 'Name is required' }),
@@ -114,7 +113,7 @@ export default function ProfileSettingsView() {
                   className="pt-7 @2xl:pt-9 @3xl:grid-cols-12 @3xl:pt-11"
                 >
                   <div className="col-span-2 flex flex-col items-center gap-4 @xl:flex-row">
-                    <AvatarUpload
+                    <AvatarUploadS3
                       name="profile"
                       setValue={setValue}
                       getValues={getValues}

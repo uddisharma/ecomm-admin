@@ -86,7 +86,7 @@ export const getColumns = ({
     hidden: 'customer',
     render: (_: string, row: any) => (
       <AvatarCard
-        src={row.images && row?.images}
+        src={row.images && row?.images[0]}
         name={row.name}
         description={row.category?.name}
         avatarProps={{

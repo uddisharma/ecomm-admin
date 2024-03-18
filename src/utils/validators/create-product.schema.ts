@@ -14,9 +14,7 @@ export const productFormSchema = z.object({
   brand: z.string().min(1, { message: 'Brand is required' }),
   category: z.string().min(1, { message: 'Category is required' }),
   desc: z.string().min(1, { message: 'Description is required' }),
-  images: fileSchema.refine((data) => data != null, {
-    message: 'Photo is required',
-  }),
+  images: z.array(fileSchema),
   stock: z.string().min(1, { message: 'Stock is required' }),
   tags: z.array(z.string()).optional(),
   colors: z.array(colorSchema).optional(),

@@ -7,7 +7,6 @@ import { PiEnvelopeSimple } from 'react-icons/pi';
 import { Form } from '@/component/ui/form';
 import { Text } from '@/component/ui/text';
 import { Input } from '@/component/ui/input';
-import AvatarUpload from '@/component/ui/file-upload/avatar-upload';
 import {
   profileFormSchema,
   ProfileFormTypes,
@@ -30,6 +29,7 @@ import Spinner from '../ui/spinner';
 import { SellerContext } from '@/store/seller/context';
 import Link from 'next/link';
 import { PhoneNumber } from '../ui/phone-input';
+import AvatarUploadS3 from '../ui/file-upload/avatar-upload-s3';
 const QuillEditor = dynamic(() => import('@/component/ui/quill-editor'), {
   ssr: false,
 });
@@ -191,7 +191,7 @@ export default function ProfileSettingsView() {
                     className="pt-7 @2xl:pt-9 @3xl:grid-cols-12 @3xl:pt-11"
                   >
                     <div className="col-span-2 flex flex-col items-center gap-4 @xl:flex-row">
-                      <AvatarUpload
+                      <AvatarUploadS3
                         name="cover"
                         setValue={setValue}
                         getValues={getValues}
@@ -236,7 +236,6 @@ export default function ProfileSettingsView() {
                       error={errors.email?.message}
                     />
 
-                    
                     <Controller
                       name="mobileNo"
                       control={control}

@@ -25,7 +25,14 @@ export function defaultValues(product?: any) {
     brand: product?.brand ?? '',
     category: product?.category ?? '',
     desc: product?.desc ?? '',
-    images: product?.images ?? undefined,
+    images:
+      product?.images?.map((e: any) => {
+        return {
+          name: product.name,
+          size: 1024,
+          url: e,
+        };
+      }) ?? undefined,
     stock: product?.stock ?? '',
     tags: product?.tags ?? [],
     colors: product?.colors || [

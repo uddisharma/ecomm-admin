@@ -45,8 +45,6 @@ interface IndexProps {
   product?: any;
 }
 
-
-
 export default function CreateEditProduct1({
   slug,
   product,
@@ -138,7 +136,9 @@ export default function CreateEditProduct1({
         sizes,
         category,
         instaId: instagramId,
-        images: data?.images?.url,
+        images: data?.images?.map((e: any) => {
+          return e?.url;
+        }),
       })
       .then((res) => {
         if (res.data?.status == 'SUCCESS') {

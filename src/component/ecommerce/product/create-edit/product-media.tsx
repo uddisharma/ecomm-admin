@@ -1,8 +1,7 @@
 import { useFormContext } from 'react-hook-form';
-import UploadZone from '@/component/ui/file-upload/upload-zone';
 import FormGroup from '@/component/others/form-group';
 import cn from '@/utils/class-names';
-import AvatarUpload from '@/component/ui/file-upload/avatar-upload';
+import UploadZoneS3 from '@/component/ui/file-upload/upload-zone-s3';
 
 interface ProductMediaProps {
   className?: string;
@@ -21,8 +20,8 @@ export default function ProductMedia({ className }: ProductMediaProps) {
       description="Upload your product image gallery here"
       className={cn(className)}
     >
-      <div className="col-span-2 flex flex-col items-center gap-4 @xl:flex-row">
-        <AvatarUpload
+      <div className="col-span-full">
+        <UploadZoneS3
           name="images"
           setValue={setValue}
           getValues={getValues}

@@ -13,7 +13,6 @@ import { Button } from '@/component/ui/button';
 import Link from 'next/link';
 import { fileSchema } from '@/utils/validators/common-rules';
 import { categoriesData } from '@/data/allcategories';
-import AvatarUpload from '@/component/ui/file-upload/avatar-upload';
 import { UserContext } from '@/store/user/context';
 import axios from 'axios';
 import { BaseApi, addCategory, sellerCategoriesByAdmin } from '@/constants';
@@ -21,6 +20,7 @@ import { toast } from 'sonner';
 import { useParams } from 'next/navigation';
 import useSWR from 'swr';
 import { Empty, SearchNotFoundIcon } from 'rizzui';
+import AvatarUploadS3 from '@/component/ui/file-upload/avatar-upload-s3';
 
 const schema = z.object({
   parent: z.string().optional(),
@@ -300,7 +300,7 @@ export default function CreateCategory1() {
                       className="pt-7 @2xl:pt-9 @3xl:grid-cols-12 @3xl:pt-11"
                     >
                       <div className="col-span-2 flex flex-col items-center gap-4 @xl:flex-row">
-                        <AvatarUpload
+                        <AvatarUploadS3
                           name="photo"
                           setValue={setValue}
                           getValues={getValues}

@@ -60,6 +60,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'utfs.io',
       },
+      {
+        protocol: 'https',
+        hostname: 'd1g6ilmrb89tca.cloudfront.net',
+      },
     ],
   },
   reactStrictMode: false,

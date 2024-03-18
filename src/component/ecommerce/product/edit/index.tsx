@@ -20,7 +20,7 @@ import { useLayout } from '@/hooks/use-layout';
 import { LAYOUT_OPTIONS } from '@/config/enums';
 import { UserContext } from '@/store/user/context';
 import axios from 'axios';
-import { BaseApi, addProduct, updateProduct } from '@/constants';
+import { BaseApi, updateProduct } from '@/constants';
 import { useParams, useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
@@ -126,7 +126,9 @@ export default function EditProduct({ slug, className, product }: IndexProps) {
         sizes,
         category,
         instaId: instagramId,
-        images: data?.images?.url,
+        images: data?.images?.map((e: any) => {
+          return e?.url;
+        }),
       })
       .then((res) => {
         if (res.data?.status == 'SUCCESS') {

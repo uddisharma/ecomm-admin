@@ -75,30 +75,6 @@ export const getColumns = ({
   handleSelectAll,
   onChecked,
 }: Columns) => [
-  // {
-  //   title: (
-  //     <div className="ps-3.5">
-  //       <Checkbox
-  //         title={'Select All'}
-  //         onChange={handleSelectAll}
-  //         checked={checkedItems.length === data.length}
-  //         className="cursor-pointer"
-  //       />
-  //     </div>
-  //   ),
-  //   dataIndex: 'checked',
-  //   key: 'checked',
-  //   width: 30,
-  //   render: (_: any, row: any) => (
-  //     <div className="inline-flex ps-3.5">
-  //       <Checkbox
-  //         className="cursor-pointer"
-  //         checked={checkedItems.includes(row.id)}
-  //         {...(onChecked && { onChange: () => onChecked(row.id) })}
-  //       />
-  //     </div>
-  //   ),
-  // },
   {
     title: <HeaderCell title="Product" />,
     dataIndex: 'product',
@@ -107,7 +83,7 @@ export const getColumns = ({
     hidden: 'customer',
     render: (_: string, row: any) => (
       <AvatarCard
-        src={row.images && row?.images}
+        src={row.images && row?.images[0]}
         name={row.name}
         description={row.category?.name}
         avatarProps={{
