@@ -6,7 +6,6 @@ import { ActionIcon, Tooltip } from 'rizzui';
 import Link from 'next/link';
 import { FaFileDownload } from 'react-icons/fa';
 import PencilIcon from '../icons/pencil';
-import DeletePopover from '../others/delete-popover';
 import AddressCard from '../ui/address-card';
 import TemperoryDeletePopover from '../others/temperory-delete-popover';
 

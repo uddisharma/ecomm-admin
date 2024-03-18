@@ -1,6 +1,6 @@
 'use client';
 import { UserContext } from '@/store/user/context';
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useRef } from 'react';
 //@ts-ignore
 import html2pdf from 'html2pdf.js';
 import { Button } from 'rizzui';

@@ -31,7 +31,7 @@ export default function ContactTable({
             onMark: onMark,
           })
         }
-        // enablePagination
+       
         searchPlaceholder="Search requests..."
         className="min-h-[480px] [&_.widget-card-header]:items-center [&_.widget-card-header_h5]:font-medium"
       />

@@ -4,15 +4,12 @@ import { Button, Input, Password, Switch, Text, Title } from 'rizzui';
 import Link from 'next/link';
 import cn from '@/utils/class-names';
 import { LoginSchema, loginSchema } from '@/utils/validators/login.schema';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { SubmitHandler } from 'react-hook-form';
 import { Form } from '@/component/ui/form';
 import { toast } from 'sonner';
-import { BaseApi, Login, LoginSeller } from '@/constants/index';
+import { BaseApi, LoginSeller } from '@/constants/index';
 import axios from 'axios';
-import { UserContext } from '@/store/user/context';
-import { useCookies } from 'react-cookie';
-import { useRouter } from 'next/navigation';
 import { OnboardingContext } from '@/store/onboarding/context';
 
 export default function StepOne({ step, setStep }: any) {
@@ -24,12 +21,6 @@ export default function StepOne({ step, setStep }: any) {
   const [reset, setReset] = useState({});
   const [loading, setLoading] = useState(false);
   const { setOnboarding, state } = useContext(OnboardingContext);
-  // useEffect(() => {
-  //   const seller = state?.onboarding?.email;
-  //   if (seller) {
-  //     setStep(2);
-  //   }
-  // }, []);
 
   const onSubmit: SubmitHandler<LoginSchema> = (data) => {
     setLoading(true);
@@ -40,15 +31,6 @@ export default function StepOne({ step, setStep }: any) {
       })
       .then((res) => {
         if (res.data.status === 'SUCCESS') {
-          // if (res.data.data?.isActive) {
-          //   return toast.success(
-          //     'You have complete your onboarding process ✌️',
-          //     {
-          //       description: 'Now you cannot re onboard again',
-          //     }
-          //   );
-          // }
-
           setOnboarding(res.data.data);
           setStep(2);
           toast.success('Logined Successfully', {

@@ -1,20 +1,13 @@
 'use client';
 
-import dynamic from 'next/dynamic';
 import { useColumn } from '@/hooks/use-column';
 import ControlledTable from '@/component/controlled-table';
 import { categories } from '@/data/product-categories';
 import { useCallback, useContext, useMemo, useState } from 'react';
 import { useTable } from '@/hooks/use-table';
 import { getColumns } from '@/component/ecommerce/category/category-list/columns';
-import { seller } from '@/data/category';
-import { UserContext } from '@/store/user/context';
-import { BaseApi, deleteCategory1 } from '@/constants';
-import axios from 'axios';
-import { toast } from 'sonner';
 
 export default function CategoryTable({ data, deleteCategory }: any) {
-  const { state, setUser } = useContext(UserContext);
   const [pageSize, setPageSize] = useState(10);
 
   const onHeaderCellClick = (value: string) => ({
@@ -78,29 +71,27 @@ export default function CategoryTable({ data, deleteCategory }: any) {
       data={data}
       // @ts-ignore
       columns={visibleColumns}
-      // columns={(columnsProps) =>
-      //   visibleColumns({ ...columnsProps, onDeleteItem })
-      // }
-      paginatorOptions={{
-        pageSize,
-        setPageSize,
-        total: totalItems,
-        current: currentPage,
-        onChange: (page: number) => handlePaginate(page),
-      }}
-      filterOptions={{
-        searchTerm,
-        onSearchClear: () => {
-          handleSearch('');
-        },
-        onSearchChange: (event) => {
-          handleSearch(event.target.value);
-        },
-        hasSearched: isFiltered,
-        columns,
-        checkedColumns,
-        setCheckedColumns,
-      }}
+     
+      // paginatorOptions={{
+      //   pageSize,
+      //   setPageSize,
+      //   total: totalItems,
+      //   current: currentPage,
+      //   onChange: (page: number) => handlePaginate(page),
+      // }}
+      // filterOptions={{
+      //   searchTerm,
+      //   onSearchClear: () => {
+      //     handleSearch('');
+      //   },
+      //   onSearchChange: (event) => {
+      //     handleSearch(event.target.value);
+      //   },
+      //   hasSearched: isFiltered,
+      //   columns,
+      //   checkedColumns,
+      //   setCheckedColumns,
+      // }}
       className="overflow-hidden rounded-md border border-gray-200 text-sm shadow-sm [&_.rc-table-placeholder_.rc-table-expanded-row-fixed>div]:h-60 [&_.rc-table-placeholder_.rc-table-expanded-row-fixed>div]:justify-center [&_.rc-table-row:last-child_td.rc-table-cell]:border-b-0 [&_thead.rc-table-thead]:border-t-0"
     />
   );

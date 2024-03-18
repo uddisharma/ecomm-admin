@@ -3,13 +3,10 @@
 import Link from 'next/link';
 import { HeaderCell } from '@/component/ui/table';
 import { Text } from '@/component/ui/text';
-import { Progressbar } from '@/component/ui/progressbar';
 import { Tooltip } from '@/component/ui/tooltip';
 import { ActionIcon } from '@/component/ui/action-icon';
 import EyeIcon from '@/component/icons/eye';
 import PencilIcon from '@/component/icons/pencil';
-import AvatarCard from '@/component/ui/avatar-card';
-import DeletePopover from '@/component/others/delete-popover';
 import DateCell from '@/component/ui/date-cell';
 import { PiPackageDuotone } from 'react-icons/pi';
 import TemperoryDeletePopover from '@/component/others/temperory-delete-popover';

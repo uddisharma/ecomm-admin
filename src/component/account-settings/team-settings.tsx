@@ -47,50 +47,26 @@ export default function Legal({ legal, name }: any) {
   const router = useRouter();
   const { setSeller } = useContext(SellerContext);
 
-  // const handleDownload = async (imageLinks: any) => {
-  //   const zip = new JSZip();
-  //   await Promise.all(
-  //     imageLinks.map(async (imageLink: any, index: any) => {
-  //       const response = await fetch(imageLink);
-  //       const arrayBuffer = await response.arrayBuffer();
-  //       zip.file(`image_${index + 1}.png`, arrayBuffer);
-  //     })
-  //   );
-
-  //   const content = await zip.generateAsync({ type: 'blob' });
-  //   saveAs(content, `${name}_certificates.zip`);
-  // };
-
   const handleDownload = async (fileLinks: any) => {
     const zip = new JSZip();
 
-    // Fetch files and add them to the zip file
     await Promise.all(
       fileLinks.map(async (fileLink: any, index: any) => {
         const response = await fetch(fileLink);
         const arrayBuffer = await response.arrayBuffer();
 
-        // Determine the file extension
         const fileExtension = fileLink.split('.').pop().toLowerCase();
 
-        // Use different file names based on the file type
         const fileName = `file_${index + 1}.${fileExtension}`;
         zip.file(fileName, arrayBuffer);
       })
     );
 
-    // Generate the zip file
     const content = await zip.generateAsync({ type: 'blob' });
 
-    // Save the zip file
     saveAs(content, `${name}_certificates.zip`);
   };
 
-  // useEffect(() => {
-  //   if (!legal?.aadhar?.name) {
-  //     router.push(`/${params?.seller}/shop`);
-  //   }
-  // }, [legal]);
   const onSubmit: SubmitHandler<LegalFormTypes> = (data) => {
     setIsLoading(true);
     axios
@@ -151,7 +127,6 @@ export default function Legal({ legal, name }: any) {
     gst: legal?.gst ?? 'NA',
     taxid: legal?.taxid ?? 'NA',
     signed: legal?.signed ?? false,
-    // certificate: legal?.certificate ?? [],
     certificate: legal?.certificate
       ? legal?.certificate?.map((e: any, i: any) => {
           return { name: `document${i + 1}`, size: 1024, url: e };

@@ -4,7 +4,6 @@ import { PiArrowLineUpBold } from 'react-icons/pi';
 import { Button } from '@/component/ui/button';
 import cn from '@/utils/class-names';
 import Papa from 'papaparse';
-import { exportToCSV } from '@/utils/export-to-csv';
 
 type ExportButtonProps = {
   data: unknown[];

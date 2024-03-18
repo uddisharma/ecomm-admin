@@ -4,7 +4,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
-import { PiEye } from 'react-icons/pi';
 import { SubmitHandler } from 'react-hook-form';
 import cn from '@/utils/class-names';
 import { Button } from '@/component/ui/button';

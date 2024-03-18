@@ -1,7 +1,6 @@
 'use client';
 import Link from 'next/link';
 import Image from 'next/image';
-import { routes } from '@/config/routes';
 import { Button } from '@/component/ui/button';
 import WelcomeBanner from '@/component/banners/welcome';
 import StatCards from './stat-cards';
@@ -11,8 +10,6 @@ import OrderStats from './order-stats1';
 import { PiPlusBold } from 'react-icons/pi';
 import welcomeImg from '@public/shop-illustration.png';
 import HandWaveIcon from '@/component/icons/hand-wave';
-import { useContext } from 'react';
-import { UserContext } from '@/store/user/context';
 import { formatNumber } from '@/utils/format-number';
 import useSWR from 'swr';
 import { BaseApi, totalCounts } from '@/constants';

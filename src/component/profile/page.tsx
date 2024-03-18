@@ -18,7 +18,7 @@ import { useContext, useState } from 'react';
 import { UserContext } from '@/store/user/context';
 import { toast } from 'sonner';
 import axios from 'axios';
-import { BaseApi, adminUpdate, updateSeller } from '@/constants';
+import { BaseApi, adminUpdate } from '@/constants';
 import { Button } from 'rizzui';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';

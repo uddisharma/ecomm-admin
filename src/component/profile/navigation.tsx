@@ -4,7 +4,7 @@ import { Text } from '@/component/ui/text';
 import { Button } from '@/component/ui/button';
 import { useScrollableSlider } from '@/hooks/use-scrollable-slider';
 import { PiCaretLeftBold, PiCaretRightBold } from 'react-icons/pi';
-import { useParams, usePathname } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import cn from '@/utils/class-names';
 import { useLayout } from '@/hooks/use-layout';
 import { LAYOUT_OPTIONS } from '@/config/enums';

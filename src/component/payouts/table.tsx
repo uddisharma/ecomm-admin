@@ -6,11 +6,10 @@ import BasicTableWidget from '@/component/controlled-table/basic-table-widget';
 
 export default function OrderTable({
   data,
-  // temperoryDelete,
+
   onDeleteItem,
 }: {
   data: any[];
-  // temperoryDelete: any;
   onDeleteItem: any;
 }) {
   return (
@@ -24,11 +23,9 @@ export default function OrderTable({
         getColumns={(columns: any) =>
           getColumns({
             ...columns,
-            // temperoryDelete: temperoryDelete,
             onDeleteItem: onDeleteItem,
           })
         }
-        // enablePagination
         searchPlaceholder="Search Payout..."
         className="min-h-[480px] [&_.widget-card-header]:items-center [&_.widget-card-header_h5]:font-medium"
       />

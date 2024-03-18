@@ -1,5 +1,3 @@
-import { CreateProductInput } from '@/utils/validators/create-product.schema';
-
 export const customFields = [
   {
     label: '',

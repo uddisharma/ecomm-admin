@@ -6,14 +6,12 @@ import { Form } from '@/component/ui/form';
 import { Input } from '@/component/ui/input';
 import { Button } from '@/component/ui/button';
 
-// import images and icons
 import { PiBellBold } from 'react-icons/pi';
 
 const subscriptionFormSchema = z.object({
   email: z.string({ required_error: 'This email is required' }).email(),
 });
 
-// generate form types from zod validation schema
 type SubscriptionFormTypes = z.infer<typeof subscriptionFormSchema>;
 
 export default function SubscriptionForm() {

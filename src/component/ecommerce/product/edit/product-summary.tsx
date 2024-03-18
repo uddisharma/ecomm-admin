@@ -2,7 +2,6 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { Input } from '@/component/ui/input';
 import FormGroup from '@/component/others/form-group';
 import cn from '@/utils/class-names';
-import { categoryOption } from '@/component/ecommerce/product/create-edit/form-utils';
 import dynamic from 'next/dynamic';
 import SelectLoader from '@/component/loader/select-loader';
 import QuillLoader from '@/component/loader/quill-loader';

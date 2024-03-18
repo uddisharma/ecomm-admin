@@ -62,7 +62,6 @@ export function MessageItem({ className, message }: MessageItemProps) {
 
   function handleChange() {
     setMessageId(message.id);
-    // router.push(url);
     if (isMobile) {
       router.push(url);
     }

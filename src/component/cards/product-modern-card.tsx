@@ -3,7 +3,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { routes } from '@/config/routes';
 import { Title, Text } from '@/component/ui/text';
-
 import { generateSlug } from '@/utils/generate-slug';
 import ColorSwatch from '@/utils/color-swatch';
 import cn from '@/utils/class-names';

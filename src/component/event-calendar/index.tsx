@@ -4,7 +4,6 @@ import type { CalendarEvent } from '@/types';
 import dayjs from 'dayjs';
 import { useCallback, useMemo } from 'react';
 import { Calendar, dayjsLocalizer } from 'react-big-calendar';
-import EventForm from './event-form';
 import DetailsEvents from './details-event';
 import { useModal } from '@/component/modal-views/use-modal';
 import useEventCalendar from '@/hooks/use-event-calendar';

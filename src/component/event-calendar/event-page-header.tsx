@@ -22,7 +22,6 @@ const pageHeader = {
 };
 
 function EventPageHeader() {
-  // const { createEvent } = useEventCalendar();
   return (
     <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
       <div className="mt-4 flex items-center gap-3 @lg:mt-0">

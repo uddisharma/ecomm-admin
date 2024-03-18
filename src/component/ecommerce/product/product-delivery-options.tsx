@@ -1,6 +1,6 @@
 'use client';
 
-import { Title, Text } from '@/component/ui/text';
+import { Text } from '@/component/ui/text';
 import { SubmitHandler } from 'react-hook-form';
 import { Form } from '@/component/ui/form';
 import { Input } from '@/component/ui/input';

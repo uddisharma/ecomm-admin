@@ -8,7 +8,6 @@ import { Form } from '@/component/ui/form';
 import { Text } from '@/component/ui/text';
 import { Input } from '@/component/ui/input';
 import AvatarUpload from '@/component/ui/file-upload/avatar-upload';
-import { FaPhoneAlt } from 'react-icons/fa';
 import {
   profileFormSchema,
   ProfileFormTypes,
@@ -20,7 +19,6 @@ import { useLayout } from '@/hooks/use-layout';
 import { useBerylliumSidebars } from '@/layouts/beryllium/beryllium-utils';
 import { LAYOUT_OPTIONS } from '@/config/enums';
 import { useContext, useEffect, useState } from 'react';
-import { UserContext } from '@/store/user/context';
 import { toast } from 'sonner';
 import axios from 'axios';
 import { BaseApi, singleSeller, updateSeller } from '@/constants';
@@ -37,7 +35,6 @@ const QuillEditor = dynamic(() => import('@/component/ui/quill-editor'), {
 });
 
 export default function ProfileSettingsView() {
-  // const { state, setUser } = useContext(UserContext);
   const { state, setSeller } = useContext(SellerContext);
   const [loading, setLoading] = useState(false);
   const onSubmit: SubmitHandler<ProfileFormTypes> = (data) => {
@@ -104,7 +101,6 @@ export default function ProfileSettingsView() {
     cover: data?.cover ?? undefined,
     discount: data?.discount ?? '',
   };
-  // console.log(defaultValues);
 
   const { openModal } = useModal();
 

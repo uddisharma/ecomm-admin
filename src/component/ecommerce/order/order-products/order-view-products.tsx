@@ -2,10 +2,7 @@
 
 import Image from 'next/image';
 import Table, { HeaderCell } from '@/component/ui/table';
-import { useCart } from '@/store/quick-cart/cart.context';
 import { Title, Text } from '@/component/ui/text';
-import { toCurrency } from '@/utils/to-currency';
-import { CartItem } from '@/types';
 
 const columns = [
   {

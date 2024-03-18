@@ -1,7 +1,6 @@
 'use client';
 
 import { getColumns } from './columns';
-import { useModal } from '@/component/modal-views/use-modal';
 import BasicTableWidget from '@/component/controlled-table/basic-table-widget';
 
 export default function DeletedPayoutsTable({

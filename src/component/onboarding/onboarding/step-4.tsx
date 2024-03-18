@@ -26,7 +26,6 @@ import { categoriesData } from '@/data/allcategories';
 import { toast } from 'sonner';
 import { BaseApi, UpdateSeller } from '@/constants/index';
 import axios from 'axios';
-import { UserContext } from '@/store/user/context';
 import { OnboardingContext } from '@/store/onboarding/context';
 const Select = dynamic(() => import('@/component/ui/select'), {
   ssr: false,

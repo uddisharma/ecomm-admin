@@ -5,9 +5,7 @@ import { Input } from '@/component/ui/input';
 import { z } from 'zod';
 import FormGroup from '../others/form-group';
 import FormFooter from '../others/form-footer';
-import { seller } from '@/data/category';
-import { useContext, useEffect, useState } from 'react';
-import { UserContext } from '@/store/user/context';
+import { useContext, useState } from 'react';
 import { SellerContext } from '@/store/seller/context';
 import dynamic from 'next/dynamic';
 import SelectLoader from '../loader/select-loader';
@@ -66,11 +64,7 @@ export default function ProfileSettingsView() {
   const { state, setSeller } = useContext(SellerContext);
   const params = useParams();
   const router = useRouter();
-  // useEffect(() => {
-  //   if (!state?.seller?.shopaddress?.address1) {
-  //     router.push(`/${params?.seller}/shop`);
-  //   }
-  // }, [state]);
+
   const onSubmit: SubmitHandler<WarehouseFormTypes> = (data) => {
     setIsLoading(true);
     axios

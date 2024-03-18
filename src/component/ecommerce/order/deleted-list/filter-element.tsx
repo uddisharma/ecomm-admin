@@ -5,7 +5,7 @@ import { PiTrashDuotone } from 'react-icons/pi';
 import DateFiled from '@/component/controlled-table/date-field';
 import PriceField from '@/component/controlled-table/price-field';
 import StatusField from '@/component/controlled-table/status-field';
-import { Title, Text } from '@/component/ui/text';
+import { Text } from '@/component/ui/text';
 import { Badge } from '@/component/ui/badge';
 import { Button } from '@/component/ui/button';
 import { getDateRangeStateValues } from '@/utils/get-formatted-date';

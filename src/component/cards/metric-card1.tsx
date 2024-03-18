@@ -7,7 +7,6 @@ import {
   PiShoppingCartDuotone,
   PiPackageDuotone,
   PiCreditCardDuotone,
-  PiHouseLine,
   PiXBold,
 } from 'react-icons/pi';
 import { CiDeliveryTruck } from 'react-icons/ci';

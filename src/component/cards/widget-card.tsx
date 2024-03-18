@@ -1,7 +1,6 @@
 import { Title } from '@/component/ui/text';
 import cn from '@/utils/class-names';
 import { ForwardedRef, forwardRef } from 'react';
-
 const widgetCardClasses = {
   base: 'border border-gray-200 bg-gray-0 p-5 dark:bg-gray-50 lg:p-7',
   rounded: {

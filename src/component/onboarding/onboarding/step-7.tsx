@@ -34,7 +34,6 @@ export default function StepSeven({ step, setStep }: any) {
   const warehouses = partner.warehouses;
   const initialValues: Step6Schema = {
     personal: {
-      // have: personal?.have ? (personal?.have ? 'Yes' : 'No') : '',
       have: personal && personal?.have ? 'Yes' : 'No',
       name: personal?.name ?? '',
       rate: personal?.rate ?? '0',

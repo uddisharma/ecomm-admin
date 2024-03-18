@@ -74,8 +74,6 @@ export default function EditProduct({ slug, className, product }: IndexProps) {
   }
 
   const onSubmit: SubmitHandler<CreateProductInput> = (data) => {
-    // setLoading(true);
-
     const sellingCategories = state?.user?.sellingCategory;
 
     let category = sellingCategories?.filter((e: any) => {

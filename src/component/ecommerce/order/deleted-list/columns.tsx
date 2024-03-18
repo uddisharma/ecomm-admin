@@ -10,10 +10,8 @@ import EyeIcon from '@/component/icons/eye';
 import DateCell from '@/component/ui/date-cell';
 import AddressCard from '@/component/ui/address-card';
 import { AiOutlineCloudDownload } from 'react-icons/ai';
-import { MdOutlineFileDownloadOff } from 'react-icons/md';
 import StatusPopover from '@/component/others/orderStatusPopover';
 import DeletePopover from '@/component/others/delete-popover';
-import TemperoryDeletePopover from '@/component/others/temperory-delete-popover';
 import RecyclePopover from '@/component/others/recycle-popover';
 function getStatusBadge(status: string) {
   switch (status.toLowerCase()) {

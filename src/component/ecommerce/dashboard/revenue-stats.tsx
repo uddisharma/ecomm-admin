@@ -1,6 +1,6 @@
 'use client';
 
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import WidgetCard from '@/component/cards/widget-card';
 import { DatePicker } from '@/component/ui/datepicker';
 import {
@@ -18,7 +18,7 @@ import { CustomTooltip } from '@/component/charts/custom-tooltip';
 import SimpleBar from '@/component/ui/simplebar';
 import { formatNumber } from '@/utils/format-number';
 import Spinner from '@/component/ui/spinner';
-import { BaseApi, adminmonthwiseRevenue, monthwiseRevenue } from '@/constants';
+import { BaseApi, adminmonthwiseRevenue } from '@/constants';
 import useSWR from 'swr';
 import axios from 'axios';
 import { Empty, SearchNotFoundIcon } from 'rizzui';

@@ -2,9 +2,6 @@
 
 import {
   PiCheckCircle,
-  PiTrashSimple,
-  PiWarningCircle,
-  PiProhibitInset,
   PiDotsThreeBold,
 } from 'react-icons/pi';
 import { ActionIcon } from '@/component/ui/action-icon';

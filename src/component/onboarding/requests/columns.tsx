@@ -2,11 +2,8 @@
 import { HeaderCell } from '@/component/ui/table';
 import { Text } from '@/component/ui/text';
 import DateCell from '@/component/ui/date-cell';
-import { ActionIcon, Tooltip } from 'rizzui';
-import Link from 'next/link';
 import DeletePopover from '@/component/others/delete-popover';
 import AvatarCard from '@/component/ui/avatar-card';
-import EyeIcon from '@/component/icons/eye';
 import StatusPopover from '@/component/others/orderStatusPopover';
 type Columns = {
   data: any[];

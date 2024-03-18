@@ -21,13 +21,6 @@ export default function ProductMedia({ className }: ProductMediaProps) {
       description="Upload your product image gallery here"
       className={cn(className)}
     >
-      {/* <UploadZone
-        className="col-span-full"
-        name="images"
-        getValues={getValues}
-        setValue={setValue}
-        error={errors.images?.message as string}
-      /> */}
       <div className="col-span-2 flex flex-col items-center gap-4 @xl:flex-row">
         <AvatarUpload
           name="images"

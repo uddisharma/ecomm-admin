@@ -3,12 +3,9 @@ import { HeaderCell } from '@/component/ui/table';
 import { Text } from '@/component/ui/text';
 import DateCell from '@/component/ui/date-cell';
 import { ActionIcon, Tooltip } from 'rizzui';
-import Link from 'next/link';
 import DeletePopover from '@/component/others/delete-popover';
 import AvatarCard from '@/component/ui/avatar-card';
 import EyeIcon from '@/component/icons/eye';
-import TicketsLoadingPage from '../loading/tickets';
-import InfoModal from '../tickets/InfoModal';
 import MessageModal from './messageModal';
 import StatusPopover from '../others/orderStatusPopover';
 type Columns = {

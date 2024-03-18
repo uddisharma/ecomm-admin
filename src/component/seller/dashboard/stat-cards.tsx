@@ -7,10 +7,8 @@ import { UserContext } from '@/store/user/context';
 import cn from '@/utils/class-names';
 import { formatNumber } from '@/utils/format-number';
 import axios from 'axios';
-import { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react';
 import {
-  PiCaretDoubleUpDuotone,
-  PiCaretDoubleDownDuotone,
   PiGiftDuotone,
   PiBankDuotone,
   PiChartPieSliceDuotone,

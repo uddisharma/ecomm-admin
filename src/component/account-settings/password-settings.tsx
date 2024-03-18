@@ -15,7 +15,6 @@ import {
 import FormFooter from '../others/form-footer';
 import axios from 'axios';
 import { BaseApi, changePassword } from '@/constants';
-import { UserContext } from '@/store/user/context';
 import { toast } from 'sonner';
 import { useParams } from 'next/navigation';
 

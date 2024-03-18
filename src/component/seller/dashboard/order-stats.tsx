@@ -16,8 +16,6 @@ import { useMedia } from '@/hooks/use-media';
 import { CustomYAxisTick } from '@/component/charts/custom-yaxis-tick';
 import { CustomTooltip } from '@/component/charts/custom-tooltip';
 import SimpleBar from '@/component/ui/simplebar';
-import { Title, Text } from '@/component/ui/text';
-import TrendingUpIcon from '@/component/icons/trending-up';
 import cn from '@/utils/class-names';
 import DropdownAction from '@/component/charts/dropdown-action';
 import { formatNumber } from '@/utils/format-number';

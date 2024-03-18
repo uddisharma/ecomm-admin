@@ -18,7 +18,7 @@ import { CustomTooltip } from '@/component/charts/custom-tooltip';
 import SimpleBar from '@/component/ui/simplebar';
 import { formatNumber } from '@/utils/format-number';
 import Spinner from '@/component/ui/spinner';
-import { BaseApi, monthwiseOrders, monthwiseRevenue } from '@/constants';
+import { BaseApi, monthwiseOrders } from '@/constants';
 import useSWR from 'swr';
 import { UserContext } from '@/store/user/context';
 import axios from 'axios';

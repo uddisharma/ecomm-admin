@@ -2,11 +2,9 @@ import cn from '@/utils/class-names';
 import Image from 'next/image';
 import React from 'react';
 import { CiEdit } from 'react-icons/ci';
-import DeletePopover from '../others/delete-popover';
 import { ActionIcon } from 'rizzui';
 import { PiArrowLineUpRightBold } from 'react-icons/pi';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
 import TemperoryDeletePopover from '../others/temperory-delete-popover';
 
 const Card2 = ({ data, onDelete }: any) => {

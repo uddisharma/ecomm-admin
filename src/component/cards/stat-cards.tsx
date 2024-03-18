@@ -3,7 +3,6 @@
 import cn from '@/utils/class-names';
 import MetricCard from './metric-card1';
 import TagIcon2 from '@/component/icons/tag-2';
-
 export default function StatCards({
   className,
   data,

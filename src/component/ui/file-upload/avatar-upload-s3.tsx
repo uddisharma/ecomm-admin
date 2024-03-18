@@ -1,14 +1,9 @@
 'use client';
 import Image from 'next/image';
-
 import { useCallback, useState } from 'react';
 import type { FileWithPath } from '@uploadthing/react';
 import { useDropzone } from '@uploadthing/react/hooks';
-import {
-  UploadFileResponse,
-  generateClientDropzoneAccept,
-} from 'uploadthing/client';
-import { useUploadThing } from '@/utils/uploadthing';
+import { generateClientDropzoneAccept } from 'uploadthing/client';
 import cn from '@/utils/class-names';
 import UploadIcon from '@/component/shape/upload';
 import { Loader } from '@/component/ui/loader';
@@ -16,6 +11,7 @@ import { FieldError } from '@/component/ui/field-error';
 import { PiPencilSimple } from 'react-icons/pi';
 import { LoadingSpinner } from '@/component/ui/file-upload/upload-zone';
 import { toast } from 'sonner';
+import axios from 'axios';
 
 interface UploadZoneProps {
   name: string;
@@ -25,7 +21,7 @@ interface UploadZoneProps {
   error?: string;
 }
 
-export default function AvatarUpload({
+export default function AvatarUploadS3({
   name,
   error,
   className,
@@ -36,30 +32,55 @@ export default function AvatarUpload({
 
   const [files, setFiles] = useState<File[]>([]);
 
-  const { startUpload, permittedFileInfo, isUploading } = useUploadThing(
-    'avatar',
-    {
-      onClientUploadComplete: (res: UploadFileResponse[] | undefined) => {
+  const [isUploading, setIsUploading] = useState(false);
+
+  const startUpload = async (files: any) => {
+    const formData = new FormData();
+    files.forEach((file: any) => {
+      formData.append('files', file);
+    });
+    try {
+      setIsUploading(true);
+      const response: any = await axios.post<{
+        data: { uploadSuccess: { path: string }[] };
+      }>('http://localhost:5000/seller/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      if (response.data.status == 'SUCCESS') {
         if (setValue) {
-          const respondedUrls = res?.map((r) => ({
-            name: r.name,
-            size: r.size,
-            url: r.url,
-          }));
+          setFiles([]);
+          const respondedUrls = response?.data?.data?.uploadSuccess?.map(
+            (r: any) => ({
+              name: r.name,
+              size: 1024,
+              url: r.path,
+            })
+          );
           setValue(name, respondedUrls?.[0]);
         }
-        toast.success('Avatar Uploaded');
-      },
-      onUploadError: (error: Error) => {
-        console.error(error);
-        toast.error(error.message);
-      },
+        toast.success(response?.data?.message);
+      }
+      if (response.data.data?.uploadFailed?.length > 0) {
+        toast.error(
+          'Upload Failed for ' +
+            response?.data?.data?.uploadFailed?.length +
+            ' Photos'
+        );
+      }
+    } catch (error) {
+      console.error('Upload failed:', error);
+    } finally {
+      setIsUploading(false);
     }
-  );
+  };
 
-  const fileTypes = permittedFileInfo?.config
-    ? Object.keys(permittedFileInfo?.config)
-    : [];
+  //   const fileTypes = permittedFileInfo?.config
+  //     ? Object.keys(permittedFileInfo?.config)
+  //     : [];
+
+  const fileTypes: any = [];
 
   const onDrop = useCallback(
     (acceptedFiles: FileWithPath[]) => {

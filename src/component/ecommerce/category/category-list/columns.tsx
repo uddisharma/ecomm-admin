@@ -1,14 +1,7 @@
 'use client';
-
-import Link from 'next/link';
 import Image from 'next/image';
-import { routes } from '@/config/routes';
 import { Title, Text } from '@/component/ui/text';
 import { HeaderCell } from '@/component/ui/table';
-import { Checkbox } from '@/component/ui/checkbox';
-import { Tooltip } from '@/component/ui/tooltip';
-import { ActionIcon } from '@/component/ui/action-icon';
-import PencilIcon from '@/component/icons/pencil';
 import DeletePopover from '@/component/others/delete-popover';
 
 type Columns = {
@@ -24,21 +17,6 @@ export const getColumns = ({
   onHeaderCellClick,
   onChecked,
 }: Columns) => [
-  // {
-  //   title: <></>,
-  //   dataIndex: 'checked',
-  //   key: 'checked',
-  //   width: 30,
-  //   render: (_: any, row: any) => (
-  //     <div className="inline-flex ps-2">
-  //       <Checkbox
-  //         value={row.id}
-  //         className="cursor-pointer"
-  //         {...(onChecked && { onChange: (e) => onChecked(e, e.target.value) })}
-  //       />
-  //     </div>
-  //   ),
-  // },
   {
     title: <HeaderCell title="Image" />,
     dataIndex: 'image',

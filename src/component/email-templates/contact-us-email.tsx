@@ -1,20 +1,4 @@
-import {
-  Body,
-  Button,
-  Column,
-  Container,
-  Head,
-  Heading,
-  Hr,
-  Html,
-  Img,
-  Link,
-  Preview,
-  Row,
-  Section,
-  Tailwind,
-  Text,
-} from '@react-email/components';
+import { Container, Html, Section, Text } from '@react-email/components';
 
 export default function ContactUsEmail(message: string) {
   return (
@@ -28,7 +12,6 @@ export default function ContactUsEmail(message: string) {
   );
 }
 
-// Styles for the email template
 const main = {
   backgroundColor: '#ffffff',
 };

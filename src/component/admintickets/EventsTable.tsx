@@ -23,7 +23,6 @@ export default function TicketTable({ data, onDeleteItem, onMark, user }: any) {
               user: user,
             })
           }
-          // enablePagination
           searchPlaceholder="Search tickets..."
           className="min-h-[480px] [&_.widget-card-header]:items-center [&_.widget-card-header_h5]:font-medium"
         />

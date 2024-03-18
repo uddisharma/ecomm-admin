@@ -4,10 +4,7 @@ import { Text } from '@/component/ui/text';
 import DateCell from '@/component/ui/date-cell';
 import { ActionIcon, Tooltip } from 'rizzui';
 import Link from 'next/link';
-import { FaFileDownload } from 'react-icons/fa';
-import PencilIcon from '@/component/icons/pencil';
 import DeletePopover from '@/component/others/delete-popover';
-import AddressCard from '@/component/ui/address-card';
 import AvatarCard from '@/component/ui/avatar-card';
 import EyeIcon from '@/component/icons/eye';
 

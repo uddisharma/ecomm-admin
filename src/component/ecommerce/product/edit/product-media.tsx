@@ -1,5 +1,4 @@
 import { useFormContext } from 'react-hook-form';
-import UploadZone from '@/component/ui/file-upload/upload-zone';
 import FormGroup from '@/component/others/form-group';
 import cn from '@/utils/class-names';
 import AvatarUpload from '@/component/ui/file-upload/avatar-upload';

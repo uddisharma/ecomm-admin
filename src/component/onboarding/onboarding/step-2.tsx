@@ -1,6 +1,6 @@
 'use client';
 
-import { Textarea, Button, Input, Text, Title } from 'rizzui';
+import { Textarea, Button, Input } from 'rizzui';
 import { LuInstagram } from 'react-icons/lu';
 import cn from '@/utils/class-names';
 import { FaFacebook, FaHouseUser, FaYoutube } from 'react-icons/fa';
@@ -14,7 +14,6 @@ import { CiAt } from 'react-icons/ci';
 import { useContext, useState } from 'react';
 import { Form } from '@/component/ui/form';
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from 'react-icons/md';
-import { UserContext } from '@/store/user/context';
 import { toast } from 'sonner';
 import axios from 'axios';
 import { BaseApi, UpdateSeller } from '@/constants/index';

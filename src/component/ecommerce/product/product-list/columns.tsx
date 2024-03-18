@@ -2,23 +2,16 @@
 
 import Link from 'next/link';
 import { HeaderCell } from '@/component/ui/table';
-import { Badge } from '@/component/ui/badge';
-import { Title, Text } from '@/component/ui/text';
-import { Checkbox } from '@/component/ui/checkbox';
+import { Text } from '@/component/ui/text';
 import { Progressbar } from '@/component/ui/progressbar';
 import { Tooltip } from '@/component/ui/tooltip';
 import { ActionIcon } from '@/component/ui/action-icon';
-import { routes } from '@/config/routes';
 import EyeIcon from '@/component/icons/eye';
 import PencilIcon from '@/component/icons/pencil';
 import AvatarCard from '@/component/ui/avatar-card';
-import { ProductType } from '@/data/products-data';
-import { PiStarFill } from 'react-icons/pi';
-import DeletePopover from '@/component/others/delete-popover';
 import DateCell from '@/component/ui/date-cell';
 import TemperoryDeletePopover from '@/component/others/temperory-delete-popover';
 
-// get stock status
 function getStockStatus(status: number) {
   if (status === 0) {
     return (

@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/component/ui/button';
-import { Title, Text } from '@/component/ui/text';
+import { Text } from '@/component/ui/text';
 
 interface TableFooterProps {
   checkedItems: string[];

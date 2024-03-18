@@ -1,15 +1,10 @@
 'use client';
 import { PiXBold } from 'react-icons/pi';
 import { SubmitHandler } from 'react-hook-form';
-import { ActionIcon, Button, Input, Title } from 'rizzui';
+import { ActionIcon } from 'rizzui';
 import { useModal } from '@/component/modal-views/use-modal';
-import { Form } from '@/component/ui/form';
 import { Text } from '@/component/ui/text';
-import {
-  EventFormInput,
-  eventFormSchema,
-} from '@/utils/validators/create-event.schema';
-import QuillEditor from '@/component/ui/quill-editor';
+import { EventFormInput } from '@/utils/validators/create-event.schema';
 
 export default function InfoModal({ startDate, endDate, event }: any) {
   const { closeModal } = useModal();

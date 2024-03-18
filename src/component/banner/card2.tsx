@@ -7,7 +7,6 @@ import { ActionIcon } from 'rizzui';
 import { PiArrowLineUpRightBold } from 'react-icons/pi';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import TemperoryDeletePopover from '../others/temperory-delete-popover';
 import RecyclePopover from '../others/recycle-popover';
 
 const Card3 = ({ data, onDelete, onTemperoryDelete }: any) => {

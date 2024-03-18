@@ -8,7 +8,6 @@ import { Step2Schema, step2Schema } from '@/utils/validators/onboarding.schema';
 import { useContext, useState } from 'react';
 import { Form } from '@/component/ui/form';
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from 'react-icons/md';
-import { UserContext } from '@/store/user/context';
 import axios from 'axios';
 import { BaseApi, UpdateSeller } from '@/constants/index';
 import { toast } from 'sonner';
@@ -63,7 +62,7 @@ export default function StepThree({ step, setStep }: any) {
     state: seller?.shopaddress?.state ?? '',
     pincode: seller?.shopaddress?.pincode ?? '',
   };
-  const [reset, setReset] = useState({});
+  const [reset, _setReset] = useState({});
   const [loading, setLoading] = useState(false);
   const onSubmit: SubmitHandler<Step2Schema> = (data) => {
     setLoading(true);

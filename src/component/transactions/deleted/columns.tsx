@@ -7,7 +7,6 @@ import Link from 'next/link';
 import { FaFileDownload } from 'react-icons/fa';
 import PencilIcon from '../../icons/pencil';
 import DeletePopover from '../../others/delete-popover';
-import TemperoryDeletePopover from '../../others/temperory-delete-popover';
 import RecyclePopover from '@/component/others/recycle-popover';
 
 type Columns = {

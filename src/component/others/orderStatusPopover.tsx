@@ -4,7 +4,6 @@ import { Title, Text } from '@/component/ui/text';
 import { ActionIcon } from '@/component/ui/action-icon';
 import { Button } from '@/component/ui/button';
 import { Popover } from '@/component/ui/popover';
-import TrashIcon from '@/component/icons/trash';
 import { PiTrashFill } from 'react-icons/pi';
 import { IoCheckmarkDoneOutline } from 'react-icons/io5';
 

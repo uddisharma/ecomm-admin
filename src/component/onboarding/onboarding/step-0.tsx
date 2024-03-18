@@ -1,12 +1,12 @@
 'use client';
 import FormSummary from './form-summary';
-import { Button, Input, Password, Switch, Text, Textarea, Title } from 'rizzui';
+import { Button, Input, Password, Switch, Text, Title } from 'rizzui';
 import cn from '@/utils/class-names';
 import { useState } from 'react';
 import { SubmitHandler } from 'react-hook-form';
 import { Form } from '@/component/ui/form';
 import axios from 'axios';
-import { BaseApi, Register, RegisterSeller } from '@/constants/index';
+import { BaseApi, RegisterSeller } from '@/constants/index';
 import { toast } from 'sonner';
 import { messages } from '@/config/messages';
 import { z } from 'zod';

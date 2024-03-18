@@ -11,7 +11,6 @@ import InfoModal from './InfoModal';
 import { CgMailReply } from 'react-icons/cg';
 import MarkPopover from '../../others/popover';
 import PencilIcon from '../../icons/pencil';
-import TemperoryDeletePopover from '../../others/temperory-delete-popover';
 import DeletePopover from '@/component/others/delete-popover';
 import RecyclePopover from '@/component/others/recycle-popover';
 

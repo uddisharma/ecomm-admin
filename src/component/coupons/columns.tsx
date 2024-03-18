@@ -2,7 +2,6 @@
 import { HeaderCell } from '@/component/ui/table';
 import { Text } from '@/component/ui/text';
 import DateCell from '@/component/ui/date-cell';
-import DeletePopover from '../others/delete-popover';
 import Link from 'next/link';
 import { ActionIcon, Tooltip } from 'rizzui';
 import EyeIcon from '../icons/eye';

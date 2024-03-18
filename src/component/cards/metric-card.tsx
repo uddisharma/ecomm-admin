@@ -1,6 +1,6 @@
 'use client';
 
-import { Title, Text } from '@/component/ui/text';
+import { Text } from '@/component/ui/text';
 import cn from '@/utils/class-names';
 import Spinner from '../ui/spinner';
 
@@ -82,7 +82,7 @@ export default function MetricCard({
               {isLoading ? (
                 <Spinner className="mt-3 h-4 w-4" />
               ) : error ? (
-                <span className='text-xs'>Something went wrong</span>
+                <span className="text-xs">Something went wrong</span>
               ) : (
                 metric
               )}

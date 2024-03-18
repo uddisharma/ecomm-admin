@@ -8,7 +8,6 @@ import { FaFacebookF, FaYoutube } from 'react-icons/fa';
 import { LuInstagram } from 'react-icons/lu';
 import { z } from 'zod';
 import { useContext, useState } from 'react';
-import { UserContext } from '@/store/user/context';
 import { toast } from 'sonner';
 import axios from 'axios';
 import { BaseApi, updateSeller } from '@/constants';
@@ -20,7 +19,6 @@ const profileFormSchema = z.object({
   youtube: z.string().optional(),
 });
 
-// generate form types from zod validation schema
 export type ProfileFormTypes = z.infer<typeof profileFormSchema>;
 
 export default function ProfileSettingsView() {

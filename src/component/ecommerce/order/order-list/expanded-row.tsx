@@ -1,9 +1,7 @@
 import Image from 'next/image';
-import { PiXBold } from 'react-icons/pi';
 import { Title, Text } from '@/component/ui/text';
 
 export default function ExpandedOrderRow({ record }: any) {
-  // console.log(record?.orderItems);
   if (record?.orderItems?.length === 0) {
     return <Text>No product available</Text>;
   }
