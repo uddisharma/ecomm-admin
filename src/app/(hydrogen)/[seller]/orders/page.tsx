@@ -3,7 +3,6 @@ import { Button } from '@/component/ui/button';
 import PageHeader from '@/component/others/pageHeader';
 import OrdersTable from '@/component/ecommerce/order/order-list/table';
 import { PiXBold } from 'react-icons/pi';
-import { orderData } from '@/data/order-data';
 import ExportButton from '@/component/others/export-button';
 import { CiFilter } from 'react-icons/ci';
 import { useModal } from '@/component/modal-views/use-modal';
@@ -12,20 +11,18 @@ import dynamic from 'next/dynamic';
 import SelectLoader from '@/component/loader/select-loader';
 import { Input } from '@/component/ui/input';
 import cn from '@/utils/class-names';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { useFilterControls } from '@/hooks/use-filter-control';
 import Pagination from '@/component/ui/pagination';
 import axios from 'axios';
 import useSWR from 'swr';
 import {
   BaseApi,
-  adminOrders,
   orderPerPage,
   sellerOrders,
   softOrderDelete,
   updateOrders,
 } from '@/constants';
-import { UserContext } from '@/store/user/context';
 import OrderLoading from '@/component/loading/orders';
 import { toast } from 'sonner';
 import { useParams } from 'next/navigation';

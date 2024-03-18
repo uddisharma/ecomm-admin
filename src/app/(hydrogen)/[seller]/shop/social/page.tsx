@@ -1,4 +1,3 @@
-import { routes } from '@/config/routes';
 import IntegrationSettingsView from '@/component/account-settings/integration-settings';
 import { metaObject } from '@/config/site.config';
 

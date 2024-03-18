@@ -8,7 +8,6 @@ type Props = {
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  // read route params
   const id = params.id;
 
   return metaObject(`Message ${id}`);

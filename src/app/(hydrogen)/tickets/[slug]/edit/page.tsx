@@ -1,5 +1,5 @@
 'use client';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, SubmitHandler } from 'react-hook-form';
 import { Input } from '@/component/ui/input';
 import { Form } from '@/component/ui/form';
@@ -13,15 +13,8 @@ import SelectLoader from '@/component/loader/select-loader';
 import PageHeader from '@/component/others/pageHeader';
 import Link from 'next/link';
 import { Button, Empty, SearchNotFoundIcon } from 'rizzui';
-import { UserContext } from '@/store/user/context';
 import axios from 'axios';
-import {
-  BaseApi,
-  createTicket,
-  findSingleSeller,
-  singleTicket,
-  updateTicket,
-} from '@/constants';
+import { BaseApi, findSingleSeller, updateTicket } from '@/constants';
 import { toast } from 'sonner';
 import { useParams, useRouter } from 'next/navigation';
 import useSWR from 'swr';

@@ -1,13 +1,11 @@
 'use client';
 import PageHeader from '@/component/others/pageHeader';
-import { productsData } from '@/data/products-data';
 import { metaObject } from '@/config/site.config';
 import ExportButton from '@/component/others/export-button';
 import TransactionTable from '@/component/transactions/table';
 import Pagination from '@/component/ui/pagination';
 import { useFilterControls } from '@/hooks/use-filter-control';
-import { useContext, useState } from 'react';
-import { UserContext } from '@/store/user/context';
+import { useState } from 'react';
 import axios from 'axios';
 import useSWR from 'swr';
 import {

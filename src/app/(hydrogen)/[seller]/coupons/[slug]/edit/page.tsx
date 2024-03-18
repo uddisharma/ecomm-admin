@@ -14,7 +14,7 @@ import PageHeader from '@/component/others/pageHeader';
 import Link from 'next/link';
 import { Button, Empty, SearchNotFoundIcon } from 'rizzui';
 import axios from 'axios';
-import { BaseApi, addCoupon, singleCoupon, updateCoupon } from '@/constants';
+import { BaseApi, singleCoupon, updateCoupon } from '@/constants';
 
 import { UserContext } from '@/store/user/context';
 import { useParams, useRouter } from 'next/navigation';

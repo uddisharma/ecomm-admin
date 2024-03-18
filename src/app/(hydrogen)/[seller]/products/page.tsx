@@ -13,16 +13,14 @@ import {
   BaseApi,
   ItemperPage,
   SellerProducts,
-  deleteProduct,
   productsSoftDelete,
 } from '@/constants';
-import { useContext, useState } from 'react';
-import { UserContext } from '@/store/user/context';
 import { useFilterControls } from '@/hooks/use-filter-control';
 import { Empty, SearchNotFoundIcon } from 'rizzui';
 import { toast } from 'sonner';
 import { useParams } from 'next/navigation';
 import { MdOutlineAutoDelete } from 'react-icons/md';
+import { useState } from 'react';
 
 const pageHeader = {
   title: 'Products',
@@ -50,7 +48,6 @@ export default function ProductsPage() {
     initialState
   );
   const [page, setPage] = useState(st?.page ? st?.page : 1);
-  const { state } = useContext(UserContext);
   const fetcher = (url: any) => axios.get(url).then((res) => res.data);
   let { data, isLoading, error, mutate } = useSWR(
     `${BaseApi}${SellerProducts}/${params?.seller}?page=${page}&limit=${ItemperPage}&isDeleted=${false}`,

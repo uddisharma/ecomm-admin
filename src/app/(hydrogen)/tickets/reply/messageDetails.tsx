@@ -7,26 +7,19 @@ import { Badge } from '@/component/ui/badge';
 import { Button } from '@/component/ui/button';
 import { Avatar } from '@/component/ui/avatar';
 import { dataAtom, messageIdAtom } from '@/component/chat/message-list';
-import ActionDropdown from '@/component/chat/action-dropdown';
 import MessageBody from './messageBody';
 import cn from '@/utils/class-names';
 import SimpleBar from '@/component/ui/simplebar';
 import { useElementSize } from '@/hooks/use-element-size';
 import { useMedia } from '@/hooks/use-media';
 import Spinner from '@/component/ui/spinner';
-import { ActionIcon, Empty, Input, SearchNotFoundIcon } from 'rizzui';
+import { ActionIcon, Input } from 'rizzui';
 import axios from 'axios';
 
 import useSWR from 'swr';
-// import { BaseApi } from '@/constants/page';
 import { useParams } from 'next/navigation';
 import { FaTelegramPlane } from 'react-icons/fa';
-import {
-  BaseApi,
-  singleAdminTicket,
-  singleTicket,
-  ticketReply,
-} from '@/constants';
+import { BaseApi, singleAdminTicket, ticketReply } from '@/constants';
 import { UserContext } from '@/store/user/context';
 import toast from 'react-hot-toast';
 
@@ -62,7 +55,6 @@ export default function ReplyDetails({ className }: { className?: string }) {
   )}`;
 
   function getCurrentDateTimeIndia() {
-    // Set the time zone offset to IST (UTC+5:30)
     const now = new Date(
       new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' })
     );
@@ -71,7 +63,7 @@ export default function ReplyDetails({ className }: { className?: string }) {
     const month = (now.getMonth() + 1).toString().padStart(2, '0');
     const year = now.getFullYear();
 
-    const hours = now.getHours() % 12 || 12; // Convert to 12-hour format
+    const hours = now.getHours() % 12 || 12;
     const minutes = now.getMinutes().toString().padStart(2, '0');
     const ampm = now.getHours() < 12 ? 'AM' : 'PM';
 
@@ -111,39 +103,6 @@ export default function ReplyDetails({ className }: { className?: string }) {
       </div>
     );
   }
-  // if (data2?.data?.closed) {
-  //   return (
-  //     <>
-  //       <header className="flex flex-col justify-between gap-4 border-b border-gray-200 pb-5 3xl:flex-row 3xl:items-center">
-  //         <div className="flex flex-row flex-wrap items-start justify-between gap-3 xs:flex-row xs:items-center xs:gap-6 lg:justify-normal">
-  //           <Title as="h4" className="font-semibold">
-  //             {data2?.data?.subject}
-  //           </Title>
-  //           <Badge variant="outline" color="primary" size="sm">
-  //             {data2?.data?.type}
-  //           </Badge>
-  //           {data2?.data?.closed === false ? (
-  //             <Badge variant="outline" color="success" size="sm">
-  //               Active
-  //             </Badge>
-  //           ) : (
-  //             <Badge variant="outline" color="danger" size="sm">
-  //               Closed
-  //             </Badge>
-  //           )}
-  //         </div>
-  //         <div dangerouslySetInnerHTML={{ __html: data2?.data?.description }} />
-  //       </header>
-  //       <div style={{ paddingBottom: '100px' }}>
-  //         <Empty
-  //           image={<SearchNotFoundIcon />}
-  //           text="This ticket is closed !"
-  //           className="h-full justify-center"
-  //         />
-  //       </div>
-  //     </>
-  //   );
-  // }
 
   return (
     <div
@@ -170,9 +129,6 @@ export default function ReplyDetails({ className }: { className?: string }) {
                 Closed
               </Badge>
             )}
-            {/* <div className="jus flex flex-wrap items-center gap-2.5 sm:justify-end">
-              <ActionDropdown className="ml-auto sm:ml-0" />
-            </div> */}
           </div>
           <div dangerouslySetInnerHTML={{ __html: data2?.data?.description }} />
         </header>

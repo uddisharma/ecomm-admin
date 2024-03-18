@@ -8,7 +8,6 @@ import OrderView from '@/component/ecommerce/order/order-view';
 import { BaseApi, singleOrder, updateOrders } from '@/constants';
 import useSWR from 'swr';
 import axios from 'axios';
-import { useParams } from 'next/navigation';
 import OrderDetailsLoadingPage from '@/component/loading/orderdetails';
 import { toast } from 'sonner';
 import { Empty, SearchNotFoundIcon } from 'rizzui';

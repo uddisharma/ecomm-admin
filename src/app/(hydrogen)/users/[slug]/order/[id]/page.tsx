@@ -47,9 +47,6 @@ export default function LogisticsListPage() {
     }
   );
 
-  const saveFile = (url: any) => {
-    console.log(url);
-  };
   return (
     <>
       <br />

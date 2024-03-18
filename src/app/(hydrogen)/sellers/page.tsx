@@ -2,7 +2,6 @@
 import StatCards from '@/component/cards/stat-cards';
 import SellerLoading from '@/component/loading/sellerLoading';
 import ExportButton from '@/component/others/export-button';
-import PageHeader from '@/component/others/pageHeader';
 import Pagination from '@/component/ui/pagination';
 import {
   BaseApi,
@@ -15,30 +14,14 @@ import cn from '@/utils/class-names';
 import axios from 'axios';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
-import { CiMoneyCheck1, CiSearch } from 'react-icons/ci';
+import { CiSearch } from 'react-icons/ci';
 import { FiUserPlus } from 'react-icons/fi';
 import { MdOutlineAutoDelete, MdOutlinePendingActions } from 'react-icons/md';
-import { Button, Empty, Input, SearchNotFoundIcon, Title } from 'rizzui';
+import { Button, Empty, Input, SearchNotFoundIcon } from 'rizzui';
 import { toast } from 'sonner';
 import useSWR from 'swr';
 
 const Page = () => {
-  const pageHeader = {
-    title: '',
-    breadcrumb: [
-      {
-        href: '/',
-        name: '',
-      },
-      {
-        href: '/',
-        name: '',
-      },
-      {
-        name: '',
-      },
-    ],
-  };
   const [loading, setLoading] = useState(false);
   const [searchedData, setSearchedData] = useState<any>([]);
   const [term, setTerm] = useState<string>('');

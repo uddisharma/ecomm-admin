@@ -1,10 +1,9 @@
-"use client"
+'use client';
 import Link from 'next/link';
 import PageHeader from '@/component/others/pageHeader';
 import { Button } from '@/component/ui/button';
 import CreateEditProduct1 from '@/component/ecommerce/product/create-edit';
 import { useParams } from 'next/navigation';
-
 
 const pageHeader = {
   title: 'Create Product',
@@ -36,7 +35,6 @@ export default function CreateProductPage() {
             tag="span"
             className="w-full @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
           >
-            {/* <PiPlusBold className="me-1.5 h-[17px] w-[17px]" /> */}
             View all Products
           </Button>
         </Link>

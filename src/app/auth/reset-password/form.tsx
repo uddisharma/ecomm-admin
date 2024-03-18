@@ -14,7 +14,7 @@ import {
 } from '@/utils/validators/reset.schema';
 
 import axios from 'axios';
-import { AdminResetPassword, BaseApi, ResetPassword } from '@/constants';
+import { AdminResetPassword, BaseApi } from '@/constants';
 import { useParams, useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 

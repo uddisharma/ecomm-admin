@@ -6,7 +6,6 @@ import { Form } from '@/component/ui/form';
 import dynamic from 'next/dynamic';
 import Spinner from '@/component/ui/spinner';
 import FormGroup from '@/component/others/form-group';
-import FormFooter from '@/component/others/form-footer';
 import cn from '@/utils/class-names';
 import { z } from 'zod';
 import SelectLoader from '@/component/loader/select-loader';
@@ -14,10 +13,8 @@ import PageHeader from '@/component/others/pageHeader';
 import Link from 'next/link';
 import { Button, Empty, SearchNotFoundIcon } from 'rizzui';
 import axios from 'axios';
-import { BaseApi, addCoupon, singleCoupon, updateCoupon } from '@/constants';
-import toast from 'react-hot-toast';
-import { UserContext } from '@/store/user/context';
-import { useParams, useRouter } from 'next/navigation';
+import { BaseApi,  singleCoupon } from '@/constants';
+import { useParams } from 'next/navigation';
 import useSWR from 'swr';
 const schema = z.object({
   code: z.string().min(1, { message: 'Code is Required' }),
@@ -35,7 +32,6 @@ const Select = dynamic(() => import('@/component/ui/select'), {
 export default function NewsLetterForm() {
   const [reset, setReset] = useState({});
   const params = useParams();
-  const router = useRouter();
   const fetcher = (url: any) => axios.get(url).then((res) => res.data);
 
   let {
@@ -55,35 +51,7 @@ export default function NewsLetterForm() {
     discount: data?.data?.discount.toString() ?? '',
   };
 
-  const [isLoading, setIsLoading] = useState(false);
-  const { state } = useContext(UserContext);
-  const onSubmit: SubmitHandler<Schema> = (data) => {
-    setIsLoading(true);
-    axios
-      .patch(`${BaseApi}${updateCoupon}/${params?.slug}`, {
-        ...data,
-        code: data?.code?.toUpperCase()?.split(' ').join(''),
-        discount: Number(data?.discount),
-        seller: state?.user?.id,
-        discount_type:
-          data.discount_type == 'Percentage' ? 'percentage' : 'direct_amount',
-      })
-      .then((res) => {
-        if (res.data?.status == 'SUCCESS') {
-          router.back();
-          return toast('Coupon Code Updated Successfully !');
-        } else {
-          return toast.error('Something went wrong');
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        return toast.error('Something went wrong');
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  };
+  const onSubmit: SubmitHandler<Schema> = (data) => {};
   const pageHeader = {
     title: 'View Coupon',
     breadcrumb: [

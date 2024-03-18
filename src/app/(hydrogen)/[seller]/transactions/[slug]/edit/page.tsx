@@ -1,10 +1,9 @@
 'use client';
-import { useContext, useState } from 'react';
-import { Controller, SubmitHandler } from 'react-hook-form';
+import { useState } from 'react';
+import { SubmitHandler } from 'react-hook-form';
 import { Input } from '@/component/ui/input';
 import { Form } from '@/component/ui/form';
 import dynamic from 'next/dynamic';
-import Spinner from '@/component/ui/spinner';
 import FormGroup from '@/component/others/form-group';
 import FormFooter from '@/component/others/form-footer';
 import cn from '@/utils/class-names';
@@ -14,13 +13,7 @@ import PageHeader from '@/component/others/pageHeader';
 import Link from 'next/link';
 import { Button, Empty, SearchNotFoundIcon } from 'rizzui';
 import axios from 'axios';
-import {
-  BaseApi,
-  addCoupon,
-  addTransaction,
-  singleTransaction,
-  updateTransaction,
-} from '@/constants';
+import { BaseApi, singleTransaction, updateTransaction } from '@/constants';
 import { toast } from 'sonner';
 import { useParams, useRouter } from 'next/navigation';
 import useSWR from 'swr';
@@ -45,27 +38,21 @@ export default function NewsLetterForm() {
   const router = useRouter();
 
   function convertDateFormat(dateString: any) {
-    // Convert the dateString to a Date object
     const date = new Date(dateString);
-
-    // Set time components to 00:00:00
     date.setHours(0);
     date.setMinutes(0);
     date.setSeconds(0);
     date.setMilliseconds(0);
 
-    // Get the individual date components
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
 
-    // Get the time components
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
     const seconds = String(date.getSeconds()).padStart(2, '0');
     const milliseconds = String(date.getMilliseconds()).padStart(3, '0');
 
-    // Get the timezone offset
     const timezoneOffsetMinutes = date.getTimezoneOffset();
     const timezoneOffsetHours = Math.abs(
       Math.trunc(timezoneOffsetMinutes / 60)
@@ -73,7 +60,6 @@ export default function NewsLetterForm() {
     const timezoneOffsetMinutesRemainder = Math.abs(timezoneOffsetMinutes) % 60;
     const timezoneSign = timezoneOffsetMinutes < 0 ? '+' : '-';
 
-    // Construct the formatted date string
     const formattedDateString = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}${timezoneSign}${String(
       timezoneOffsetHours
     ).padStart(2, '0')}:${String(timezoneOffsetMinutesRemainder).padStart(

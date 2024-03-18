@@ -19,8 +19,6 @@ import { Button, Empty, SearchNotFoundIcon } from 'rizzui';
 import { toast } from 'sonner';
 import Link from 'next/link';
 import { PiPlusBold } from 'react-icons/pi';
-import { MdOutlineAutoDelete } from 'react-icons/md';
-import ReferralTable from '@/component/referrals/table';
 import { LuScreenShare } from 'react-icons/lu';
 import DeletedReferralTable from '@/component/referrals/deleted/table';
 const metadata = {
@@ -156,7 +154,10 @@ export default function Transactions() {
           </Link>
         </div>
       </PageHeader>
-      {error && (
+
+      {isLoading ? (
+        <TransactionLoadingPage />
+      ) : error ? (
         <div style={{ paddingBottom: '100px' }}>
           <Empty
             image={<SearchNotFoundIcon />}
@@ -164,9 +165,7 @@ export default function Transactions() {
             className="h-full justify-center"
           />
         </div>
-      )}
-      {isLoading && <TransactionLoadingPage />}
-      {data && (
+      ) : data ? (
         <DeletedReferralTable
           onDeleteItem={onDelete}
           key={Math.random()}
@@ -175,8 +174,7 @@ export default function Transactions() {
           updateOnboard={updateOnboard}
           permanentlydelete={permanentlydelete}
         />
-      )}
-      {data == null && (
+      ) : (
         <DeletedReferralTable
           onDeleteItem={onDelete}
           key={Math.random()}

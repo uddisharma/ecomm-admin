@@ -1,10 +1,8 @@
 'use client';
-import StatCards from '@/component/cards/stat-cards';
 import SellerLoading from '@/component/loading/sellerLoading';
 import OnboardingPendingTable from '@/component/onboarding/pending/table';
 import ExportButton from '@/component/others/export-button';
 import PageHeader from '@/component/others/pageHeader';
-import TicketTable from '@/component/tickets/EventsTable';
 import Pagination from '@/component/ui/pagination';
 import {
   BaseApi,
@@ -18,7 +16,7 @@ import cn from '@/utils/class-names';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { CiSearch } from 'react-icons/ci';
-import { Button, Empty, Input, SearchNotFoundIcon, Title } from 'rizzui';
+import { Button, Empty, Input, SearchNotFoundIcon } from 'rizzui';
 import { toast } from 'sonner';
 import useSWR from 'swr';
 

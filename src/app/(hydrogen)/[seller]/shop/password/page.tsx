@@ -1,4 +1,3 @@
-import { routes } from '@/config/routes';
 import PasswordSettingsView from '@/component/account-settings/password-settings';
 import { metaObject } from '@/config/site.config';
 

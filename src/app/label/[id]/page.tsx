@@ -14,7 +14,6 @@ const Page = () => {
     data: data1,
     error,
     isLoading,
-    mutate,
   } = useSWR(`${BaseApi}${singleOrder}/${params?.id}`, fetcher, {
     refreshInterval: 3600000,
     onErrorRetry({ retrycount }: any) {
@@ -26,8 +25,13 @@ const Page = () => {
   const orderData = data1?.data;
   return (
     <div>
-      {error && <Text className="mt-10 text-center">Something went wrong</Text>}
-      {isLoading ? <Spinner /> : orderData && <SellerLabel data={orderData} />}
+      {isLoading ? (
+        <Spinner />
+      ) : error ? (
+        <Text className="mt-10 text-center">Something went wrong</Text>
+      ) : (
+        orderData && <SellerLabel data={orderData} />
+      )}
     </div>
   );
 };

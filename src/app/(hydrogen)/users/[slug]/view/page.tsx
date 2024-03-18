@@ -111,8 +111,6 @@ interface StepSixProps {
 }
 
 export default function CreateUserForm() {
-  const [isLoading, setIsLoading] = useState(false);
-
   const pageHeader = {
     title: 'User Details',
     breadcrumb: [
@@ -182,42 +180,12 @@ export default function CreateUserForm() {
   }, [user]);
   const [errors, setErrors] = useState<any>([]);
 
-  const addWarehouse = () => {
-    setWarehouses([
-      ...warehouses,
-      {
-        name: '',
-        phone: '',
-        phone1: '',
-        email: '',
-        pincode: '',
-        address: '',
-        landmark: '',
-        city: '',
-        district: '',
-        state: '',
-      },
-    ]);
-    setErrors([...errors, {}]);
-  };
-
-  const removeWarehouse = (index: number) => {
-    const updatedWarehouses = [...warehouses];
-    updatedWarehouses.splice(index, 1);
-    setWarehouses(updatedWarehouses);
-
-    const updatedErrors = [...errors];
-    updatedErrors.splice(index, 1);
-    setErrors(updatedErrors);
-  };
-
   const validateForm = () => {
     const newErrors: FormError[] = [];
 
     warehouses.forEach((warehouse: any, index: any) => {
       const warehouseErrors: any = {};
 
-      // Validate each field manually
       if (!warehouse.name.trim()) {
         warehouseErrors.name = 'Name is required';
       }
@@ -249,8 +217,6 @@ export default function CreateUserForm() {
         warehouseErrors.state = 'State is required';
       }
 
-      // Add more validations for other fields...
-
       newErrors[index] = warehouseErrors;
     });
 
@@ -270,45 +236,8 @@ export default function CreateUserForm() {
       setWarehouses(updatedWarehouses);
     };
 
-  const validateForm1 = (data: any) => {
-    if (
-      data?.name == '' ||
-      data?.email == '' ||
-      data?.mobileNo == '' ||
-      data?.password == ''
-    ) {
-      return false;
-    }
-    return true;
-  };
-
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    // if (!validateForm() || !validateForm1(personal)) {
-    //   toast.warning('All fields are required');
-    // }
-    // setIsLoading(true);
-    // axios
-    //   .post(`${BaseApi}${createUser}`, {
-    //     ...personal,
-    //     userType: 1,
-    //     shippingAddress: warehouses,
-    //   })
-    //   .then((res) => {
-    //     if (res.data?.status == 'SUCCESS') {
-    //       return toast.success('User Created Successfully !');
-    //     } else {
-    //       return toast.error('Something went wrong !');
-    //     }
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //     return toast.error('Something went wrong !');
-    //   })
-    //   .finally(() => {
-    //     setIsLoading(false);
-    //   });
   };
 
   if (loading) {

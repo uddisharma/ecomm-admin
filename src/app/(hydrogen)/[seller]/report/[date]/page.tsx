@@ -3,13 +3,9 @@ import cn from '@/utils/class-names';
 import { Button } from 'rizzui';
 import * as XLSX from 'xlsx';
 import PageHeader from '@/component/others/pageHeader';
-import {  useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { UserContext } from '@/store/user/context';
-import {
-  BaseApi,
-  datewiseStats,
-  sellerOrders,
-} from '@/constants';
+import { BaseApi, datewiseStats, sellerOrders } from '@/constants';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { useParams, useRouter } from 'next/navigation';
@@ -178,7 +174,7 @@ function PromoBanner() {
         <div className="relative h-full min-h-[200px] w-full sm:max-w-[223px]">
           <img
             className=" rounded-t-xl object-cover xs:rounded-none xs:rounded-s-xl"
-            src="https://img.icons8.com/?size=128&id=119060&format=png"
+            src="/calendor.png"
             style={{ display: 'block', margin: 'auto', marginTop: '40px' }}
             alt=""
           />
@@ -228,7 +224,7 @@ function PromoBanner() {
         <div className="relative h-full min-h-[200px] w-full sm:max-w-[223px]">
           <img
             className=" rounded-t-xl object-cover xs:rounded-none xs:rounded-s-xl"
-            src="https://img.icons8.com/?size=128&id=lSY0siquqSks&format=png"
+            src="/report.png"
             style={{ display: 'block', margin: 'auto', marginTop: '40px' }}
             alt=""
           />

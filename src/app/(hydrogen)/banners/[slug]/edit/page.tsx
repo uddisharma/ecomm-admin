@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { Controller, SubmitHandler } from 'react-hook-form';
+import { SubmitHandler } from 'react-hook-form';
 import { Input } from '@/component/ui/input';
 import { Form } from '@/component/ui/form';
 import FormGroup from '@/component/others/form-group';
@@ -15,7 +15,7 @@ import Link from 'next/link';
 import { Button, Empty, SearchNotFoundIcon } from 'rizzui';
 import { useParams, useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { BaseApi, addBanner, singleBanner, updateBanner } from '@/constants';
+import { BaseApi, singleBanner, updateBanner } from '@/constants';
 import useSWR from 'swr';
 import Spinner from '@/component/ui/spinner';
 const schema = z.object({
@@ -27,7 +27,7 @@ const schema = z.object({
 type Schema = z.infer<typeof schema>;
 
 export default function AssetInit() {
-  const [reset, setReset] = useState({});
+  const [reset, _setReset] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const params = useParams();
   const router = useRouter();

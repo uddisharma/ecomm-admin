@@ -7,8 +7,7 @@ import Link from 'next/link';
 import { Button, Empty, SearchNotFoundIcon } from 'rizzui';
 import { PiPlusBold } from 'react-icons/pi';
 import { useFilterControls } from '@/hooks/use-filter-control';
-import { useContext, useState } from 'react';
-import { UserContext } from '@/store/user/context';
+import { useState } from 'react';
 import axios from 'axios';
 import useSWR from 'swr';
 import {
@@ -18,7 +17,6 @@ import {
   deleteCoupon,
   updateCoupon,
 } from '@/constants';
-import CouponsTable from '@/component/coupons/table';
 import CouponLoadingPage from '@/component/loading/coupons';
 import { toast } from 'sonner';
 import { useParams } from 'next/navigation';
@@ -54,7 +52,6 @@ export default function Coupons() {
   );
   const params = useParams();
   const [page, setPage] = useState(st?.page ? st?.page : 1);
-  const { state } = useContext(UserContext);
   const fetcher = (url: any) => axios.get(url).then((res) => res.data);
   let { data, isLoading, error, mutate } = useSWR(
     `${BaseApi}${coupons}/${params?.seller}?page=${page}&limit=${couponsPerPage}&isDeleted=${true}`,

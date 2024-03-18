@@ -1,21 +1,17 @@
 'use client';
-import ProductLoadingPage from '@/component/loading/products';
 import TicketsLoadingPage from '@/component/loading/tickets';
 import ExportButton from '@/component/others/export-button';
 import PageHeader from '@/component/others/pageHeader';
 import TicketTable from '@/component/tickets/EventsTable';
 import Pagination from '@/component/ui/pagination';
-import { metaObject } from '@/config/site.config';
 import {
   BaseApi,
-  deleteTicket,
   markTicket,
   sellerAllTickets,
   ticketPerPage,
   updateTicket,
 } from '@/constants';
 import { useFilterControls } from '@/hooks/use-filter-control';
-import { UserContext } from '@/store/user/context';
 import axios from 'axios';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -25,10 +21,6 @@ import { PiPlusBold } from 'react-icons/pi';
 import { Button, Empty, SearchNotFoundIcon } from 'rizzui';
 import { toast } from 'sonner';
 import useSWR from 'swr';
-
-const metadata = {
-  ...metaObject('Events'),
-};
 
 const pageHeader = {
   title: 'Tickets',

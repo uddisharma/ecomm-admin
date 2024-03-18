@@ -44,7 +44,7 @@ const Page = () => {
         <div className="relative h-full min-h-[200px] w-full sm:max-w-[223px]">
           <img
             className=" rounded-t-xl object-cover xs:rounded-none xs:rounded-s-xl"
-            src="https://ouch-cdn2.icons8.com/jqWgXqsYHbWosdBVPpt1VV7ruVZMya9OQwk7RoOyPr8/rs:fit:368:368/czM6Ly9pY29uczgu/b3VjaC1wcm9kLmFz/c2V0cy9zdmcvNjMx/L2RlZjEzYjZmLWQ0/NDMtNDIzOC04MTEz/LTVmMmU4NmZmM2Qz/ZC5zdmc.png"
+            src="/delivery.png"
             style={{ display: 'block', margin: 'auto' }}
             alt=""
           />

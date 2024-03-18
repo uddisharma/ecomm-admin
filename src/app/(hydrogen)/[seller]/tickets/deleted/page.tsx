@@ -1,9 +1,7 @@
 'use client';
-import ProductLoadingPage from '@/component/loading/products';
 import TicketsLoadingPage from '@/component/loading/tickets';
 import ExportButton from '@/component/others/export-button';
 import PageHeader from '@/component/others/pageHeader';
-import TicketTable from '@/component/tickets/EventsTable';
 import DeletedTicketTable from '@/component/tickets/deleted/EventsTable';
 import Pagination from '@/component/ui/pagination';
 import { metaObject } from '@/config/site.config';
@@ -16,11 +14,10 @@ import {
   updateTicket,
 } from '@/constants';
 import { useFilterControls } from '@/hooks/use-filter-control';
-import { UserContext } from '@/store/user/context';
 import axios from 'axios';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { PiPlusBold } from 'react-icons/pi';
 import { TiTicket } from 'react-icons/ti';
 import { Button, Empty, SearchNotFoundIcon } from 'rizzui';

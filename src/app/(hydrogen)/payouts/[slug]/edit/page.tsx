@@ -1,6 +1,6 @@
 'use client';
-import { useContext, useEffect, useState } from 'react';
-import { Controller, SubmitHandler } from 'react-hook-form';
+import { useEffect, useState } from 'react';
+import { SubmitHandler } from 'react-hook-form';
 import { Input } from '@/component/ui/input';
 import { Form } from '@/component/ui/form';
 import dynamic from 'next/dynamic';
@@ -16,8 +16,6 @@ import { Button, Empty, SearchNotFoundIcon } from 'rizzui';
 import axios from 'axios';
 import {
   BaseApi,
-  addCoupon,
-  addTransaction,
   findSingleSeller,
   singleTransaction,
   updateTransaction,
@@ -36,11 +34,6 @@ const schema = z.object({
 
 type Schema = z.infer<typeof schema>;
 
-const Select = dynamic(() => import('@/component/ui/select'), {
-  ssr: false,
-  loading: () => <SelectLoader />,
-});
-
 export default function NewsLetterForm() {
   const [reset, setReset] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -48,27 +41,22 @@ export default function NewsLetterForm() {
   const router = useRouter();
 
   function convertDateFormat(dateString: any) {
-    // Convert the dateString to a Date object
     const date = new Date(dateString);
 
-    // Set time components to 00:00:00
     date.setHours(0);
     date.setMinutes(0);
     date.setSeconds(0);
     date.setMilliseconds(0);
 
-    // Get the individual date components
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
 
-    // Get the time components
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
     const seconds = String(date.getSeconds()).padStart(2, '0');
     const milliseconds = String(date.getMilliseconds()).padStart(3, '0');
 
-    // Get the timezone offset
     const timezoneOffsetMinutes = date.getTimezoneOffset();
     const timezoneOffsetHours = Math.abs(
       Math.trunc(timezoneOffsetMinutes / 60)
@@ -76,7 +64,6 @@ export default function NewsLetterForm() {
     const timezoneOffsetMinutesRemainder = Math.abs(timezoneOffsetMinutes) % 60;
     const timezoneSign = timezoneOffsetMinutes < 0 ? '+' : '-';
 
-    // Construct the formatted date string
     const formattedDateString = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}${timezoneSign}${String(
       timezoneOffsetHours
     ).padStart(2, '0')}:${String(timezoneOffsetMinutesRemainder).padStart(
@@ -87,32 +74,6 @@ export default function NewsLetterForm() {
     return formattedDateString;
   }
 
-  // const onSubmit: SubmitHandler<Schema> = (data) => {
-  //   setIsLoading(true);
-  //   axios
-  //     .patch(`${BaseApi}${updateTransaction}/${params?.slug}`, {
-  //       ...data,
-  //       seller: params?.seller,
-  //       from: convertDateFormat(data?.from),
-  //       to: convertDateFormat(data?.to),
-  //     })
-  //     .then((res) => {
-  //       if (res.data?.status == 'SUCCESS') {
-  //         setReset(initialValues);
-  //         router.back();
-  //         return toast.success('Transaction is updated Successfully !');
-  //       } else {
-  //         return toast.error('Something went wrong');
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //       return toast.error('Something went wrong');
-  //     })
-  //     .finally(() => {
-  //       setIsLoading(false);
-  //     });
-  // };
   const pageHeader = {
     title: 'Edit Payout',
     breadcrumb: [

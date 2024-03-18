@@ -4,19 +4,11 @@ import { Button } from 'rizzui';
 import * as XLSX from 'xlsx';
 import PageHeader from '@/component/others/pageHeader';
 import { useEffect, useState } from 'react';
-import { UserContext } from '@/store/user/context';
-import {
-  BaseApi,
-  adminOrders,
-  admindatewiseStats,
-  datewiseStats,
-  sellerOrders,
-} from '@/constants';
+import { BaseApi, adminOrders, admindatewiseStats } from '@/constants';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { PiArrowLineDownBold, PiArrowLineUpBold } from 'react-icons/pi';
-import useMedia from 'react-use/lib/useMedia';
 function convertDateFormat(inputDate: any) {
   const parsedDate = new Date(inputDate);
   if (isNaN(parsedDate.getTime())) {
@@ -33,7 +25,6 @@ function convertDateFormat(inputDate: any) {
 
 function PromoBanner() {
   const params = useParams();
-  const router = useRouter();
   const [date, setDate] = useState<string>('');
   const [loading1, setLoading1] = useState(false);
   const [loading2, setLoading2] = useState(false);
@@ -98,7 +89,6 @@ function PromoBanner() {
         )}&status=All&courior=All&page=${1}&limit=${100000}`
       )
       .then((res) => {
-        // console.log(res?.data);
         if (res.data?.status == 'SUCCESS') {
           const orders = res.data?.data?.data;
           const calculateTotalQuantity = (orderItems: any) => {
@@ -187,7 +177,7 @@ function PromoBanner() {
         <div className="relative h-full min-h-[200px] w-full sm:max-w-[223px]">
           <img
             className=" rounded-t-xl object-cover xs:rounded-none xs:rounded-s-xl"
-            src="https://img.icons8.com/?size=128&id=119060&format=png"
+            src="/calendor.png"
             style={{ display: 'block', margin: 'auto', marginTop: '40px' }}
             alt=""
           />
@@ -237,7 +227,7 @@ function PromoBanner() {
         <div className="relative h-full min-h-[200px] w-full sm:max-w-[223px]">
           <img
             className=" rounded-t-xl object-cover xs:rounded-none xs:rounded-s-xl"
-            src="https://img.icons8.com/?size=128&id=lSY0siquqSks&format=png"
+            src="/report.png"
             style={{ display: 'block', margin: 'auto', marginTop: '40px' }}
             alt=""
           />

@@ -23,23 +23,6 @@ import Link from 'next/link';
 import { MdOutlineAutoDelete } from 'react-icons/md';
 import { FiUserPlus } from 'react-icons/fi';
 
-const pageHeader = {
-  title: 'Users',
-  breadcrumb: [
-    {
-      href: '/',
-      name: 'Home',
-    },
-    {
-      href: '/users',
-      name: 'Users',
-    },
-    {
-      name: 'List',
-    },
-  ],
-};
-
 export default function ProductsPage() {
   const [loading, setLoading] = useState(false);
   const [searchedData, setSearchedData] = useState<any>([]);
@@ -159,15 +142,18 @@ export default function ProductsPage() {
           </div>
         </div>
       </header>
-      {isLoading && <ProductLoadingPage />}
-      {error && (
-        <div style={{ paddingBottom: '100px' }}>
-          <Empty
-            image={<SearchNotFoundIcon />}
-            text="Something Went Wrong !"
-            className="h-full justify-center"
-          />
-        </div>
+      {isLoading ? (
+        <ProductLoadingPage />
+      ) : (
+        error && (
+          <div style={{ paddingBottom: '100px' }}>
+            <Empty
+              image={<SearchNotFoundIcon />}
+              text="Something Went Wrong !"
+              className="h-full justify-center"
+            />
+          </div>
+        )
       )}
 
       {searchedData && searchedData?.length > 0 ? (
@@ -178,19 +164,20 @@ export default function ProductsPage() {
         />
       ) : (
         <>
-          {data == null && (
+          {data == null ? (
             <UserTable
               key={Math.random()}
               data={users}
               onDeleteItem={onDelete}
             />
-          )}
-          {data && (
-            <UserTable
-              key={Math.random()}
-              data={data}
-              onDeleteItem={onDelete}
-            />
+          ) : (
+            data && (
+              <UserTable
+                key={Math.random()}
+                data={data}
+                onDeleteItem={onDelete}
+              />
+            )
           )}
           <div
             style={{

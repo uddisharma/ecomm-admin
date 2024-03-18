@@ -5,22 +5,16 @@ import { PiPlusBold } from 'react-icons/pi';
 import PageHeader from '@/component/others/pageHeader';
 import { metaObject } from '@/config/site.config';
 import { Button } from '@/component/ui/button';
-import { routes } from '@/config/routes';
 import axios from 'axios';
 import useSWR from 'swr';
 import { BaseApi, singleProduct } from '@/constants';
 import EditProduct from '@/component/ecommerce/product/edit';
-import { Empty, EmptyProductBoxIcon, SearchNotFoundIcon } from 'rizzui';
+import { Empty, EmptyProductBoxIcon } from 'rizzui';
 import Spinner from '@/component/ui/spinner';
 
 type Props = {
   params: { slug: string; seller: string };
 };
-
-/**
- * for dynamic metadata
- * @link: https://nextjs.org/docs/app/api-reference/functions/generate-metadata#generatemetadata-function
- */
 
 async function generateMetadata({ params }: Props): Promise<Metadata> {
   // read route params
@@ -97,7 +91,10 @@ export default function EditProductPage({
           </Button>
         </Link>
       </PageHeader>
-      {error && (
+
+      {isLoading ? (
+        <Spinner />
+      ) : error ? (
         <div style={{ paddingBottom: '100px' }}>
           <Empty
             image={<EmptyProductBoxIcon />}
@@ -105,11 +102,9 @@ export default function EditProductPage({
             className="h-full justify-center"
           />
         </div>
-      )}
-      {isLoading && <Spinner />}
-
-      {product && product?.name && (
-        <EditProduct product={product} slug={params.slug} />
+      ) : (
+        product &&
+        product?.name && <EditProduct product={product} slug={params.slug} />
       )}
     </>
   );

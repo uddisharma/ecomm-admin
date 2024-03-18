@@ -207,22 +207,6 @@ export default function NewsLetterForm() {
                       title="Ticket Type"
                       className="pt-7 @2xl:pt-9 @3xl:grid-cols-12 @3xl:pt-11"
                     >
-                      {/* <div className="mb-5 @3xl:col-span-2">
-                      <Controller
-                        name="employeeId"
-                        control={control}
-                        render={({ field: { onChange, value } }) => (
-                          <Select
-                            options={employees}
-                            value={value}
-                            onChange={onChange}
-                            label="Employee"
-                            error={errors?.employeeId?.message as string}
-                            getOptionValue={(option) => option.name}
-                          />
-                        )}
-                      />
-                    </div> */}
                       <div className="mb-5 @3xl:col-span-2">
                         <Controller
                           name="type"

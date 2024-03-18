@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { PiPlusBold, PiShoppingCartDuotone } from 'react-icons/pi';
 import { Button } from '@/component/ui/button';
 import PageHeader from '@/component/others/pageHeader';
-import ProductsTable from '@/component/ecommerce/product/product-list/table';
 import ExportButton from '@/component/others/export-button';
 import ProductLoadingPage from '@/component/loading/products';
 import Pagination from '@/component/ui/pagination';

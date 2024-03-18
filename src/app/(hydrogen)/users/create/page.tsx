@@ -222,8 +222,6 @@ export default function CreateUserForm() {
         warehouseErrors.state = 'State is required';
       }
 
-      // Add more validations for other fields...
-
       newErrors[index] = warehouseErrors;
     });
 

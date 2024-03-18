@@ -7,9 +7,7 @@ import Pagination from '@/component/ui/pagination';
 import {
   BaseApi,
   admintickets,
-  deleteTicket,
   markTicket,
-  sellerAllTickets,
   ticketPerPage,
   updateTicket,
 } from '@/constants';
@@ -70,7 +68,6 @@ export default function BlankPage() {
   );
   const pagininator = data?.data?.paginator;
   data = data?.data?.data;
-  // console.log(data);
 
   const onDeleteItem = async (id: any) => {
     try {
@@ -129,8 +126,9 @@ export default function BlankPage() {
           </Link>
         </div>
       </PageHeader>
-      {isLoading && <TicketsLoadingPage />}
-      {error && (
+      {isLoading ? (
+        <TicketsLoadingPage />
+      ) : error ? (
         <div style={{ paddingBottom: '100px' }}>
           <Empty
             image={<SearchNotFoundIcon />}
@@ -138,8 +136,7 @@ export default function BlankPage() {
             className="h-full justify-center"
           />
         </div>
-      )}
-      {data && (
+      ) : data ? (
         <TicketTable
           onDeleteItem={onDeleteItem}
           onMark={onMark}
@@ -147,8 +144,7 @@ export default function BlankPage() {
           data={data}
           user={state?.user?.id}
         />
-      )}
-      {data == null && (
+      ) : (
         <TicketTable
           onDeleteItem={onDeleteItem}
           onMark={onMark}

@@ -1,33 +1,25 @@
 'use client';
 
 import { useAtomValue } from 'jotai';
-import { useState, useEffect, useContext } from 'react';
+import { useState } from 'react';
 import { Title } from '@/component/ui/text';
 import { Badge } from '@/component/ui/badge';
 import { Button } from '@/component/ui/button';
 import { Avatar } from '@/component/ui/avatar';
 import { dataAtom, messageIdAtom } from '@/component/chat/message-list';
-import ActionDropdown from '@/component/chat/action-dropdown';
 import MessageBody from './messageBody';
 import cn from '@/utils/class-names';
 import SimpleBar from '@/component/ui/simplebar';
 import { useElementSize } from '@/hooks/use-element-size';
 import { useMedia } from '@/hooks/use-media';
 import Spinner from '@/component/ui/spinner';
-import { ActionIcon, Empty, Input, SearchNotFoundIcon } from 'rizzui';
+import { ActionIcon, Input } from 'rizzui';
 import axios from 'axios';
 
 import useSWR from 'swr';
-// import { BaseApi } from '@/constants/page';
 import { useParams } from 'next/navigation';
 import { FaTelegramPlane } from 'react-icons/fa';
-import {
-  BaseApi,
-  singleAdminTicket,
-  singleTicket,
-  ticketReply,
-} from '@/constants';
-import { UserContext } from '@/store/user/context';
+import { BaseApi, singleAdminTicket, ticketReply } from '@/constants';
 import { toast } from 'sonner';
 
 export default function ReplyDetails({ className }: { className?: string }) {
@@ -61,7 +53,6 @@ export default function ReplyDetails({ className }: { className?: string }) {
   )}`;
 
   function getCurrentDateTimeIndia() {
-    // Set the time zone offset to IST (UTC+5:30)
     const now = new Date(
       new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' })
     );
@@ -70,7 +61,7 @@ export default function ReplyDetails({ className }: { className?: string }) {
     const month = (now.getMonth() + 1).toString().padStart(2, '0');
     const year = now.getFullYear();
 
-    const hours = now.getHours() % 12 || 12; // Convert to 12-hour format
+    const hours = now.getHours() % 12 || 12;
     const minutes = now.getMinutes().toString().padStart(2, '0');
     const ampm = now.getHours() < 12 ? 'AM' : 'PM';
 
@@ -136,9 +127,6 @@ export default function ReplyDetails({ className }: { className?: string }) {
                 Closed
               </Badge>
             )}
-            {/* <div className="jus flex flex-wrap items-center gap-2.5 sm:justify-end">
-              <ActionDropdown className="ml-auto sm:ml-0" />
-            </div> */}
           </div>
           <div dangerouslySetInnerHTML={{ __html: data2?.data?.description }} />
         </header>

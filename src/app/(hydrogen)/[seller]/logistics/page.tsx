@@ -6,7 +6,6 @@ import { Form } from '@/component/ui/form';
 import {
   PiArrowLineUpRightBold,
   PiArrowRightBold,
-  PiX,
   PiXBold,
 } from 'react-icons/pi';
 import {
@@ -26,13 +25,12 @@ import {
 import NextBtn from '@/component/ui/carousel/next-btn';
 import PrevBtn from '@/component/ui/carousel/prev-btn';
 import PageHeader from '@/component/others/pageHeader';
-import { useContext, useEffect, useState } from 'react';
-import { UserContext } from '@/store/user/context';
+import { useEffect, useState } from 'react';
 import { z } from 'zod';
 import { BaseApi, singleSeller, updateSeller } from '@/constants';
 import axios from 'axios';
 import { toast } from 'sonner';
-import useSWR, { mutate } from 'swr';
+import useSWR from 'swr';
 import { useParams } from 'next/navigation';
 import { Skeleton } from '@/component/ui/skeleton';
 import Image from 'next/image';
@@ -268,7 +266,6 @@ const WareHouses = ({ data, data1, mutate }: any) => {
   const params = useParams();
   useEffect(() => {
     setWarehouses(data);
-    
   }, []);
 
   const handleSetDefault = async (selectedWarehouse: any) => {

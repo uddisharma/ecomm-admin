@@ -4,8 +4,7 @@ import { metaObject } from '@/config/site.config';
 import ExportButton from '@/component/others/export-button';
 import Pagination from '@/component/ui/pagination';
 import { useFilterControls } from '@/hooks/use-filter-control';
-import { useContext, useState } from 'react';
-import { UserContext } from '@/store/user/context';
+import { useState } from 'react';
 import axios from 'axios';
 import useSWR from 'swr';
 import {
@@ -17,7 +16,6 @@ import {
 import TransactionLoadingPage from '@/component/loading/transactions';
 import { Button, Empty, SearchNotFoundIcon } from 'rizzui';
 import { toast } from 'sonner';
-import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { PiPlusBold } from 'react-icons/pi';
 import PayoutsTable from '@/component/payouts/table';
@@ -51,8 +49,7 @@ export default function Transactions() {
     initialState
   );
   const [page, setPage] = useState(st?.page ? st?.page : 1);
-  const { state } = useContext(UserContext);
-  const params = useParams();
+
   const fetcher = (url: any) => axios.get(url).then((res) => res.data);
   let { data, isLoading, error, mutate } = useSWR(
     `${BaseApi}${allTransactions}?page=${page}&limit=${transactionPerPage}&isDeleted=${false}`,
@@ -107,7 +104,10 @@ export default function Transactions() {
           </Link>
         </div>
       </PageHeader>
-      {error && (
+      {}
+      {isLoading ? (
+        <TransactionLoadingPage />
+      ) : error ? (
         <div style={{ paddingBottom: '100px' }}>
           <Empty
             image={<SearchNotFoundIcon />}
@@ -115,12 +115,9 @@ export default function Transactions() {
             className="h-full justify-center"
           />
         </div>
-      )}
-      {isLoading && <TransactionLoadingPage />}
-      {data && (
+      ) : data ? (
         <PayoutsTable onDeleteItem={onDelete} key={Math.random()} data={data} />
-      )}
-      {data == null && (
+      ) : (
         <PayoutsTable
           onDeleteItem={onDelete}
           key={Math.random()}

@@ -218,7 +218,6 @@ export default function CreateUserForm() {
     warehouses.forEach((warehouse: any, index: any) => {
       const warehouseErrors: any = {};
 
-      // Validate each field manually
       if (!warehouse.name.trim()) {
         warehouseErrors.name = 'Name is required';
       }

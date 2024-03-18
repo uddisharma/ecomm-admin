@@ -19,7 +19,6 @@ import { useEffect, useState } from 'react';
 import { useFilterControls } from '@/hooks/use-filter-control';
 import { Empty, Input, SearchNotFoundIcon } from 'rizzui';
 import { toast } from 'sonner';
-import UserTable from '@/component/users/user-list/table';
 import { CiSearch } from 'react-icons/ci';
 import DeletedUsersTable from '@/component/users/user-list/deleted/table';
 
@@ -152,15 +151,18 @@ export default function ProductsPage() {
           </Button>
         </div>
       </PageHeader>
-      {isLoading && <ProductLoadingPage />}
-      {error && (
-        <div style={{ paddingBottom: '100px' }}>
-          <Empty
-            image={<SearchNotFoundIcon />}
-            text="Something Went Wrong !"
-            className="h-full justify-center"
-          />
-        </div>
+      {isLoading ? (
+        <ProductLoadingPage />
+      ) : (
+        error && (
+          <div style={{ paddingBottom: '100px' }}>
+            <Empty
+              image={<SearchNotFoundIcon />}
+              text="Something Went Wrong !"
+              className="h-full justify-center"
+            />
+          </div>
+        )
       )}
 
       {searchedData && searchedData?.length > 0 ? (
@@ -172,21 +174,22 @@ export default function ProductsPage() {
         />
       ) : (
         <>
-          {data == null && (
+          {data == null ? (
             <DeletedUsersTable
               key={Math.random()}
               data={users}
               onDeleteItem={onDelete}
               temperoryDelete={temperoryDelete}
             />
-          )}
-          {data && (
-            <DeletedUsersTable
-              key={Math.random()}
-              data={data}
-              onDeleteItem={onDelete}
-              temperoryDelete={temperoryDelete}
-            />
+          ) : (
+            data && (
+              <DeletedUsersTable
+                key={Math.random()}
+                data={data}
+                onDeleteItem={onDelete}
+                temperoryDelete={temperoryDelete}
+              />
+            )
           )}
           <div
             style={{

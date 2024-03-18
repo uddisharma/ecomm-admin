@@ -134,7 +134,10 @@ export default function Transactions() {
           </Link>
         </div>
       </PageHeader>
-      {error && (
+
+      {isLoading ? (
+        <TransactionLoadingPage />
+      ) : error ? (
         <div style={{ paddingBottom: '100px' }}>
           <Empty
             image={<SearchNotFoundIcon />}
@@ -142,9 +145,7 @@ export default function Transactions() {
             className="h-full justify-center"
           />
         </div>
-      )}
-      {isLoading && <TransactionLoadingPage />}
-      {data && (
+      ) : data ? (
         <ReferralTable
           onDeleteItem={onDelete}
           key={Math.random()}
@@ -152,8 +153,7 @@ export default function Transactions() {
           updatePaid={updatePaid}
           updateOnboard={updateOnboard}
         />
-      )}
-      {data == null && (
+      ) : (
         <ReferralTable
           onDeleteItem={onDelete}
           key={Math.random()}

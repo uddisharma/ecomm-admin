@@ -1,8 +1,6 @@
 'use client';
 import CategoryTable from '@/component/ecommerce/category/category-list/table';
 import CategoryPageHeader from './category-page-header';
-import { useContext } from 'react';
-import { UserContext } from '@/store/user/context';
 import axios from 'axios';
 import useSWR from 'swr';
 import { BaseApi, deleteCategory1, sellerCategoriesByAdmin } from '@/constants';
@@ -29,7 +27,6 @@ const pageHeader = {
 };
 
 export default function CategoriesPage() {
-  const { state } = useContext(UserContext);
   const params = useParams();
   const fetcher = (url: any) => axios.get(url).then((res) => res.data);
   let { data, isLoading, error, mutate } = useSWR(

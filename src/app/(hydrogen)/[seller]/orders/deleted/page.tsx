@@ -1,11 +1,8 @@
 'use client';
 import { Button } from '@/component/ui/button';
 import PageHeader from '@/component/others/pageHeader';
-import OrdersTable from '@/component/ecommerce/order/order-list/table';
 import { PiPackageDuotone, PiXBold } from 'react-icons/pi';
-import { orderData } from '@/data/order-data';
 import ExportButton from '@/component/others/export-button';
-import { CiFilter } from 'react-icons/ci';
 import { useModal } from '@/component/modal-views/use-modal';
 import { ActionIcon, Empty, SearchNotFoundIcon, Title } from 'rizzui';
 import dynamic from 'next/dynamic';
@@ -86,7 +83,6 @@ const pageHeader = {
 const orders: any = [];
 
 export default function OrdersPage() {
-  const { openModal } = useModal();
   const initialState = {
     page: '',
     date: '',
@@ -109,11 +105,8 @@ export default function OrdersPage() {
     courier: state?.courier ? state?.courier : 'All',
   });
 
-  const { date, status, courier } = filters;
+  const { date } = filters;
 
-  const handleApplyFilter = (newFilters: any) => {
-    setFilters(newFilters);
-  };
   const fetcher = (url: any) => axios.get(url).then((res) => res.data);
   let { data, error, isLoading, mutate } = useSWR(
     `${BaseApi}${deletedOrder}/${params?.seller}?page=${page}&limit=${orderPerPage}`,

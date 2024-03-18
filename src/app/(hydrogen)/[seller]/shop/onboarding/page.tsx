@@ -1,21 +1,13 @@
 'use client';
 import React, { useContext, useState } from 'react';
 import { Title, Text } from '@/component/ui/text';
-import { MdClose, MdOutlineAutoDelete } from 'react-icons/md';
+import { MdClose } from 'react-icons/md';
 import { Button } from '@/component/ui/button';
 import { useModal } from '@/component/modal-views/use-modal';
 import { ActionIcon } from 'rizzui';
 import { PiXBold, PiArrowRightBold } from 'react-icons/pi';
-import Link from 'next/link';
-import { SubmitHandler } from 'react-hook-form';
-import { Password } from '@/component/ui/password';
-import { Input } from '@/component/ui/input';
-import { Form } from '@/component/ui/form';
-import { routes } from '@/config/routes';
-import { z } from 'zod';
-import { FaRepeat } from 'react-icons/fa6';
 import axios from 'axios';
-import { BaseApi, Login, updateSeller } from '@/constants';
+import { BaseApi, updateSeller } from '@/constants';
 import { toast } from 'sonner';
 import { SellerContext } from '@/store/seller/context';
 import { IoCheckmarkDoneOutline } from 'react-icons/io5';
@@ -143,7 +135,6 @@ export default function Page() {
 
 function DisableAccount({ title }: any) {
   const { closeModal } = useModal();
-  const [reset, setReset] = useState({});
   const { state, setSeller } = useContext(SellerContext);
   const [loading, setLoading] = useState(false);
   const isActive = state?.seller?.isOnboarded;

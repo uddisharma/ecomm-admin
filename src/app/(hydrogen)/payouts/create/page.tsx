@@ -1,28 +1,20 @@
 'use client';
 import { useContext, useEffect, useState } from 'react';
-import {
-  Controller,
-  SubmitHandler,
-  useFormContext,
-  useWatch,
-} from 'react-hook-form';
+import { SubmitHandler } from 'react-hook-form';
 import { Input } from '@/component/ui/input';
 import { Form } from '@/component/ui/form';
-import dynamic from 'next/dynamic';
 import Spinner from '@/component/ui/spinner';
 import FormGroup from '@/component/others/form-group';
 import FormFooter from '@/component/others/form-footer';
 import cn from '@/utils/class-names';
 import { z } from 'zod';
-import SelectLoader from '@/component/loader/select-loader';
 import PageHeader from '@/component/others/pageHeader';
 import Link from 'next/link';
 import { Button } from 'rizzui';
 import axios from 'axios';
 import { BaseApi, addTransaction, findSingleSeller } from '@/constants';
 import { toast } from 'sonner';
-import { useParams, useRouter } from 'next/navigation';
-import MagnifyingGlassIconColor from '@/component/icons/magnifying-glass-color';
+import { useParams } from 'next/navigation';
 import { GoArrowRight } from 'react-icons/go';
 import { IoIosSearch } from 'react-icons/io';
 const schema = z.object({

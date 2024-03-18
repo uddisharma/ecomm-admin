@@ -2,14 +2,12 @@
 import TicketsLoadingPage from '@/component/loading/tickets';
 import ExportButton from '@/component/others/export-button';
 import PageHeader from '@/component/others/pageHeader';
-import TicketTable from '@/component/admintickets/EventsTable';
 import Pagination from '@/component/ui/pagination';
 import {
   BaseApi,
   admintickets,
   deleteTicket,
   markTicket,
-  sellerAllTickets,
   ticketPerPage,
   updateTicket,
 } from '@/constants';
@@ -71,7 +69,6 @@ export default function BlankPage() {
   );
   const pagininator = data?.data?.paginator;
   data = data?.data?.data;
-  // console.log(data);
 
   const onDeleteItem = async (id: any) => {
     try {
@@ -144,8 +141,9 @@ export default function BlankPage() {
           </Link>
         </div>
       </PageHeader>
-      {isLoading && <TicketsLoadingPage />}
-      {error && (
+      {isLoading ? (
+        <TicketsLoadingPage />
+      ) : error ? (
         <div style={{ paddingBottom: '100px' }}>
           <Empty
             image={<SearchNotFoundIcon />}
@@ -153,8 +151,7 @@ export default function BlankPage() {
             className="h-full justify-center"
           />
         </div>
-      )}
-      {data && (
+      ) : data ? (
         <DeletedTicketTable
           onDeleteItem={onDeleteItem}
           onMark={onMark}
@@ -163,8 +160,7 @@ export default function BlankPage() {
           user={state?.user?.id}
           onTemperoryDelete={onTemperoryDelete}
         />
-      )}
-      {data == null && (
+      ) : (
         <DeletedTicketTable
           onDeleteItem={onDeleteItem}
           onMark={onMark}

@@ -1,10 +1,9 @@
 'use client';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { Controller, SubmitHandler } from 'react-hook-form';
 import { Input } from '@/component/ui/input';
 import { Form } from '@/component/ui/form';
 import dynamic from 'next/dynamic';
-import Spinner from '@/component/ui/spinner';
 import FormGroup from '@/component/others/form-group';
 import FormFooter from '@/component/others/form-footer';
 import cn from '@/utils/class-names';
@@ -15,7 +14,6 @@ import Link from 'next/link';
 import { Button } from 'rizzui';
 import axios from 'axios';
 import { BaseApi, addCoupon } from '@/constants';
-import { UserContext } from '@/store/user/context';
 import { toast } from 'sonner';
 import { useParams } from 'next/navigation';
 const schema = z.object({

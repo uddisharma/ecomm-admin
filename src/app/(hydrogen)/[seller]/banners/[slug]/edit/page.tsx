@@ -27,7 +27,7 @@ const schema = z.object({
 type Schema = z.infer<typeof schema>;
 
 export default function AssetInit() {
-  const [reset, setReset] = useState({});
+  const [reset, _setReset] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const params = useParams();
   const router = useRouter();
@@ -68,6 +68,7 @@ export default function AssetInit() {
     mobile: [mobileBanner] ?? undefined,
     link: redirectLink ?? '',
   };
+  
   const onSubmit: SubmitHandler<Schema> = (data) => {
     if (!validateData(data?.desktop, data?.mobile, data?.link)) {
       return toast.warning('All fields are required');

@@ -1,5 +1,5 @@
 'use client';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { Controller, SubmitHandler } from 'react-hook-form';
 import { Input } from '@/component/ui/input';
 import { Form } from '@/component/ui/form';
@@ -13,7 +13,6 @@ import SelectLoader from '@/component/loader/select-loader';
 import PageHeader from '@/component/others/pageHeader';
 import Link from 'next/link';
 import { Button } from 'rizzui';
-import { UserContext } from '@/store/user/context';
 import axios from 'axios';
 import { BaseApi, createTicket } from '@/constants';
 import { toast } from 'sonner';
@@ -142,22 +141,6 @@ export default function NewsLetterForm() {
                     title="Ticket Type"
                     className="pt-7 @2xl:pt-9 @3xl:grid-cols-12 @3xl:pt-11"
                   >
-                    {/* <div className="mb-5 @3xl:col-span-2">
-                      <Controller
-                        name="employeeId"
-                        control={control}
-                        render={({ field: { onChange, value } }) => (
-                          <Select
-                            options={employees}
-                            value={value}
-                            onChange={onChange}
-                            label="Employee"
-                            error={errors?.employeeId?.message as string}
-                            getOptionValue={(option) => option.name}
-                          />
-                        )}
-                      />
-                    </div> */}
                     <div className="mb-5 @3xl:col-span-2">
                       <Controller
                         name="type"

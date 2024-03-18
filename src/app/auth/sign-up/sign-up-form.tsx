@@ -10,7 +10,6 @@ import { Input } from '@/component/ui/input';
 import { useMedia } from '@/hooks/use-media';
 import { Text } from '@/component/ui/text';
 import { Form } from '@/component/ui/form';
-import { routes } from '@/config/routes';
 import { SignUpSchema, signUpSchema } from '@/utils/validators/signup.schema';
 
 const initialValues = {

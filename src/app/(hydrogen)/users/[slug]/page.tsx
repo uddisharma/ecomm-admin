@@ -12,15 +12,12 @@ export default function ProductDetailsPage({ params }: any) {
     title: 'Shop',
     breadcrumb: [
       {
-        href: routes.eCommerce.dashboard,
-        name: 'E-Commerce',
+        href: '/',
+        name: 'Home',
       },
       {
-        href: routes.eCommerce.shop,
-        name: 'Shop',
-      },
-      {
-        name: params.slug,
+        href: '/',
+        name: 'Shops',
       },
     ],
   };

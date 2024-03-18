@@ -6,21 +6,16 @@ import Link from 'next/link';
 import { Button, Empty, SearchNotFoundIcon } from 'rizzui';
 import { PiPlusBold } from 'react-icons/pi';
 import { useFilterControls } from '@/hooks/use-filter-control';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import useSWR from 'swr';
 import {
   BaseApi,
   adminBanners,
   bannerPerPage,
-  banners,
-  deleteBanner,
-  deleteCoupon,
   softDeleteBanner,
 } from '@/constants';
 import { toast } from 'sonner';
-import { useParams } from 'next/navigation';
-import Card1 from '@/component/banner/cards';
 import BannerLoading from '@/component/loading/bannerLoading';
 import Card2 from '@/component/banner/card';
 import { MdOutlineAutoDelete } from 'react-icons/md';
@@ -84,7 +79,7 @@ export default function Coupons() {
       return toast.error('Something went wrong');
     }
   };
-  //  console.log(data)
+  
   return (
     <>
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
