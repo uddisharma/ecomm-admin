@@ -1,18 +1,18 @@
 'use client';
 import MetricCard from '@/component/cards/metric-card';
 import { Text } from '@/component/ui/text';
-import { BaseApi, datewiseStats } from '@/constants';
-import { UserContext } from '@/store/user/context';
+import { BaseApi, datewiseStats, errorRetry } from '@/constants';
+import { fetcher } from '@/constants/fetcher';
 import cn from '@/utils/class-names';
 import { formatNumber } from '@/utils/format-number';
-import axios from 'axios';
-import { useContext } from 'react';
+import { useCookies } from 'react-cookie';
 import {
   PiGiftDuotone,
   PiBankDuotone,
   PiChartPieSliceDuotone,
 } from 'react-icons/pi';
 import { BarChart, Bar, ResponsiveContainer } from 'recharts';
+import { toast } from 'sonner';
 import useSWR from 'swr';
 
 const orderData = [
@@ -130,8 +130,6 @@ const revenueData = [
 ];
 
 export default function StatCards({ className }: { className?: string }) {
-  const { state } = useContext(UserContext);
-
   const now = new Date();
   const formatter = new Intl.DateTimeFormat('en-US', {
     year: 'numeric',
@@ -147,19 +145,24 @@ export default function StatCards({ className }: { className?: string }) {
 
   const formattedTime: any = formatter.format(now);
 
-  const fetcher = (url: any) => axios.get(url).then((res) => res.data);
+  const [cookies] = useCookies(['admintoken']);
+
   let { data, isLoading, error } = useSWR(
-    `${BaseApi}${datewiseStats}?date=${formattedTime?.slice(
-      0,
-      10
-    )}`,
-    fetcher,
+    `${BaseApi}${datewiseStats}?date=${formattedTime?.slice(0, 10)}`,
+    (url) => fetcher(url, cookies.admintoken),
     {
       refreshInterval: 3600000,
+      revalidateOnMount: true,
       revalidateOnFocus: true,
-      errorRetryCount: 3,
+      onErrorRetry({ retrycount }: any) {
+        if (retrycount > errorRetry) {
+          return false;
+        }
+      },
     }
   );
+
+  const authstatus = error?.response?.data?.status == 'UNAUTHORIZED' && true;
 
   const eComDashboardStatData = [
     {
@@ -202,6 +205,13 @@ export default function StatCards({ className }: { className?: string }) {
       desc: `Revenue of day ₹${data?.data ? data?.data?.charge : ''}`,
     },
   ];
+  if (authstatus) {
+    localStorage.removeItem('admin');
+    toast.error('Session Expired');
+    if (typeof window !== 'undefined') {
+      location.href = `/auth/sign-in`;
+    }
+  }
 
   return (
     <div

@@ -1,7 +1,6 @@
 'use client';
 import Link from 'next/link';
 import Image from 'next/image';
-import { routes } from '@/config/routes';
 import { Button } from '@/component/ui/button';
 import WelcomeBanner from '@/component/banners/welcome';
 import StatCards from './stat-cards';
@@ -14,9 +13,12 @@ import { useContext } from 'react';
 import { UserContext } from '@/store/user/context';
 import { formatNumber } from '@/utils/format-number';
 import useSWR from 'swr';
-import { BaseApi, admintotalCount } from '@/constants';
+import { BaseApi, admintotalCount, errorRetry } from '@/constants';
 import axios from 'axios';
 import { BsActivity } from 'react-icons/bs';
+import { useCookies } from 'react-cookie';
+import { fetcher } from '@/constants/fetcher';
+import { toast } from 'sonner';
 
 export default function EcommerceDashboard() {
   function getGreeting() {
@@ -37,16 +39,30 @@ export default function EcommerceDashboard() {
   }
 
   const { state } = useContext(UserContext);
-  const fetcher = (url: any) => axios.get(url).then((res) => res.data);
+
+  const [cookies] = useCookies(['admintoken']);
+
   let {
     data: data1,
     isLoading,
     error,
-  } = useSWR(`${BaseApi}${admintotalCount}`, fetcher, {
-    refreshInterval: 3600000,
-    revalidateOnFocus: true,
-    errorRetryCount: 3,
-  });
+  } = useSWR(
+    `${BaseApi}${admintotalCount}`,
+    (url) => fetcher(url, cookies.admintoken),
+    {
+      refreshInterval: 3600000,
+      revalidateOnMount: true,
+      revalidateOnFocus: true,
+      onErrorRetry({ retrycount }: any) {
+        if (retrycount > errorRetry) {
+          return false;
+        }
+      },
+    }
+  );
+
+  const authstatus = error?.response?.data?.status == 'UNAUTHORIZED' && true;
+
   const totalSales = data1?.data?.totalSales;
   const orders = data1?.data?.orders;
   const products = data1?.data?.products;
@@ -93,6 +109,15 @@ export default function EcommerceDashboard() {
       color: '#3872FA',
     },
   ];
+
+  if (authstatus) {
+    localStorage.removeItem('admin');
+    toast.error('Session Expired');
+
+    if (typeof window !== 'undefined') {
+      location.href = `/auth/sign-in`;
+    }
+  }
 
   return (
     <div className="@container">

@@ -7,16 +7,20 @@ import Pagination from '@/component/ui/pagination';
 import {
   BaseApi,
   deletedSellers,
+  errorRetry,
   finddeletedSellers,
   pendingOnboardingLimit,
   updateAdminSeller,
 } from '@/constants';
+import { fetcher } from '@/constants/fetcher';
 import { useFilterControls } from '@/hooks/use-filter-control';
 import cn from '@/utils/class-names';
+import { extractPathAndParams } from '@/utils/urlextractor';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
+import { useCookies } from 'react-cookie';
 import { CiSearch } from 'react-icons/ci';
-import { Button, Empty, Input, SearchNotFoundIcon, Title } from 'rizzui';
+import { Button, Empty, Input, SearchNotFoundIcon } from 'rizzui';
 import { toast } from 'sonner';
 import useSWR from 'swr';
 
@@ -45,38 +49,60 @@ const Page = () => {
   };
   const { state, paginate } = useFilterControls(initialState);
   const [page, setPage] = useState(state?.page ? state?.page : 1);
-  const fetcher = (url: any) => axios.get(url).then((res) => res.data);
-  let { data, error, isLoading, mutate } = useSWR(
+
+  const [cookies] = useCookies(['admintoken']);
+
+  let { data, isLoading, error, mutate } = useSWR(
     `${BaseApi}${deletedSellers}?page=${page}&limit=${pendingOnboardingLimit}`,
-    fetcher,
+    (url) => fetcher(url, cookies.admintoken),
     {
       refreshInterval: 3600000,
       revalidateOnMount: true,
       revalidateOnFocus: true,
       onErrorRetry({ retrycount }: any) {
-        if (retrycount > 3) {
+        if (retrycount > errorRetry) {
           return false;
         }
       },
     }
   );
+
+  const authstatus = error?.response?.data?.status == 'UNAUTHORIZED' && true;
+
   const pagininator = data?.data?.paginator;
   data = data?.data?.data;
 
   const onDeleteItem = async (id: any) => {
     console.log(id);
     try {
-      const res = await axios.patch(`${BaseApi}${updateAdminSeller}/${id}`, {
-        isDeleted: false,
-      });
+      const res = await axios.patch(
+        `${BaseApi}${updateAdminSeller}/${id}`,
+        {
+          isDeleted: false,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
+          },
+        }
+      );
       if (res.data?.status == 'SUCCESS') {
         await mutate();
         return toast.success(`Seller is Recycled Successfully`);
       } else {
         return toast.error('Something went wrong !');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
+      if (error?.response?.data?.status == 'UNAUTHORIZED') {
+        localStorage.removeItem('admin');
+        const currentUrl = window.location.href;
+        const path = extractPathAndParams(currentUrl);
+        if (typeof window !== 'undefined') {
+          location.href = `/auth/sign-in?ref=${path}`;
+        }
+        return toast.error('Session Expired');
+      }
       return toast.error('Something went wrong');
     }
   };
@@ -84,7 +110,11 @@ const Page = () => {
   const findSeller = () => {
     setLoading(true);
     axios
-      .get(`${BaseApi}${finddeletedSellers}?term=${term}`)
+      .get(`${BaseApi}${finddeletedSellers}?term=${term}`, {
+        headers: {
+          Authorization: `Bearer ${cookies?.admintoken}`,
+        },
+      })
       .then((res) => {
         if (res?.data?.data) {
           setSearchedData(res?.data?.data);
@@ -94,6 +124,15 @@ const Page = () => {
       })
       .catch((err) => {
         console.log(err);
+        if (err?.response?.data?.status == 'UNAUTHORIZED') {
+          localStorage.removeItem('admin');
+          const currentUrl = window.location.href;
+          const path = extractPathAndParams(currentUrl);
+          if (typeof window !== 'undefined') {
+            location.href = `/auth/sign-in?ref=${path}`;
+          }
+          return toast.error('Session Expired');
+        }
         return toast.error('Something went wrong');
       })
       .finally(() => {
@@ -107,6 +146,16 @@ const Page = () => {
   }, [term]);
 
   const sellers: any = [];
+
+  if (authstatus) {
+    localStorage.removeItem('admin');
+    toast.error('Session Expired');
+    const currentUrl = window.location.href;
+    const path = extractPathAndParams(currentUrl);
+    if (typeof window !== 'undefined') {
+      location.href = `/auth/sign-in?ref=${path}`;
+    }
+  }
 
   return (
     <div>
@@ -152,7 +201,7 @@ const Page = () => {
           ) : (
             <div className="grid grid-cols-1 gap-6 @container 3xl:gap-8">
               <SectionBlock title={''}>
-                {error && (
+                {error ? (
                   <div style={{ paddingBottom: '100px' }}>
                     <Empty
                       image={<SearchNotFoundIcon />}
@@ -160,22 +209,20 @@ const Page = () => {
                       className="h-full justify-center"
                     />
                   </div>
-                )}
-
-                {data && (
+                ) : data ? (
                   <OnboardingPendingTable
                     onDelete={onDeleteItem}
                     key={Math.random()}
                     data={data}
                   />
-                )}
-
-                {data == null && (
-                  <OnboardingPendingTable
-                    onDelete={onDeleteItem}
-                    key={Math.random()}
-                    data={sellers}
-                  />
+                ) : (
+                  data == null && (
+                    <OnboardingPendingTable
+                      onDelete={onDeleteItem}
+                      key={Math.random()}
+                      data={sellers}
+                    />
+                  )
                 )}
               </SectionBlock>
             </div>

@@ -17,30 +17,51 @@ import { CustomTooltip } from '@/component/charts/custom-tooltip';
 import SimpleBar from '@/component/ui/simplebar';
 import { formatNumber } from '@/utils/format-number';
 import Spinner from '@/component/ui/spinner';
-import { BaseApi, adminmonthwiseOrders } from '@/constants';
+import { BaseApi, adminmonthwiseOrders, errorRetry } from '@/constants';
 import useSWR from 'swr';
-import axios from 'axios';
 import { Empty, SearchNotFoundIcon } from 'rizzui';
+import { useCookies } from 'react-cookie';
+import { fetcher } from '@/constants/fetcher';
+import { toast } from 'sonner';
 
 export default function OrderStats({ className }: { className?: string }) {
   const isTablet = useMedia('(max-width: 820px)', false);
   const [startDate, setStartDate] = useState<Date>(new Date());
-  const fetcher = (url: any) => axios.get(url).then((res) => res.data);
+
+  const [cookies] = useCookies(['admintoken']);
+
   let {
     data: newdata,
     isLoading,
     error,
   } = useSWR(
     `${BaseApi}${adminmonthwiseOrders}?year=${startDate?.getFullYear()}`,
-    fetcher,
+    (url) => fetcher(url, cookies.admintoken),
     {
       refreshInterval: 3600000,
+      revalidateOnMount: true,
+      revalidateOnFocus: true,
+      onErrorRetry({ retrycount }: any) {
+        if (retrycount > errorRetry) {
+          return false;
+        }
+      },
     }
   );
+
+  const authstatus = error?.response?.data?.status == 'UNAUTHORIZED' && true;
 
   const newdata1 = newdata?.map((e: any) => {
     return { month: e?.month?.slice(0, 3), orders: e?.totalOrders };
   });
+
+  if (authstatus) {
+    localStorage.removeItem('admin');
+    toast.error('Session Expired');
+    if (typeof window !== 'undefined') {
+      location.href = `/auth/sign-in`;
+    }
+  }
 
   return (
     <WidgetCard

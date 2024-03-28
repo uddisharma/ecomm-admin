@@ -1,5 +1,7 @@
 export const BaseApi = 'http://localhost:5000';
 
+export const errorRetry = 3;
+
 export const SearchShops = '/client/seller/all/search';
 
 export const AllSellers = '/client/seller/all';
