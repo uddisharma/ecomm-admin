@@ -50,7 +50,7 @@ export const ResetPassword = '/seller/auth/reset-password';
 
 export const AdminResetPassword = '/admin/auth/reset-password';
 
-export const orderDetails = '/client/api/v1/order';
+export const orderDetails = '/admin/order';
 
 export const shopCategories = '/client/seller/all';
 

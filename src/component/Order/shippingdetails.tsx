@@ -22,7 +22,7 @@ export const getColumns = () => [
         }}
       >
         <img
-          src={row?.productId?.images && row?.productId?.images}
+          src={row?.productId?.images && row?.productId?.images[0]}
           style={{ height: '50px', width: '50px', borderRadius: '50%' }}
           alt=""
         />
@@ -35,7 +35,7 @@ export const getColumns = () => [
     dataIndex: 'description',
     key: 'description',
     width: 50,
-    render: (_: any, row: any) => <p>{row?.color?.name}</p>,
+    render: (_: any, row: any) => <p>{row?.color}</p>,
   },
   {
     title: <span className="block">Size</span>,
@@ -81,7 +81,7 @@ export default function ShippingDetails({
   if (order?.orderItems) {
     return (
       <BasicTableWidget
-        title="Shipping Details"
+        title="Ordered Products"
         className={cn(
           'pb-0 lg:pb-0 [&_.rc-table-row:last-child_td]:border-b-0'
         )}

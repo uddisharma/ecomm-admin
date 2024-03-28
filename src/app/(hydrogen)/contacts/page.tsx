@@ -103,6 +103,7 @@ const Page = () => {
       {searchedData && searchedData?.length > 0 ? (
         <OnboardingPendingTable
           onDelete={onDeleteItem}
+          DeleteItem={() => {}}
           key={Math.random()}
           data={data}
         />

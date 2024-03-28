@@ -1,83 +1,27 @@
 'use client';
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
-import { SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 import { Input } from '@/component/ui/input';
-import { Form } from '@/component/ui/form';
 import FormGroup from '@/component/others/form-group';
-import FormFooter from '@/component/others/form-footer';
 import cn from '@/utils/class-names';
-import { Button, Empty, SearchNotFoundIcon, Text } from 'rizzui';
+import { Button, Empty, SearchNotFoundIcon } from 'rizzui';
 import PageHeader from '@/component/others/pageHeader';
 import Link from 'next/link';
-import TrashIcon from '@/component/icons/trash';
-import { PiPlusBold } from 'react-icons/pi';
-import { userSchema, UserInput } from '@/utils/validators/users.schema';
 import dynamic from 'next/dynamic';
 import SelectLoader from '@/component/loader/select-loader';
-import { MdKeyboardArrowLeft } from 'react-icons/md';
-import { FiChevronsRight } from 'react-icons/fi';
-import { toast } from 'sonner';
-import axios from 'axios';
-import { BaseApi, createUser, singleUser } from '@/constants';
+import { BaseApi, errorRetry, singleUser } from '@/constants';
 import useSWR from 'swr';
 import { useParams } from 'next/navigation';
 import Spinner from '@/component/ui/spinner';
-
-const initialValues = {
-  password: '',
-  mobileNo: '',
-  email: '',
-  name: '',
-  shippingAddress: [
-    {
-      name: '',
-      phone: '',
-      phone1: '',
-      email: '',
-      pincode: '',
-      address: '',
-      landmark: '',
-      city: '',
-      district: '',
-      state: '',
-    },
-  ],
-};
+import { states } from '@/constants/states';
+import { useCookies } from 'react-cookie';
+import { fetcher } from '@/constants/fetcher';
+import { toast } from 'sonner';
+import { extractPathAndParams } from '@/utils/urlextractor';
 
 const Select = dynamic(() => import('@/component/ui/select'), {
   ssr: false,
   loading: () => <SelectLoader />,
 });
-const states = [
-  { name: 'Andhra Pradesh', value: 'Andhra Pradesh' },
-  { name: 'Arunachal Pradesh', value: 'Arunachal Pradesh' },
-  { name: 'Assam', value: 'Assam' },
-  { name: 'Bihar', value: 'Bihar' },
-  { name: 'Chhattisgarh', value: 'Chhattisgarh' },
-  { name: 'Goa', value: 'Goa' },
-  { name: 'Gujarat', value: 'Gujarat' },
-  { name: 'Haryana', value: 'Haryana' },
-  { name: 'Himachal Pradesh', value: 'Himachal Pradesh' },
-  { name: 'Jharkhand', value: 'Jharkhand' },
-  { name: 'Karnataka', value: 'Karnataka' },
-  { name: 'Kerala', value: 'Kerala' },
-  { name: 'Madhya Pradesh', value: 'Madhya Pradesh' },
-  { name: 'Maharashtra', value: 'Maharashtra' },
-  { name: 'Manipur', value: 'Manipur' },
-  { name: 'Meghalaya', value: 'Meghalaya' },
-  { name: 'Mizoram', value: 'Mizoram' },
-  { name: 'Nagaland', value: 'Nagaland' },
-  { name: 'Odisha', value: 'Odisha' },
-  { name: 'Punjab', value: 'Punjab' },
-  { name: 'Rajasthan', value: 'Rajasthan' },
-  { name: 'Sikkim', value: 'Sikkim' },
-  { name: 'Tamil Nadu', value: 'Tamil Nadu' },
-  { name: 'Telangana', value: 'Telangana' },
-  { name: 'Tripura', value: 'Tripura' },
-  { name: 'Uttar Pradesh', value: 'Uttar Pradesh' },
-  { name: 'Uttarakhand', value: 'Uttarakhand' },
-  { name: 'West Bengal', value: 'West Bengal' },
-];
 
 interface Warehouse {
   name: string;
@@ -105,11 +49,6 @@ interface FormError {
   state: string;
 }
 
-interface StepSixProps {
-  step: number;
-  setStep: React.Dispatch<React.SetStateAction<number>>;
-}
-
 export default function CreateUserForm() {
   const pageHeader = {
     title: 'User Details',
@@ -130,15 +69,29 @@ export default function CreateUserForm() {
 
   const params = useParams();
 
-  const fetcher = (url: any) => axios.get(url).then((res) => res.data);
+  const [cookies] = useCookies(['admintoken']);
 
   let {
     data,
-    error,
     isLoading: loading,
-  } = useSWR(`${BaseApi}${singleUser}/${params?.slug}`, fetcher, {
-    refreshInterval: 3600000,
-  });
+    error,
+  } = useSWR(
+    `${BaseApi}${singleUser}/${params?.slug}`,
+    (url) => fetcher(url, cookies.admintoken),
+    {
+      refreshInterval: 3600000,
+      revalidateOnMount: true,
+      revalidateOnFocus: true,
+      onErrorRetry({ retrycount }: any) {
+        if (retrycount > errorRetry) {
+          return false;
+        }
+      },
+    }
+  );
+
+  const authstatus = error?.response?.data?.status == 'UNAUTHORIZED' && true;
+
   const user = data?.data;
 
   const [personal, setPersonal] = useState({
@@ -239,6 +192,16 @@ export default function CreateUserForm() {
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
   };
+
+  if (authstatus) {
+    localStorage.removeItem('admin');
+    toast.error('Session Expired');
+    const currentUrl = window.location.href;
+    const path = extractPathAndParams(currentUrl);
+    if (typeof window !== 'undefined') {
+      location.href = `/auth/sign-in?ref=${path}`;
+    }
+  }
 
   if (loading) {
     <div>

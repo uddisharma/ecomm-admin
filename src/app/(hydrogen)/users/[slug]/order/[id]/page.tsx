@@ -5,19 +5,20 @@ import PageHeader from '@/component/others/pageHeader';
 import Addresses from '@/component/Order/address';
 import InvoiceDetails from '@/component/Order/invoicedetails';
 import ShippingDetails from '@/component/Order/shippingdetails';
-import axios from 'axios';
 import useSWR from 'swr';
-import { BaseApi, orderDetails } from '@/constants';
+import { BaseApi, errorRetry, orderDetails } from '@/constants';
 import { useParams, useRouter } from 'next/navigation';
 import BannerLoading from '@/component/loading/bannerLoading';
 import { FaTruck } from 'react-icons/fa6';
 import toast from 'react-hot-toast';
+import { useCookies } from 'react-cookie';
+import { fetcher } from '@/constants/fetcher';
+import { extractPathAndParams } from '@/utils/urlextractor';
 
 export default function LogisticsListPage() {
   const router = useParams();
   const router1 = useRouter();
 
-  const fetcher = (url: any) => axios.get(url).then((res) => res.data);
   const pageHeader = {
     title: 'Order Details',
     breadcrumb: [
@@ -39,13 +40,34 @@ export default function LogisticsListPage() {
     ],
   };
 
-  const { data, isLoading } = useSWR(
+  const [cookies] = useCookies(['admintoken']);
+
+  let { data, isLoading, error } = useSWR(
     `${BaseApi}${orderDetails}/${router?.id}`,
-    fetcher,
+    (url) => fetcher(url, cookies.admintoken),
     {
       refreshInterval: 3600000,
+      revalidateOnMount: true,
+      revalidateOnFocus: true,
+      onErrorRetry({ retrycount }: any) {
+        if (retrycount > errorRetry) {
+          return false;
+        }
+      },
     }
   );
+
+  const authstatus = error?.response?.data?.status == 'UNAUTHORIZED' && true;
+
+  if (authstatus) {
+    localStorage.removeItem('admin');
+    toast.error('Session Expired');
+    const currentUrl = window.location.href;
+    const path = extractPathAndParams(currentUrl);
+    if (typeof window !== 'undefined') {
+      location.href = `/auth/sign-in?ref=${path}`;
+    }
+  }
 
   return (
     <>

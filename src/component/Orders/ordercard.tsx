@@ -6,15 +6,16 @@ import { Badge } from '@/component/ui/badge';
 import { PiCaretDownBold } from 'react-icons/pi';
 import cn from '@/utils/class-names';
 import { Collapse } from '@/component/ui/collapse';
-import { useContext } from 'react';
 import Link from 'next/link';
-import axios from 'axios';
 import useSWR from 'swr';
-import { BaseApi, userOrders } from '@/constants';
-import { UserContext } from '@/store/user/context';
+import { BaseApi, errorRetry, userOrders } from '@/constants';
 import BannerLoading from '@/component/loading/bannerLoading';
 import { Empty, SearchNotFoundIcon } from 'rizzui';
 import { useParams } from 'next/navigation';
+import { useCookies } from 'react-cookie';
+import { fetcher } from '@/constants/fetcher';
+import { toast } from 'sonner';
+import { extractPathAndParams } from '@/utils/urlextractor';
 
 const getformatDate = (date: any) => {
   const originalDate = new Date(date);
@@ -24,16 +25,38 @@ const getformatDate = (date: any) => {
   return formattedDate;
 };
 export default function OrderCard() {
-  const fetcher = (url: any) => axios.get(url).then((res) => res.data);
-  const { state } = useContext(UserContext);
+  const [cookies] = useCookies(['admintoken']);
   const params = useParams();
-  const {
+  let {
     data,
-    error,
     isLoading: loading,
-  } = useSWR(`${BaseApi}${userOrders}/${params?.slug}`, fetcher, {
-    refreshInterval: 3600000,
-  });
+    error,
+  } = useSWR(
+    `${BaseApi}${userOrders}/${params?.slug}`,
+    (url) => fetcher(url, cookies.admintoken),
+    {
+      refreshInterval: 3600000,
+      revalidateOnMount: true,
+      revalidateOnFocus: true,
+      onErrorRetry({ retrycount }: any) {
+        if (retrycount > errorRetry) {
+          return false;
+        }
+      },
+    }
+  );
+
+  const authstatus = error?.response?.data?.status == 'UNAUTHORIZED' && true;
+
+  if (authstatus) {
+    localStorage.removeItem('admin');
+    toast.error('Session Expired');
+    const currentUrl = window.location.href;
+    const path = extractPathAndParams(currentUrl);
+    if (typeof window !== 'undefined') {
+      location.href = `/auth/sign-in?ref=${path}`;
+    }
+  }
 
   return (
     <>
@@ -123,7 +146,7 @@ function AccordionContent({ order }: any) {
                 src={
                   order?.orderItems &&
                   order?.orderItems[0].productId?.images &&
-                  order?.orderItems[0].productId?.images
+                  order?.orderItems[0].productId?.images[0]
                 }
                 alt={order?.id}
                 fill

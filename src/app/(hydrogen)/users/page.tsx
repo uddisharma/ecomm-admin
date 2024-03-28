@@ -7,6 +7,7 @@ import axios from 'axios';
 import useSWR from 'swr';
 import {
   BaseApi,
+  errorRetry,
   findUsers,
   updateUser,
   userList,
@@ -22,6 +23,9 @@ import cn from '@/utils/class-names';
 import Link from 'next/link';
 import { MdOutlineAutoDelete } from 'react-icons/md';
 import { FiUserPlus } from 'react-icons/fi';
+import { useCookies } from 'react-cookie';
+import { fetcher } from '@/constants/fetcher';
+import { extractPathAndParams } from '@/utils/urlextractor';
 
 export default function ProductsPage() {
   const [loading, setLoading] = useState(false);
@@ -34,28 +38,37 @@ export default function ProductsPage() {
     initialState
   );
   const [page, setPage] = useState(st?.page ? st?.page : 1);
-  const fetcher = (url: any) => axios.get(url).then((res) => res.data);
+
+  const [cookies] = useCookies(['admintoken']);
+
   let { data, isLoading, error, mutate } = useSWR(
     `${BaseApi}${userList}?page=${page}&limit=${userPerPage}&isDeleted=${false}`,
-    fetcher,
+    (url) => fetcher(url, cookies.admintoken),
     {
       refreshInterval: 3600000,
       revalidateOnMount: true,
       revalidateOnFocus: true,
       onErrorRetry({ retrycount }: any) {
-        if (retrycount > 3) {
+        if (retrycount > errorRetry) {
           return false;
         }
       },
     }
   );
+
+  const authstatus = error?.response?.data?.status == 'UNAUTHORIZED' && true;
+
   const pagininator = data?.data?.paginator;
   data = data?.data?.data;
 
   const findUser = () => {
     setLoading(true);
     axios
-      .get(`${BaseApi}${findUsers}?term=${term}`)
+      .get(`${BaseApi}${findUsers}?term=${term}`, {
+        headers: {
+          Authorization: `Bearer ${cookies?.admintoken}`,
+        },
+      })
       .then((res) => {
         if (res?.data?.data) {
           setSearchedData(res?.data?.data);
@@ -63,8 +76,17 @@ export default function ProductsPage() {
           toast.warning('User Not found');
         }
       })
-      .catch((err) => {
+      .catch((err: any) => {
         console.log(err);
+        if (err?.response?.data?.status == 'UNAUTHORIZED') {
+          localStorage.removeItem('admin');
+          const currentUrl = window.location.href;
+          const path = extractPathAndParams(currentUrl);
+          if (typeof window !== 'undefined') {
+            location.href = `/auth/sign-in?ref=${path}`;
+          }
+          return toast.error('Session Expired');
+        }
         return toast.error('Something went wrong');
       })
       .finally(() => {
@@ -79,22 +101,50 @@ export default function ProductsPage() {
 
   const onDelete = async (id: any) => {
     try {
-      const res = await axios.patch(`${BaseApi}${updateUser}/${id}`, {
-        isDeleted: true,
-      });
+      const res = await axios.patch(
+        `${BaseApi}${updateUser}/${id}`,
+        {
+          isDeleted: true,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
+          },
+        }
+      );
       if (res?.data?.status == 'SUCCESS') {
         await mutate();
         return toast.success('User is Temperory Deleted Successfully !');
       } else {
         toast.error('Something went wrong !');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
+      if (error?.response?.data?.status == 'UNAUTHORIZED') {
+        localStorage.removeItem('admin');
+        const currentUrl = window.location.href;
+        const path = extractPathAndParams(currentUrl);
+        if (typeof window !== 'undefined') {
+          location.href = `/auth/sign-in?ref=${path}`;
+        }
+        return toast.error('Session Expired');
+      }
       return toast.error('Something went wrong');
     }
   };
 
   const users: any = [];
+
+  if (authstatus) {
+    localStorage.removeItem('admin');
+    toast.error('Session Expired');
+    const currentUrl = window.location.href;
+    const path = extractPathAndParams(currentUrl);
+    if (typeof window !== 'undefined') {
+      location.href = `/auth/sign-in?ref=${path}`;
+    }
+  }
+  
   return (
     <>
       <header className={cn('mb-3 @container xs:-mt-2 lg:mb-7')}>
