@@ -144,7 +144,7 @@ export const monthwiseOrders = '/seller/api/v1/order/orders/monthwise';
 
 export const adminmonthwiseOrders = '/admin/order/orders/monthwise';
 
-export const datewiseStats = '/seller/api/v1/order/revenue/datewise';
+export const datewiseStats = '/admin/order/revenue/datewise';
 
 export const admindatewiseStats = '/admin/order/revenue/datewise';
 

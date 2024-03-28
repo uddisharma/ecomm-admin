@@ -149,7 +149,7 @@ export default function StatCards({ className }: { className?: string }) {
 
   const fetcher = (url: any) => axios.get(url).then((res) => res.data);
   let { data, isLoading, error } = useSWR(
-    `${BaseApi}${datewiseStats}/${state?.user?.id}?date=${formattedTime?.slice(
+    `${BaseApi}${datewiseStats}?date=${formattedTime?.slice(
       0,
       10
     )}`,
