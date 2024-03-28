@@ -15,9 +15,11 @@ const filterState = {
 export default function OnboardingPendingTable({
   data = [],
   onDelete,
+  DeleteItem,
 }: {
   data: any[];
   onDelete: any;
+  DeleteItem: any;
 }) {
   const [pageSize, setPageSize] = useState(10);
 
@@ -63,6 +65,7 @@ export default function OnboardingPendingTable({
         onDeleteItem,
         onChecked: handleRowSelect,
         handleSelectAll,
+        DeleteItem,
       }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [

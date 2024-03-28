@@ -7,6 +7,7 @@ import Link from 'next/link';
 import DeletePopover from '@/component/others/delete-popover';
 import AvatarCard from '@/component/ui/avatar-card';
 import EyeIcon from '@/component/icons/eye';
+import RecyclePopover from '@/component/others/recycle-popover';
 
 type Columns = {
   data: any[];
@@ -16,6 +17,7 @@ type Columns = {
   onDeleteItem: (id: string) => void;
   onHeaderCellClick: (value: string) => void;
   onChecked?: (id: string) => void;
+  DeleteItem: any;
 };
 
 export const getColumns = ({
@@ -26,6 +28,7 @@ export const getColumns = ({
   onHeaderCellClick,
   handleSelectAll,
   onChecked,
+  DeleteItem,
 }: Columns) => [
   {
     title: <HeaderCell title="Seller" />,
@@ -112,19 +115,36 @@ export const getColumns = ({
             </ActionIcon>
           </Link>
         </Tooltip>
-        <DeletePopover
-          title={
-            !row?.isDeleted
-              ? `Temperory Delete the Seller`
-              : `Recycle this seller`
-          }
-          description={`Are you sure you want to ${
-            !row?.isDeleted
-              ? 'temperory delete this seller?'
-              : 'recycle this seller'
-          } `}
-          onDelete={() => onDeleteItem(row.id)}
-        />
+        {!row?.isDeleted && (
+          <DeletePopover
+            title={
+              !row?.isDeleted
+                ? `Temperory Delete the Seller`
+                : `Recycle this seller`
+            }
+            description={`Are you sure you want to ${
+              !row?.isDeleted
+                ? 'temperory delete this seller?'
+                : 'recycle this seller'
+            } `}
+            onDelete={() => onDeleteItem(row.id)}
+          />
+        )}
+        {row?.isDeleted && (
+          <RecyclePopover
+            title={`Recycle this seller`}
+            description={`Are you sure you want to recycle this seller
+            `}
+            onDelete={() => onDeleteItem(row.id)}
+          />
+        )}
+        {row?.isDeleted && (
+          <DeletePopover
+            title={`Permanently Delete the Seller`}
+            description={`Are you sure you want to permanently delete this seller ? `}
+            onDelete={() => DeleteItem(row.id)}
+          />
+        )}
       </div>
     ),
   },

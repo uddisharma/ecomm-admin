@@ -100,7 +100,7 @@ export const allTransactions = '/admin/transaction/list';
 
 export const transactionPerPage = 2;
 
-export const updateSeller = '/seller/vi/seller/update';
+export const updateSeller = '/admin/seller/update';
 
 export const changePassword = '/seller/vi/change/password';
 
@@ -236,6 +236,8 @@ export const updateAdminSeller = '/admin/seller/update';
 export const deletedSellers = '/admin/seller/deleted/list';
 
 export const finddeletedSellers = '/admin/seller/find/deleted';
+
+export const deleteSeller = '/admin/seller/delete';
 
 export const onboardingRequest = '/admin/requests';
 

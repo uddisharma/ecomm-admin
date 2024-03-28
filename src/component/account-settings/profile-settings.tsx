@@ -30,6 +30,8 @@ import { SellerContext } from '@/store/seller/context';
 import Link from 'next/link';
 import { PhoneNumber } from '../ui/phone-input';
 import AvatarUploadS3 from '../ui/file-upload/avatar-upload-s3';
+import { useCookies } from 'react-cookie';
+import { extractPathAndParams } from '@/utils/urlextractor';
 const QuillEditor = dynamic(() => import('@/component/ui/quill-editor'), {
   ssr: false,
 });
@@ -37,13 +39,23 @@ const QuillEditor = dynamic(() => import('@/component/ui/quill-editor'), {
 export default function ProfileSettingsView() {
   const { state, setSeller } = useContext(SellerContext);
   const [loading, setLoading] = useState(false);
+  const [cookies] = useCookies(['admintoken']);
+
   const onSubmit: SubmitHandler<ProfileFormTypes> = (data) => {
     setLoading(true);
     axios
-      .patch(`${BaseApi}${updateSeller}/${params?.seller}`, {
-        ...data,
-        cover: data?.cover?.url,
-      })
+      .patch(
+        `${BaseApi}${updateSeller}/${params?.seller}`,
+        {
+          ...data,
+          cover: data?.cover?.url,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
+          },
+        }
+      )
       .then((res) => {
         if (res.data?.status == 'SUCCESS') {
           setSeller(res.data?.data);
@@ -54,6 +66,15 @@ export default function ProfileSettingsView() {
       })
       .catch((err) => {
         console.log(err);
+        if (err?.response?.data?.status == 'UNAUTHORIZED') {
+          localStorage.removeItem('admin');
+          const currentUrl = window.location.href;
+          const path = extractPathAndParams(currentUrl);
+          if (typeof window !== 'undefined') {
+            location.href = `/auth/sign-in?ref=${path}`;
+          }
+          return toast.error('Session Expired');
+        }
         return toast.error('Something went wrong !');
       })
       .finally(() => {
@@ -100,6 +121,7 @@ export default function ProfileSettingsView() {
     description: data?.description ?? '',
     cover: data?.cover ?? undefined,
     discount: data?.discount ?? '',
+    charge: data?.charge ?? '',
   };
 
   const { openModal } = useModal();
@@ -285,6 +307,19 @@ export default function ProfileSettingsView() {
                       placeholder="Discount"
                       {...register('discount')}
                       error={errors.discount?.message}
+                    />
+                  </FormGroup>
+                  <FormGroup
+                    title="Charge"
+                    className="pt-7 @2xl:pt-9 @3xl:grid-cols-12 @3xl:pt-11"
+                  >
+                    <Input
+                      type="text"
+                      className="col-span-full"
+                      prefixClassName="relative pe-2.5 before:w-[1px] before:h-[38px] before:absolute before:bg-gray-300 before:-top-[9px] before:right-0"
+                      placeholder="Charge"
+                      {...register('charge')}
+                      error={errors.charge?.message}
                     />
                   </FormGroup>
                 </div>

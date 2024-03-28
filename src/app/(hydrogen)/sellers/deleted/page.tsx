@@ -6,6 +6,7 @@ import PageHeader from '@/component/others/pageHeader';
 import Pagination from '@/component/ui/pagination';
 import {
   BaseApi,
+  deleteSeller,
   deletedSellers,
   errorRetry,
   finddeletedSellers,
@@ -73,7 +74,6 @@ const Page = () => {
   data = data?.data?.data;
 
   const onDeleteItem = async (id: any) => {
-    console.log(id);
     try {
       const res = await axios.patch(
         `${BaseApi}${updateAdminSeller}/${id}`,
@@ -139,6 +139,36 @@ const Page = () => {
         setLoading(false);
       });
   };
+
+  const DeleteItem = async (id: any) => {
+    try {
+      const res = await axios.delete(`${BaseApi}${deleteSeller}/${id}`, {
+        headers: {
+          Authorization: `Bearer ${cookies?.admintoken}`,
+        },
+      });
+
+      if (res.data?.status == 'SUCCESS') {
+        await mutate();
+        return toast.success(`Seller is Deleted Successfully`);
+      } else {
+        return toast.error('Something went wrong !');
+      }
+    } catch (error: any) {
+      console.log(error);
+      if (error?.response?.data?.status == 'UNAUTHORIZED') {
+        localStorage.removeItem('admin');
+        const currentUrl = window.location.href;
+        const path = extractPathAndParams(currentUrl);
+        if (typeof window !== 'undefined') {
+          location.href = `/auth/sign-in?ref=${path}`;
+        }
+        return toast.error('Session Expired');
+      }
+      return toast.error('Something went wrong');
+    }
+  };
+
   useEffect(() => {
     if (!term) {
       setSearchedData([]);
@@ -184,6 +214,7 @@ const Page = () => {
       {searchedData && searchedData?.length > 0 ? (
         <OnboardingPendingTable
           onDelete={onDeleteItem}
+          DeleteItem={DeleteItem}
           key={Math.random()}
           data={data}
         />
@@ -212,6 +243,7 @@ const Page = () => {
                 ) : data ? (
                   <OnboardingPendingTable
                     onDelete={onDeleteItem}
+                    DeleteItem={DeleteItem}
                     key={Math.random()}
                     data={data}
                   />
@@ -219,6 +251,7 @@ const Page = () => {
                   data == null && (
                     <OnboardingPendingTable
                       onDelete={onDeleteItem}
+                      DeleteItem={DeleteItem}
                       key={Math.random()}
                       data={sellers}
                     />

@@ -92,9 +92,9 @@ export const getColumns = ({
     render: (_: string, row: any) => (
       <Text className="truncate !text-sm ">
         {row?.status ? (
-          <span className="text-green-500">Completed</span>
+          <span className="font-semibold text-green-500">Completed</span>
         ) : (
-          <span className="text-red-500">Pending</span>
+          <span className="font-semibold text-red-500">Pending</span>
         )}
       </Text>
     ),

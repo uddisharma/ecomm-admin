@@ -2,7 +2,6 @@
 
 import { useModal } from '@/component/modal-views/use-modal';
 import { getColumns } from './columns';
-
 import BasicTableWidget from '@/component/controlled-table/basic-table-widget';
 
 export default function ContactTable({

@@ -6,15 +6,19 @@ import PageHeader from '@/component/others/pageHeader';
 import Pagination from '@/component/ui/pagination';
 import {
   BaseApi,
+  errorRetry,
   findPendingSellers,
   pendingOnboarding,
   pendingOnboardingLimit,
   updateAdminSeller,
 } from '@/constants';
+import { fetcher } from '@/constants/fetcher';
 import { useFilterControls } from '@/hooks/use-filter-control';
 import cn from '@/utils/class-names';
+import { extractPathAndParams } from '@/utils/urlextractor';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
+import { useCookies } from 'react-cookie';
 import { CiSearch } from 'react-icons/ci';
 import { Button, Empty, Input, SearchNotFoundIcon } from 'rizzui';
 import { toast } from 'sonner';
@@ -45,37 +49,60 @@ const Page = () => {
   };
   const { state, paginate } = useFilterControls(initialState);
   const [page, setPage] = useState(state?.page ? state?.page : 1);
-  const fetcher = (url: any) => axios.get(url).then((res) => res.data);
-  let { data, error, isLoading, mutate } = useSWR(
+
+  const [cookies] = useCookies(['admintoken']);
+
+  let { data, isLoading, error, mutate } = useSWR(
     `${BaseApi}${pendingOnboarding}?page=${page}&limit=${pendingOnboardingLimit}`,
-    fetcher,
+    (url) => fetcher(url, cookies.admintoken),
     {
       refreshInterval: 3600000,
       revalidateOnMount: true,
       revalidateOnFocus: true,
       onErrorRetry({ retrycount }: any) {
-        if (retrycount > 3) {
+        if (retrycount > errorRetry) {
           return false;
         }
       },
     }
   );
+
+  const authstatus = error?.response?.data?.status == 'UNAUTHORIZED' && true;
+
   const pagininator = data?.data?.paginator;
   data = data?.data?.data;
 
   const onDeleteItem = async (id: any) => {
     try {
-      const res = await axios.patch(`${BaseApi}${updateAdminSeller}/${id}`, {
-        isDeleted: true,
-      });
+      const res = await axios.patch(
+        `${BaseApi}${updateAdminSeller}/${id}`,
+        {
+          isDeleted: true,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
+          },
+        }
+      );
       if (res.data?.status == 'SUCCESS') {
         await mutate();
         return toast.success(`Seller is Temperory Deleted Successfully`);
       } else {
         return toast.error('Something went wrong !');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
+      console.log(error);
+      if (error?.response?.data?.status == 'UNAUTHORIZED') {
+        localStorage.removeItem('admin');
+        const currentUrl = window.location.href;
+        const path = extractPathAndParams(currentUrl);
+        if (typeof window !== 'undefined') {
+          location.href = `/auth/sign-in?ref=${path}`;
+        }
+        return toast.error('Session Expired');
+      }
       return toast.error('Something went wrong');
     }
   };
@@ -83,7 +110,11 @@ const Page = () => {
   const findSeller = () => {
     setLoading(true);
     axios
-      .get(`${BaseApi}${findPendingSellers}?term=${term}`)
+      .get(`${BaseApi}${findPendingSellers}?term=${term}`, {
+        headers: {
+          Authorization: `Bearer ${cookies?.admintoken}`,
+        },
+      })
       .then((res) => {
         if (res?.data?.data) {
           setSearchedData(res?.data?.data);
@@ -91,14 +122,25 @@ const Page = () => {
           toast.warning('Seller Not found');
         }
       })
-      .catch((err) => {
+      .catch((err: any) => {
         console.log(err);
+        if (err?.response?.data?.status == 'UNAUTHORIZED') {
+          localStorage.removeItem('admin');
+          const currentUrl = window.location.href;
+          const path = extractPathAndParams(currentUrl);
+          if (typeof window !== 'undefined') {
+            location.href = `/auth/sign-in?ref=${path}`;
+          }
+          return toast.error('Session Expired');
+        }
         return toast.error('Something went wrong');
       })
       .finally(() => {
         setLoading(false);
       });
   };
+  const DeleteItem = (id: string) => {};
+  
   useEffect(() => {
     if (!term) {
       setSearchedData([]);
@@ -106,6 +148,16 @@ const Page = () => {
   }, [term]);
 
   const sellers: any = [];
+
+  if (authstatus) {
+    localStorage.removeItem('admin');
+    toast.error('Session Expired');
+    const currentUrl = window.location.href;
+    const path = extractPathAndParams(currentUrl);
+    if (typeof window !== 'undefined') {
+      location.href = `/auth/sign-in?ref=${path}`;
+    }
+  }
 
   return (
     <div>
@@ -133,6 +185,7 @@ const Page = () => {
       </PageHeader>
       {searchedData && searchedData?.length > 0 ? (
         <OnboardingPendingTable
+          DeleteItem={DeleteItem}
           onDelete={onDeleteItem}
           key={Math.random()}
           data={data}
@@ -161,12 +214,14 @@ const Page = () => {
                   </div>
                 ) : data ? (
                   <OnboardingPendingTable
+                    DeleteItem={DeleteItem}
                     onDelete={onDeleteItem}
                     key={Math.random()}
                     data={data}
                   />
                 ) : (
                   <OnboardingPendingTable
+                    DeleteItem={DeleteItem}
                     onDelete={onDeleteItem}
                     key={Math.random()}
                     data={sellers}
