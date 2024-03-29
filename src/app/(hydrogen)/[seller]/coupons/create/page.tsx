@@ -16,6 +16,8 @@ import axios from 'axios';
 import { BaseApi, addCoupon } from '@/constants';
 import { toast } from 'sonner';
 import { useParams } from 'next/navigation';
+import { useCookies } from 'react-cookie';
+import { extractPathAndParams } from '@/utils/urlextractor';
 const schema = z.object({
   code: z.string().min(1, { message: 'Code is Required' }),
   discount_type: z.string().min(1, { message: 'Discount Type is Required' }),
@@ -39,17 +41,26 @@ export default function NewsLetterForm() {
   const [reset, setReset] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const params = useParams();
+  const [cookies] = useCookies(['admintoken']);
   const onSubmit: SubmitHandler<Schema> = (data) => {
     setIsLoading(true);
     axios
-      .post(`${BaseApi}${addCoupon}`, {
-        ...data,
-        code: data?.code?.toUpperCase()?.split(' ').join(''),
-        discount: Number(data?.discount),
-        seller: params?.seller,
-        discount_type:
-          data.discount_type == 'Percentage' ? 'percentage' : 'direct_amount',
-      })
+      .post(
+        `${BaseApi}${addCoupon}`,
+        {
+          ...data,
+          code: data?.code?.toUpperCase()?.split(' ').join(''),
+          discount: Number(data?.discount),
+          seller: params?.seller,
+          discount_type:
+            data.discount_type == 'Percentage' ? 'percentage' : 'direct_amount',
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
+          },
+        }
+      )
       .then((res) => {
         if (res.data?.status == 'SUCCESS') {
           setReset(initialValues);
@@ -59,6 +70,15 @@ export default function NewsLetterForm() {
         }
       })
       .catch((err) => {
+        if (err?.response?.data?.status == 'UNAUTHORIZED') {
+          localStorage.removeItem('admin');
+          const currentUrl = window.location.href;
+          const path = extractPathAndParams(currentUrl);
+          if (typeof window !== 'undefined') {
+            location.href = `/auth/sign-in?ref=${path}`;
+          }
+          return toast.error('Session Expired');
+        }
         console.log(err);
         return toast.error('Something went wrong');
       })

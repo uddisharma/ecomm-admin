@@ -12,10 +12,13 @@ import SelectLoader from '@/component/loader/select-loader';
 import PageHeader from '@/component/others/pageHeader';
 import Link from 'next/link';
 import { Button, Empty, SearchNotFoundIcon } from 'rizzui';
-import axios from 'axios';
-import { BaseApi, singleCoupon } from '@/constants';
+import { BaseApi, errorRetry, singleCoupon } from '@/constants';
 import { useParams } from 'next/navigation';
 import useSWR from 'swr';
+import { useCookies } from 'react-cookie';
+import { fetcher } from '@/constants/fetcher';
+import { toast } from 'sonner';
+import { extractPathAndParams } from '@/utils/urlextractor';
 const schema = z.object({
   code: z.string().min(1, { message: 'Code is Required' }),
   discount_type: z.string().min(1, { message: 'Discount Type is Required' }),
@@ -32,15 +35,29 @@ const Select = dynamic(() => import('@/component/ui/select'), {
 export default function NewsLetterForm() {
   const [reset, _setReset] = useState({});
   const params = useParams();
-  const fetcher = (url: any) => axios.get(url).then((res) => res.data);
+
+  const [cookies] = useCookies(['admintoken']);
 
   let {
     data,
-    error,
     isLoading: loading,
-  } = useSWR(`${BaseApi}${singleCoupon}/${params?.slug}`, fetcher, {
-    refreshInterval: 3600000,
-  });
+    error,
+  } = useSWR(
+    `${BaseApi}${singleCoupon}/${params?.slug}`,
+    (url) => fetcher(url, cookies.admintoken),
+    {
+      refreshInterval: 3600000,
+      revalidateOnMount: true,
+      revalidateOnFocus: true,
+      onErrorRetry({ retrycount }: any) {
+        if (retrycount > errorRetry) {
+          return false;
+        }
+      },
+    }
+  );
+
+  const authstatus = error?.response?.data?.status == 'UNAUTHORIZED' && true;
 
   const initialValues = {
     code: data?.data?.code ?? '',
@@ -79,12 +96,26 @@ export default function NewsLetterForm() {
       value: 'direct_amount',
     },
   ];
+
+  if (authstatus) {
+    localStorage.removeItem('admin');
+    toast.error('Session Expired');
+    const currentUrl = window.location.href;
+    const path = extractPathAndParams(currentUrl);
+    if (typeof window !== 'undefined') {
+      location.href = `/auth/sign-in?ref=${path}`;
+    }
+  }
+
   if (error) {
     return (
       <div>
         <br />
         <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
-          <Link href={'/coupons'} className="mt-4 w-full @lg:mt-0 @lg:w-auto">
+          <Link
+            href={`/${params?.seller}/coupons`}
+            className="mt-4 w-full @lg:mt-0 @lg:w-auto"
+          >
             <Button
               tag="span"
               className="w-full @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
@@ -110,7 +141,10 @@ export default function NewsLetterForm() {
       <>
         <br />
         <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
-          <Link href={'/coupons'} className="mt-4 w-full @lg:mt-0 @lg:w-auto">
+          <Link
+            href={`/${params?.seller}/coupons`}
+            className="mt-4 w-full @lg:mt-0 @lg:w-auto"
+          >
             <Button
               tag="span"
               className="w-full @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"

@@ -82,17 +82,17 @@ export const deleteProduct = '/seller/api/v1/product/delete';
 
 export const productsSoftDelete = '/seller/api/v1/product/softDelete';
 
-export const coupons = '/seller/coupon/all/list';
+export const coupons = '/admin/seller/coupon/list';
 
 export const couponsPerPage = 1;
 
-export const addCoupon = '/seller/coupon/add';
+export const addCoupon = '/admin/coupon/add';
 
-export const singleCoupon = '/seller/coupon/code';
+export const singleCoupon = '/admin/coupon';
 
-export const updateCoupon = '/seller/coupon/update';
+export const updateCoupon = '/admin/coupon/update';
 
-export const deleteCoupon = '/seller/coupon/delete';
+export const deleteCoupon = '/admin/coupon/delete';
 
 export const sellerTransactions = '/seller/api/v1/wallettransactions';
 
@@ -140,17 +140,23 @@ export const deletedOrder = '/seller/api/v1/order/deleted/list';
 
 export const monthwiseRevenue = '/seller/api/v1/order/revenue/monthwise';
 
+export const monthwiseRevenue1 = '/admin/seller/order/revenue/monthwise';
+
 export const adminmonthwiseRevenue = '/admin/order/revenue/monthwise';
 
 export const monthwiseOrders = '/seller/api/v1/order/orders/monthwise';
+
+export const monthwiseOrders1 = '/admin/seller/order/orders/monthwise';
 
 export const adminmonthwiseOrders = '/admin/order/orders/monthwise';
 
 export const datewiseStats = '/admin/order/revenue/datewise';
 
+export const datewiseStatsSeller = '/admin/seller/order/revenue/datewise';
+
 export const admindatewiseStats = '/admin/order/revenue/datewise';
 
-export const totalCounts = '/seller/api/v1/counts';
+export const totalCounts = '/admin/seller/stats/count';
 
 export const admintotalCount = '/admin/stats/count';
 

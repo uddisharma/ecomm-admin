@@ -2,12 +2,14 @@
 
 import MetricCard from '@/component/cards/metric-card';
 import { Text } from '@/component/ui/text';
-import { BaseApi, datewiseStats } from '@/constants';
-import { UserContext } from '@/store/user/context';
+import { BaseApi, datewiseStatsSeller, errorRetry } from '@/constants';
+import { fetcher } from '@/constants/fetcher';
 import cn from '@/utils/class-names';
 import { formatNumber } from '@/utils/format-number';
-import axios from 'axios';
-import { useContext } from 'react';
+import { extractPathAndParams } from '@/utils/urlextractor';
+import { useParams } from 'next/navigation';
+import { useCookies } from 'react-cookie';
+import toast from 'react-hot-toast';
 import {
   PiGiftDuotone,
   PiBankDuotone,
@@ -131,7 +133,7 @@ const revenueData = [
 ];
 
 export default function StatCards({ className }: { className?: string }) {
-  const { state } = useContext(UserContext);
+  const params = useParams();
 
   const now = new Date();
   const formatter = new Intl.DateTimeFormat('en-US', {
@@ -148,19 +150,27 @@ export default function StatCards({ className }: { className?: string }) {
 
   const formattedTime: any = formatter.format(now);
 
-  const fetcher = (url: any) => axios.get(url).then((res) => res.data);
+  const [cookies] = useCookies(['admintoken']);
+
   let { data, isLoading, error } = useSWR(
-    `${BaseApi}${datewiseStats}/${state?.user?.id}?date=${formattedTime?.slice(
+    `${BaseApi}${datewiseStatsSeller}/${params?.seller}?date=${formattedTime?.slice(
       0,
       10
     )}`,
-    fetcher,
+    (url) => fetcher(url, cookies.admintoken),
     {
       refreshInterval: 3600000,
+      revalidateOnMount: true,
       revalidateOnFocus: true,
-      errorRetryCount: 3,
+      onErrorRetry({ retrycount }: any) {
+        if (retrycount > errorRetry) {
+          return false;
+        }
+      },
     }
   );
+
+  const authstatus = error?.response?.data?.status == 'UNAUTHORIZED' && true;
 
   const eComDashboardStatData = [
     {
@@ -205,6 +215,16 @@ export default function StatCards({ className }: { className?: string }) {
       } and Platform fee ₹${data ? data?.data?.charge : ''}`,
     },
   ];
+
+  if (authstatus) {
+    localStorage.removeItem('admin');
+    toast.error('Session Expired');
+    const currentUrl = window.location.href;
+    const path = extractPathAndParams(currentUrl);
+    if (typeof window !== 'undefined') {
+      location.href = `/auth/sign-in?ref=${path}`;
+    }
+  }
 
   return (
     <div

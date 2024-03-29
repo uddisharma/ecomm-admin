@@ -1,6 +1,6 @@
 'use client';
 
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import WidgetCard from '@/component/cards/widget-card';
 import { DatePicker } from '@/component/ui/datepicker';
 import {
@@ -18,33 +18,56 @@ import { CustomTooltip } from '@/component/charts/custom-tooltip';
 import SimpleBar from '@/component/ui/simplebar';
 import { formatNumber } from '@/utils/format-number';
 import Spinner from '@/component/ui/spinner';
-import { BaseApi, monthwiseOrders } from '@/constants';
+import { BaseApi, errorRetry, monthwiseOrders1 } from '@/constants';
 import useSWR from 'swr';
-import { UserContext } from '@/store/user/context';
-import axios from 'axios';
 import { Empty, SearchNotFoundIcon } from 'rizzui';
+import { fetcher } from '@/constants/fetcher';
+import { useCookies } from 'react-cookie';
+import { toast } from 'sonner';
+import { extractPathAndParams } from '@/utils/urlextractor';
+import { useParams } from 'next/navigation';
 
 export default function OrderStats({ className }: { className?: string }) {
   const isTablet = useMedia('(max-width: 820px)', false);
   const [startDate, setStartDate] = useState<Date>(new Date());
-  const { state } = useContext(UserContext);
-  const fetcher = (url: any) => axios.get(url).then((res) => res.data);
+  const params = useParams();
+
+  const [cookies] = useCookies(['admintoken']);
+
   let {
     data: newdata,
     isLoading,
     error,
   } = useSWR(
-    `${BaseApi}${monthwiseOrders}/${state?.user
-      ?.id}?year=${startDate?.getFullYear()}`,
-    fetcher,
+    `${BaseApi}${monthwiseOrders1}/${params?.seller}?year=${startDate?.getFullYear()}`,
+    (url) => fetcher(url, cookies.admintoken),
     {
       refreshInterval: 3600000,
+      revalidateOnMount: true,
+      revalidateOnFocus: true,
+      onErrorRetry({ retrycount }: any) {
+        if (retrycount > errorRetry) {
+          return false;
+        }
+      },
     }
   );
+
+  const authstatus = error?.response?.data?.status == 'UNAUTHORIZED' && true;
 
   const newdata1 = newdata?.map((e: any) => {
     return { month: e?.month?.slice(0, 3), orders: e?.totalOrders };
   });
+
+  if (authstatus) {
+    localStorage.removeItem('admin');
+    toast.error('Session Expired');
+    const currentUrl = window.location.href;
+    const path = extractPathAndParams(currentUrl);
+    if (typeof window !== 'undefined') {
+      location.href = `/auth/sign-in?ref=${path}`;
+    }
+  }
 
   return (
     <WidgetCard

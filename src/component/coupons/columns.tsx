@@ -94,7 +94,7 @@ export const getColumns = ({
           placement="top"
           color="invert"
         >
-          <Link href={`/${row?.seller}/coupons/${row?.id}/edit`}>
+          <Link href={`/${row?.seller?.id}/coupons/${row?.id}/edit`}>
             <ActionIcon size="sm" variant="outline" aria-label={'Edit Coupon'}>
               <PencilIcon className="h-4 w-4" />
             </ActionIcon>
@@ -106,7 +106,7 @@ export const getColumns = ({
           placement="top"
           color="invert"
         >
-          <Link href={`/${row?.seller}/coupons/${row?.id}/view`}>
+          <Link href={`/${row?.seller?.id}/coupons/${row?.id}/view`}>
             <ActionIcon size="sm" variant="outline" aria-label={'View Coupon'}>
               <EyeIcon className="h-4 w-4" />
             </ActionIcon>

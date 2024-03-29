@@ -12,9 +12,13 @@ import welcomeImg from '@public/shop-illustration.png';
 import HandWaveIcon from '@/component/icons/hand-wave';
 import { formatNumber } from '@/utils/format-number';
 import useSWR from 'swr';
-import { BaseApi, totalCounts } from '@/constants';
+import { BaseApi, errorRetry, totalCounts } from '@/constants';
 import axios from 'axios';
 import { useParams } from 'next/navigation';
+import { useCookies } from 'react-cookie';
+import { fetcher } from '@/constants/fetcher';
+import { toast } from 'sonner';
+import { extractPathAndParams } from '@/utils/urlextractor';
 
 export default function SellerDashboard() {
   function getGreeting() {
@@ -35,16 +39,30 @@ export default function SellerDashboard() {
   }
 
   const params = useParams();
-  const fetcher = (url: any) => axios.get(url).then((res) => res.data);
+
+  const [cookies] = useCookies(['admintoken']);
+
   let {
     data: data1,
     isLoading,
     error,
-  } = useSWR(`${BaseApi}${totalCounts}/${params?.seller}`, fetcher, {
-    refreshInterval: 3600000,
-    revalidateOnFocus: true,
-    errorRetryCount: 3,
-  });
+  } = useSWR(
+    `${BaseApi}${totalCounts}/${params?.seller}`,
+    (url) => fetcher(url, cookies.admintoken),
+    {
+      refreshInterval: 3600000,
+      revalidateOnMount: true,
+      revalidateOnFocus: true,
+      onErrorRetry({ retrycount }: any) {
+        if (retrycount > errorRetry) {
+          return false;
+        }
+      },
+    }
+  );
+
+  const authstatus = error?.response?.data?.status == 'UNAUTHORIZED' && true;
+
   const revenue = data1?.data?.revenue;
   const orders = data1?.data?.orders;
   const products = data1?.data?.products;
@@ -90,6 +108,16 @@ export default function SellerDashboard() {
       color: '#3872FA',
     },
   ];
+
+  if (authstatus) {
+    localStorage.removeItem('admin');
+    toast.error('Session Expired');
+    const currentUrl = window.location.href;
+    const path = extractPathAndParams(currentUrl);
+    if (typeof window !== 'undefined') {
+      location.href = `/auth/sign-in?ref=${path}`;
+    }
+  }
 
   return (
     <div className="@container">
