@@ -12,6 +12,7 @@ import {
   transactionPerPage,
   allTransactions,
   adminSoftDeleteTransactions,
+  errorRetry,
 } from '@/constants';
 import TransactionLoadingPage from '@/component/loading/transactions';
 import { Button, Empty, SearchNotFoundIcon } from 'rizzui';
@@ -20,6 +21,9 @@ import Link from 'next/link';
 import { PiPlusBold } from 'react-icons/pi';
 import PayoutsTable from '@/component/payouts/table';
 import { MdOutlineAutoDelete } from 'react-icons/md';
+import { useCookies } from 'react-cookie';
+import { fetcher } from '@/constants/fetcher';
+import { extractPathAndParams } from '@/utils/urlextractor';
 const metadata = {
   ...metaObject('Transactions'),
 };
@@ -50,14 +54,25 @@ export default function Transactions() {
   );
   const [page, setPage] = useState(st?.page ? st?.page : 1);
 
-  const fetcher = (url: any) => axios.get(url).then((res) => res.data);
+  const [cookies] = useCookies(['admintoken']);
+
   let { data, isLoading, error, mutate } = useSWR(
     `${BaseApi}${allTransactions}?page=${page}&limit=${transactionPerPage}&isDeleted=${false}`,
-    fetcher,
+    (url) => fetcher(url, cookies.admintoken),
     {
       refreshInterval: 3600000,
+      revalidateOnMount: true,
+      revalidateOnFocus: true,
+      onErrorRetry({ retrycount }: any) {
+        if (retrycount > errorRetry) {
+          return false;
+        }
+      },
     }
   );
+
+  const authstatus = error?.response?.data?.status == 'UNAUTHORIZED' && true;
+
   const pagininator = data?.data?.paginator;
   data = data?.data?.data;
 
@@ -67,6 +82,11 @@ export default function Transactions() {
         `${BaseApi}${adminSoftDeleteTransactions}/${id}`,
         {
           isDeleted: true,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
+          },
         }
       );
       if (res.data?.status == 'SUCCESS') {
@@ -75,13 +95,33 @@ export default function Transactions() {
       } else {
         return toast.error('Something went wrong');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
+      if (error?.response?.data?.status == 'UNAUTHORIZED') {
+        localStorage.removeItem('admin');
+        const currentUrl = window.location.href;
+        const path = extractPathAndParams(currentUrl);
+        if (typeof window !== 'undefined') {
+          location.href = `/auth/sign-in?ref=${path}`;
+        }
+        return toast.error('Session Expired');
+      }
       return toast.error('Something went wrong');
     }
   };
 
   const transactions: any = [];
+
+  if (authstatus) {
+    localStorage.removeItem('admin');
+    toast.error('Session Expired');
+    const currentUrl = window.location.href;
+    const path = extractPathAndParams(currentUrl);
+    if (typeof window !== 'undefined') {
+      location.href = `/auth/sign-in?ref=${path}`;
+    }
+  }
+
   return (
     <>
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>

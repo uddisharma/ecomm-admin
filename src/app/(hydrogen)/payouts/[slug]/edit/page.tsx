@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { SubmitHandler } from 'react-hook-form';
 import { Input } from '@/component/ui/input';
 import { Form } from '@/component/ui/form';
-import dynamic from 'next/dynamic';
 import Spinner from '@/component/ui/spinner';
 import FormGroup from '@/component/others/form-group';
 import FormFooter from '@/component/others/form-footer';
@@ -16,6 +15,7 @@ import { Button, Empty, SearchNotFoundIcon } from 'rizzui';
 import axios from 'axios';
 import {
   BaseApi,
+  errorRetry,
   findSingleSeller,
   singleTransaction,
   updateTransaction,
@@ -25,6 +25,9 @@ import { useParams, useRouter } from 'next/navigation';
 import useSWR from 'swr';
 import { IoIosSearch } from 'react-icons/io';
 import { GoArrowRight } from 'react-icons/go';
+import { useCookies } from 'react-cookie';
+import { fetcher } from '@/constants/fetcher';
+import { extractPathAndParams } from '@/utils/urlextractor';
 const schema = z.object({
   transactionId: z.string().min(1, { message: 'Transaction ID is Required' }),
   amount: z.string().min(1, { message: 'Amount is Required' }),
@@ -90,16 +93,29 @@ export default function NewsLetterForm() {
       },
     ],
   };
-  const fetcher = (url: any) => axios.get(url).then((res) => res.data);
+
+  const [cookies] = useCookies(['admintoken']);
 
   let {
     data,
-    error,
     isLoading: loading,
-  } = useSWR(`${BaseApi}${singleTransaction}/${params?.slug}`, fetcher, {
-    refreshInterval: 3600000,
-    revalidateOnMount: true,
-  });
+    error,
+  } = useSWR(
+    `${BaseApi}${singleTransaction}/${params?.slug}`,
+    (url) => fetcher(url, cookies.admintoken),
+    {
+      refreshInterval: 3600000,
+      revalidateOnMount: true,
+      revalidateOnFocus: true,
+      onErrorRetry({ retrycount }: any) {
+        if (retrycount > errorRetry) {
+          return false;
+        }
+      },
+    }
+  );
+
+  const authstatus = error?.response?.data?.status == 'UNAUTHORIZED' && true;
 
   function convertToSimpleDateFormat(dateString: any) {
     const [datePart] = dateString.split('T');
@@ -152,7 +168,11 @@ export default function NewsLetterForm() {
     }
     setLoading(true);
     axios
-      .get(`${BaseApi}${findSingleSeller}?term=${inputValue}`)
+      .get(`${BaseApi}${findSingleSeller}?term=${inputValue}`, {
+        headers: {
+          Authorization: `Bearer ${cookies?.admintoken}`,
+        },
+      })
       .then((res) => {
         if (res?.data?.data) {
           setSearchedData(res?.data?.data);
@@ -168,6 +188,15 @@ export default function NewsLetterForm() {
       })
       .catch((err) => {
         console.log(err);
+        if (err?.response?.data?.status == 'UNAUTHORIZED') {
+          localStorage.removeItem('admin');
+          const currentUrl = window.location.href;
+          const path = extractPathAndParams(currentUrl);
+          if (typeof window !== 'undefined') {
+            location.href = `/auth/sign-in?ref=${path}`;
+          }
+          return toast.error('Session Expired');
+        }
         return toast.error('Something went wrong');
       })
       .finally(() => {
@@ -190,12 +219,20 @@ export default function NewsLetterForm() {
 
     setIsLoading(true);
     axios
-      .patch(`${BaseApi}${updateTransaction}/${params?.slug}`, {
-        ...data,
-        seller: seller2,
-        from: convertDateFormat(data?.from),
-        to: convertDateFormat(data?.to),
-      })
+      .patch(
+        `${BaseApi}${updateTransaction}/${params?.slug}`,
+        {
+          ...data,
+          seller: seller2,
+          from: convertDateFormat(data?.from),
+          to: convertDateFormat(data?.to),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
+          },
+        }
+      )
       .then((res) => {
         if (res.data?.status == 'SUCCESS') {
           setReset(initialValues);
@@ -207,6 +244,15 @@ export default function NewsLetterForm() {
       })
       .catch((err) => {
         console.log(err);
+        if (err?.response?.data?.status == 'UNAUTHORIZED') {
+          localStorage.removeItem('admin');
+          const currentUrl = window.location.href;
+          const path = extractPathAndParams(currentUrl);
+          if (typeof window !== 'undefined') {
+            location.href = `/auth/sign-in?ref=${path}`;
+          }
+          return toast.error('Session Expired');
+        }
         return toast.error('Something went wrong');
       })
       .finally(() => {
@@ -214,12 +260,25 @@ export default function NewsLetterForm() {
       });
   };
 
+  if (authstatus) {
+    localStorage.removeItem('admin');
+    toast.error('Session Expired');
+    const currentUrl = window.location.href;
+    const path = extractPathAndParams(currentUrl);
+    if (typeof window !== 'undefined') {
+      location.href = `/auth/sign-in?ref=${path}`;
+    }
+  }
+
   if (loading) {
     return (
       <div>
         <br />
         <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
-          <Link href={`/payouts`} className="mt-4 w-full @lg:mt-0 @lg:w-auto">
+          <Link
+            href={`/payouts/all`}
+            className="mt-4 w-full @lg:mt-0 @lg:w-auto"
+          >
             <Button
               tag="span"
               className="w-full @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
@@ -240,7 +299,10 @@ export default function NewsLetterForm() {
       <div>
         <br />
         <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
-          <Link href={'/payouts'} className="mt-4 w-full @lg:mt-0 @lg:w-auto">
+          <Link
+            href={'/payouts/all'}
+            className="mt-4 w-full @lg:mt-0 @lg:w-auto"
+          >
             <Button
               tag="span"
               className="w-full @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
@@ -267,7 +329,7 @@ export default function NewsLetterForm() {
         <br />
         <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
           <Link
-            href={`/${params?.seller}/transactions`}
+            href={`/payouts/all`}
             className="mt-4 w-full @lg:mt-0 @lg:w-auto"
           >
             <Button

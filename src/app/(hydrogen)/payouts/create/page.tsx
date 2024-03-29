@@ -1,5 +1,5 @@
 'use client';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SubmitHandler } from 'react-hook-form';
 import { Input } from '@/component/ui/input';
 import { Form } from '@/component/ui/form';
@@ -17,6 +17,8 @@ import { toast } from 'sonner';
 import { useParams } from 'next/navigation';
 import { GoArrowRight } from 'react-icons/go';
 import { IoIosSearch } from 'react-icons/io';
+import { extractPathAndParams } from '@/utils/urlextractor';
+import { useCookies } from 'react-cookie';
 const schema = z.object({
   transactionId: z.string().min(1, { message: 'Transaction ID is Required' }),
   amount: z.string().min(1, { message: 'Amount is Required' }),
@@ -106,13 +108,19 @@ export default function NewsLetterForm() {
     }
   }, [inputValue]);
 
+  const [cookies] = useCookies(['admintoken']);
+
   const findSeller = () => {
     if (inputValue == '') {
       return toast.warning('Please enter a keyword');
     }
     setLoading(true);
     axios
-      .get(`${BaseApi}${findSingleSeller}?term=${inputValue}`)
+      .get(`${BaseApi}${findSingleSeller}?term=${inputValue}`, {
+        headers: {
+          Authorization: `Bearer ${cookies?.admintoken}`,
+        },
+      })
       .then((res) => {
         if (res?.data?.data) {
           setSearchedData(res?.data?.data);
@@ -128,6 +136,15 @@ export default function NewsLetterForm() {
       })
       .catch((err) => {
         console.log(err);
+        if (err?.response?.data?.status == 'UNAUTHORIZED') {
+          localStorage.removeItem('admin');
+          const currentUrl = window.location.href;
+          const path = extractPathAndParams(currentUrl);
+          if (typeof window !== 'undefined') {
+            location.href = `/auth/sign-in?ref=${path}`;
+          }
+          return toast.error('Session Expired');
+        }
         return toast.error('Something went wrong');
       })
       .finally(() => {
@@ -147,16 +164,23 @@ export default function NewsLetterForm() {
     }
     setIsLoading(true);
     axios
-      .post(`${BaseApi}${addTransaction}`, {
-        ...data,
-        seller: seller && seller[0]?.id,
-        from: convertDateFormat(data?.from),
-        to: convertDateFormat(data?.to),
-      })
+      .post(
+        `${BaseApi}${addTransaction}`,
+        {
+          ...data,
+          seller: seller && seller[0]?.id,
+          from: convertDateFormat(data?.from),
+          to: convertDateFormat(data?.to),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
+          },
+        }
+      )
       .then((res) => {
         if (res.data?.status == 'SUCCESS') {
           setReset(initialValues);
-
           return toast.success('Transaction is updated Successfully !');
         } else {
           return toast.error('Something went wrong');
@@ -164,6 +188,15 @@ export default function NewsLetterForm() {
       })
       .catch((err) => {
         console.log(err);
+        if (err?.response?.data?.status == 'UNAUTHORIZED') {
+          localStorage.removeItem('admin');
+          const currentUrl = window.location.href;
+          const path = extractPathAndParams(currentUrl);
+          if (typeof window !== 'undefined') {
+            location.href = `/auth/sign-in?ref=${path}`;
+          }
+          return toast.error('Session Expired');
+        }
         return toast.error('Something went wrong');
       })
       .finally(() => {
