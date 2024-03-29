@@ -1,28 +1,54 @@
 'use client';
 import SellerLabel from '@/component/label/page';
 import Spinner from '@/component/ui/spinner';
-import { BaseApi, singleOrder } from '@/constants';
+import { BaseApi, errorRetry, singleOrder } from '@/constants';
+import { fetcher } from '@/constants/fetcher';
+import { extractPathAndParams } from '@/utils/urlextractor';
 import axios from 'axios';
 import { useParams } from 'next/navigation';
 import React from 'react';
+import { useCookies } from 'react-cookie';
 import { Text } from 'rizzui';
+import { toast } from 'sonner';
 import useSWR from 'swr';
 const Page = () => {
   const params = useParams();
-  const fetcher = (url: any) => axios.get(url).then((res) => res.data);
+
+  const [cookies] = useCookies(['admintoken']);
+
   let {
     data: data1,
-    error,
     isLoading,
-  } = useSWR(`${BaseApi}${singleOrder}/${params?.id}`, fetcher, {
-    refreshInterval: 3600000,
-    onErrorRetry({ retrycount }: any) {
-      if (retrycount > 3) {
-        return false;
-      }
-    },
-  });
+    error,
+  } = useSWR(
+    `${BaseApi}${singleOrder}/${params?.id}`,
+    (url) => fetcher(url, cookies.admintoken),
+    {
+      refreshInterval: 3600000,
+      revalidateOnMount: true,
+      revalidateOnFocus: true,
+      onErrorRetry({ retrycount }: any) {
+        if (retrycount > errorRetry) {
+          return false;
+        }
+      },
+    }
+  );
+
+  const authstatus = error?.response?.data?.status == 'UNAUTHORIZED' && true;
+
   const orderData = data1?.data;
+
+  if (authstatus) {
+    localStorage.removeItem('admin');
+    toast.error('Session Expired');
+    const currentUrl = window.location.href;
+    const path = extractPathAndParams(currentUrl);
+    if (typeof window !== 'undefined') {
+      location.href = `/auth/sign-in?ref=${path}`;
+    }
+  }
+
   return (
     <div>
       {isLoading ? (

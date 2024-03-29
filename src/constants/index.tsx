@@ -128,7 +128,7 @@ export const adminOrders = '/admin/order/list';
 
 export const orderPerPage = 2;
 
-export const singleOrder = '/seller/api/v1/order';
+export const singleOrder = '/admin/order';
 
 export const updateOrders = '/seller/api/v1/order/update';
 

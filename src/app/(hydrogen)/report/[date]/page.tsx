@@ -9,6 +9,8 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import { useParams } from 'next/navigation';
 import { PiArrowLineDownBold, PiArrowLineUpBold } from 'react-icons/pi';
+import { useCookies } from 'react-cookie';
+import { extractPathAndParams } from '@/utils/urlextractor';
 function convertDateFormat(inputDate: any) {
   const parsedDate = new Date(inputDate);
   if (isNaN(parsedDate.getTime())) {
@@ -49,10 +51,16 @@ function PromoBanner() {
     ],
   };
 
+  const [cookies] = useCookies(['admintoken']);
+
   const comprehensive = () => {
     setLoading1(true);
     axios
-      .get(`${BaseApi}${admindatewiseStats}?date=${date}`)
+      .get(`${BaseApi}${admindatewiseStats}?date=${date}`, {
+        headers: {
+          Authorization: `Bearer ${cookies?.admintoken}`,
+        },
+      })
       .then((res) => {
         if (res.data?.status != 'SUCCESS') {
           return toast.error('Something went wrong ! while downloading report');
@@ -61,8 +69,17 @@ function PromoBanner() {
           setD_data1([{ ...res?.data?.data }]);
         }
       })
-      .catch((err) => {
-        console.log(err);
+      .catch((error: any) => {
+        console.log(error);
+        if (error?.response?.data?.status == 'UNAUTHORIZED') {
+          localStorage.removeItem('admin');
+          const currentUrl = window.location.href;
+          const path = extractPathAndParams(currentUrl);
+          if (typeof window !== 'undefined') {
+            location.href = `/auth/sign-in?ref=${path}`;
+          }
+          return toast.error('Session Expired');
+        }
         return toast.error('Something went wrong ! while downloading report');
       })
       .finally(() => {
@@ -86,7 +103,12 @@ function PromoBanner() {
       .get(
         `${BaseApi}${adminOrders}?date=${convertToISOFormat(
           date
-        )}&status=All&courior=All&page=${1}&limit=${100000}`
+        )}&status=All&courior=All&page=${1}&limit=${100000}`,
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
+          },
+        }
       )
       .then((res) => {
         if (res.data?.status == 'SUCCESS') {
@@ -140,8 +162,17 @@ function PromoBanner() {
           return toast.warning(`No Data Found for ${params?.date}`);
         }
       })
-      .catch((err) => {
-        console.log(err);
+      .catch((error: any) => {
+        console.log(error);
+        if (error?.response?.data?.status == 'UNAUTHORIZED') {
+          localStorage.removeItem('admin');
+          const currentUrl = window.location.href;
+          const path = extractPathAndParams(currentUrl);
+          if (typeof window !== 'undefined') {
+            location.href = `/auth/sign-in?ref=${path}`;
+          }
+          return toast.error('Session Expired');
+        }
         return toast.error('Something went wrong ! while downloading report');
       })
       .finally(() => {
