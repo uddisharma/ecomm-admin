@@ -13,14 +13,21 @@ import { Button } from '@/component/ui/button';
 import Link from 'next/link';
 import { fileSchema } from '@/utils/validators/common-rules';
 import { categoriesData } from '@/data/allcategories';
-import { UserContext } from '@/store/user/context';
 import axios from 'axios';
-import { BaseApi, addCategory, sellerCategoriesByAdmin } from '@/constants';
+import {
+  BaseApi,
+  addCategory,
+  errorRetry,
+  sellerCategoriesByAdmin,
+} from '@/constants';
 import { toast } from 'sonner';
 import { useParams } from 'next/navigation';
 import useSWR from 'swr';
 import { Empty, SearchNotFoundIcon } from 'rizzui';
 import AvatarUploadS3 from '@/component/ui/file-upload/avatar-upload-s3';
+import { useCookies } from 'react-cookie';
+import { fetcher } from '@/constants/fetcher';
+import { extractPathAndParams } from '@/utils/urlextractor';
 
 const schema = z.object({
   parent: z.string().optional(),
@@ -46,7 +53,7 @@ const initialValues = {
 };
 
 export default function CreateCategory1() {
-  const [reset, setReset] = useState({});
+  const [reset, _setReset] = useState({});
 
   const pageHeader = {
     title: 'Create Category',
@@ -73,31 +80,31 @@ export default function CreateCategory1() {
   );
   const [selectedItem, setSelectedItem] = useState<any | null>(null);
 
-  const { state, setUser } = useContext(UserContext);
-
   const params = useParams();
-  const fetcher = (url: any) => axios.get(url).then((res) => res.data);
+
+  const [cookies] = useCookies(['admintoken']);
+
   let {
     data,
     isLoading: loading,
     error,
-    mutate,
   } = useSWR(
     `${BaseApi}${sellerCategoriesByAdmin}/${params?.seller}`,
-    fetcher,
+    (url) => fetcher(url, cookies.admintoken),
     {
       refreshInterval: 3600000,
       revalidateOnMount: true,
       revalidateOnFocus: true,
       onErrorRetry({ retrycount }: any) {
-        if (retrycount > 3) {
+        if (retrycount > errorRetry) {
           return false;
         }
       },
     }
   );
 
-  // const sellingItems = state?.user?.sellingCategory;
+  const authstatus = error?.response?.data?.status == 'UNAUTHORIZED' && true;
+
   const sellingItems = data?.data?.sellingCategory;
 
   const handleCategoryChange = (event: any) => {
@@ -165,29 +172,51 @@ export default function CreateCategory1() {
       return toast.error('Please add a photo');
     }
     const categoryData = {
-      sellerId: state?.user?.id,
+      sellerId: params?.seller,
       category: selectedItem?.id,
       photo: data?.photo?.url,
     };
     setLoading(true);
     axios
-      .patch(`${BaseApi}${addCategory}`, categoryData)
+      .patch(`${BaseApi}${addCategory}`, categoryData, {
+        headers: {
+          Authorization: `Bearer ${cookies?.admintoken}`,
+        },
+      })
       .then((res) => {
         if (res.data?.status == 'SUCCESS') {
           toast.success('Category Added !');
-          setUser(res?.data?.data);
         } else {
           toast.error('Something went wrong');
         }
       })
       .catch((err) => {
         console.log(err);
+        if (err?.response?.data?.status == 'UNAUTHORIZED') {
+          localStorage.removeItem('admin');
+          const currentUrl = window.location.href;
+          const path = extractPathAndParams(currentUrl);
+          if (typeof window !== 'undefined') {
+            location.href = `/auth/sign-in?ref=${path}`;
+          }
+          return toast.error('Session Expired');
+        }
         toast.error('Something went wrong');
       })
       .finally(() => {
         setLoading(false);
       });
   };
+
+  if (authstatus) {
+    localStorage.removeItem('admin');
+    toast.error('Session Expired');
+    const currentUrl = window.location.href;
+    const path = extractPathAndParams(currentUrl);
+    if (typeof window !== 'undefined') {
+      location.href = `/auth/sign-in?ref=${path}`;
+    }
+  }
 
   return (
     <>

@@ -70,7 +70,7 @@ export const createOrder = '/client/api/v1/order/create';
 
 export const createSellerRequest = '/create-request';
 
-export const addCategory = '/seller/v1/add-category';
+export const addCategory = '/admin/add/category';
 
 export const addProduct = '/seller/api/v1/product/create';
 

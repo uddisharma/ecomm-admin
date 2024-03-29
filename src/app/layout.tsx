@@ -40,8 +40,8 @@ export default function RootLayout({
               <ThemeProvider>
                 <NextProgress />
                 {children}
-                <Toaster />
-                <Toaster1 />
+                <Toaster reverseOrder={false} />
+                <Toaster1 closeButton={true} />
                 <GlobalDrawer />
                 <GlobalModal />
               </ThemeProvider>

@@ -8,13 +8,22 @@ import { PiPlusBold } from 'react-icons/pi';
 import { useFilterControls } from '@/hooks/use-filter-control';
 import axios from 'axios';
 import useSWR from 'swr';
-import { BaseApi, bannerPerPage, banners, softDeleteBanner } from '@/constants';
+import {
+  BaseApi,
+  bannerPerPage,
+  banners,
+  errorRetry,
+  softDeleteBanner,
+} from '@/constants';
 import { toast } from 'sonner';
 import { useParams } from 'next/navigation';
 import Card1 from '@/component/banner/cards';
 import BannerLoading from '@/component/loading/bannerLoading';
 import { MdOutlineAutoDelete } from 'react-icons/md';
 import { useState } from 'react';
+import { useCookies } from 'react-cookie';
+import { fetcher } from '@/constants/fetcher';
+import { extractPathAndParams } from '@/utils/urlextractor';
 
 const pageHeader = {
   title: 'Banners',
@@ -43,37 +52,66 @@ export default function Coupons() {
   const params = useParams();
   const [page, setPage] = useState(st?.page ? st?.page : 1);
 
-  const fetcher = (url: any) => axios.get(url).then((res) => res.data);
+  const [cookies] = useCookies(['admintoken']);
+
   let { data, isLoading, error, mutate } = useSWR(
     `${BaseApi}${banners}/${params?.seller}?page=${page}&limit=${bannerPerPage}&isDeleted=${false}`,
-    fetcher,
+    (url) => fetcher(url, cookies.admintoken),
     {
       refreshInterval: 3600000,
       revalidateOnMount: true,
       revalidateOnFocus: true,
       onErrorRetry({ retrycount }: any) {
-        if (retrycount > 3) {
+        if (retrycount > errorRetry) {
           return false;
         }
       },
     }
   );
+
+  const authstatus = error?.response?.data?.status == 'UNAUTHORIZED' && true;
+
   const pagininator = data?.data?.paginator;
   data = data?.data?.data;
 
   const onDelete = async (id: any) => {
-    // console.log(id);
     try {
-      await axios.patch(`${BaseApi}${softDeleteBanner}/${id}`, {
-        isDeleted: true,
-      });
+      await axios.patch(
+        `${BaseApi}${softDeleteBanner}/${id}`,
+        {
+          isDeleted: true,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
+          },
+        }
+      );
       await mutate();
       return toast.success('Banner is Temperory Deleted Successfully !');
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
+      if (error?.response?.data?.status == 'UNAUTHORIZED') {
+        localStorage.removeItem('admin');
+        const currentUrl = window.location.href;
+        const path = extractPathAndParams(currentUrl);
+        if (typeof window !== 'undefined') {
+          location.href = `/auth/sign-in?ref=${path}`;
+        }
+        return toast.error('Session Expired');
+      }
       return toast.error('Something went wrong');
     }
   };
+  if (authstatus) {
+    localStorage.removeItem('admin');
+    toast.error('Session Expired');
+    const currentUrl = window.location.href;
+    const path = extractPathAndParams(currentUrl);
+    if (typeof window !== 'undefined') {
+      location.href = `/auth/sign-in?ref=${path}`;
+    }
+  }
 
   return (
     <>

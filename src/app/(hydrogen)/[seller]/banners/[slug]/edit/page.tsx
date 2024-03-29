@@ -14,10 +14,13 @@ import Link from 'next/link';
 import { Button, Empty, SearchNotFoundIcon } from 'rizzui';
 import { useParams, useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { BaseApi, singleBanner, updateBanner } from '@/constants';
+import { BaseApi, errorRetry, singleBanner, updateBanner } from '@/constants';
 import useSWR from 'swr';
 import Spinner from '@/component/ui/spinner';
 import UploadZoneS3 from '@/component/ui/file-upload/upload-zone-s3';
+import { useCookies } from 'react-cookie';
+import { fetcher } from '@/constants/fetcher';
+import { extractPathAndParams } from '@/utils/urlextractor';
 const schema = z.object({
   desktop: z.array(fileSchema).optional(),
   mobile: z.array(fileSchema).optional(),
@@ -47,15 +50,30 @@ export default function AssetInit() {
     return true;
   }
 
-  const fetcher = (url: any) => axios.get(url).then((res) => res.data);
+  const [cookies] = useCookies(['admintoken']);
 
   let {
     data,
-    error,
     isLoading: loading,
-  } = useSWR(`${BaseApi}${singleBanner}/${params?.slug}`, fetcher, {
-    refreshInterval: 3600000,
-  });
+    error,
+    mutate,
+  } = useSWR(
+    `${BaseApi}${singleBanner}/${params?.slug}`,
+    (url) => fetcher(url, cookies.admintoken),
+    {
+      refreshInterval: 3600000,
+      revalidateOnMount: true,
+      revalidateOnFocus: true,
+      onErrorRetry({ retrycount }: any) {
+        if (retrycount > errorRetry) {
+          return false;
+        }
+      },
+    }
+  );
+
+  const authstatus = error?.response?.data?.status == 'UNAUTHORIZED' && true;
+
   data = data?.data;
   const images = data?.images && data?.images[0];
   const desktop = images?.desktop?.url;
@@ -75,24 +93,32 @@ export default function AssetInit() {
     }
     setIsLoading(true);
     axios
-      .patch(`${BaseApi}${updateBanner}/${params?.slug}`, {
-        redirectLink: data?.link,
-        images: [
-          {
-            desktop: {
-              url: data?.desktop && data?.desktop[0].url,
-              height: 300,
-              width: 1600,
+      .patch(
+        `${BaseApi}${updateBanner}/${params?.slug}`,
+        {
+          redirectLink: data?.link,
+          images: [
+            {
+              desktop: {
+                url: data?.desktop && data?.desktop[0].url,
+                height: 300,
+                width: 1600,
+              },
+              mobile: {
+                url: data?.mobile && data?.mobile[0].url,
+                height: 210,
+                width: 480,
+              },
             },
-            mobile: {
-              url: data?.mobile && data?.mobile[0].url,
-              height: 210,
-              width: 480,
-            },
+          ],
+          sellerId: params?.seller,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
           },
-        ],
-        sellerId: params?.seller,
-      })
+        }
+      )
       .then((res) => {
         if (res.data.status == 'SUCCESS') {
           router.back();
@@ -105,6 +131,15 @@ export default function AssetInit() {
       })
       .catch((err) => {
         console.log(err);
+        if (err?.response?.data?.status == 'UNAUTHORIZED') {
+          localStorage.removeItem('admin');
+          const currentUrl = window.location.href;
+          const path = extractPathAndParams(currentUrl);
+          if (typeof window !== 'undefined') {
+            location.href = `/auth/sign-in?ref=${path}`;
+          }
+          return toast.error('Session Expired');
+        }
         toast.error('Error', {
           description: 'Something went wrong',
         });
@@ -113,6 +148,7 @@ export default function AssetInit() {
         setIsLoading(false);
       });
   };
+
   const pageHeader = {
     title: 'Edit Banner',
     breadcrumb: [
@@ -129,6 +165,17 @@ export default function AssetInit() {
       },
     ],
   };
+
+  if (authstatus) {
+    localStorage.removeItem('admin');
+    toast.error('Session Expired');
+    const currentUrl = window.location.href;
+    const path = extractPathAndParams(currentUrl);
+    if (typeof window !== 'undefined') {
+      location.href = `/auth/sign-in?ref=${path}`;
+    }
+  }
+
   if (loading) {
     <div>
       <br />

@@ -17,6 +17,8 @@ import { useParams } from 'next/navigation';
 import { toast } from 'sonner';
 import { BaseApi, addBanner } from '@/constants';
 import UploadZoneS3 from '@/component/ui/file-upload/upload-zone-s3';
+import { useCookies } from 'react-cookie';
+import { extractPathAndParams } from '@/utils/urlextractor';
 const schema = z.object({
   desktop: z.array(fileSchema).optional(),
   mobile: z.array(fileSchema).optional(),
@@ -35,6 +37,7 @@ export default function AssetInit() {
   const [reset, setReset] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const params = useParams();
+  const [cookies] = useCookies(['admintoken']);
   function validateData(desktop: any, mobile: any, link: any) {
     if (!desktop?.length) {
       return false;
@@ -54,45 +57,35 @@ export default function AssetInit() {
     if (!validateData(data?.desktop, data?.mobile, data?.link)) {
       return toast.warning('All fields are required');
     }
-    const maindata = {
-      redirectLink: data?.link,
-      images: [
-        {
-          desktop: {
-            url: data?.desktop && data?.desktop[0].url,
-            height: 300,
-            width: 1600,
-          },
-          mobile: {
-            url: data?.mobile && data?.mobile[0].url,
-            height: 210,
-            width: 480,
-          },
-        },
-      ],
-      sellerId: params?.seller,
-    };
-    console.log(maindata);
+
     setIsLoading(true);
     axios
-      .post(`${BaseApi}${addBanner}`, {
-        redirectLink: data?.link,
-        images: [
-          {
-            desktop: {
-              url: data?.desktop && data?.desktop[0].url,
-              height: 300,
-              width: 1600,
+      .post(
+        `${BaseApi}${addBanner}`,
+        {
+          redirectLink: data?.link,
+          images: [
+            {
+              desktop: {
+                url: data?.desktop && data?.desktop[0].url,
+                height: 300,
+                width: 1600,
+              },
+              mobile: {
+                url: data?.mobile && data?.mobile[0].url,
+                height: 210,
+                width: 480,
+              },
             },
-            mobile: {
-              url: data?.mobile && data?.mobile[0].url,
-              height: 210,
-              width: 480,
-            },
+          ],
+          sellerId: params?.seller,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
           },
-        ],
-        sellerId: params?.seller,
-      })
+        }
+      )
       .then((res) => {
         if (res.data.status == 'SUCCESS') {
           setReset(initialValues);
@@ -104,6 +97,15 @@ export default function AssetInit() {
         }
       })
       .catch((err) => {
+        if (err?.response?.data?.status == 'UNAUTHORIZED') {
+          localStorage.removeItem('admin');
+          const currentUrl = window.location.href;
+          const path = extractPathAndParams(currentUrl);
+          if (typeof window !== 'undefined') {
+            location.href = `/auth/sign-in?ref=${path}`;
+          }
+          return toast.error('Session Expired');
+        }
         console.log(err);
         toast.error('Error', {
           description: 'Something went wrong',

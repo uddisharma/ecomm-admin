@@ -14,6 +14,7 @@ import {
   bannerPerPage,
   banners,
   deleteBanner,
+  errorRetry,
   softDeleteBanner,
 } from '@/constants';
 import { toast } from 'sonner';
@@ -21,6 +22,9 @@ import { useParams } from 'next/navigation';
 import BannerLoading from '@/component/loading/bannerLoading';
 import { AiFillPicture } from 'react-icons/ai';
 import Card3 from '@/component/banner/card2';
+import { useCookies } from 'react-cookie';
+import { fetcher } from '@/constants/fetcher';
+import { extractPathAndParams } from '@/utils/urlextractor';
 
 const pageHeader = {
   title: 'Banners',
@@ -48,47 +52,90 @@ export default function Coupons() {
   );
   const params = useParams();
   const [page, setPage] = useState(st?.page ? st?.page : 1);
+  const [cookies] = useCookies(['admintoken']);
 
-  const fetcher = (url: any) => axios.get(url).then((res) => res.data);
   let { data, isLoading, error, mutate } = useSWR(
     `${BaseApi}${banners}/${params?.seller}?page=${page}&limit=${bannerPerPage}&isDeleted=${true}`,
-    fetcher,
+    (url) => fetcher(url, cookies.admintoken),
     {
       refreshInterval: 3600000,
       revalidateOnMount: true,
       revalidateOnFocus: true,
       onErrorRetry({ retrycount }: any) {
-        if (retrycount > 3) {
+        if (retrycount > errorRetry) {
           return false;
         }
       },
     }
   );
+
+  const authstatus = error?.response?.data?.status == 'UNAUTHORIZED' && true;
   const pagininator = data?.data?.paginator;
   data = data?.data?.data;
 
   const onDelete = async (id: any) => {
     try {
-      await axios.delete(`${BaseApi}${deleteBanner}/${id}`);
+      await axios.delete(`${BaseApi}${deleteBanner}/${id}`, {
+        headers: {
+          Authorization: `Bearer ${cookies?.admintoken}`,
+        },
+      });
       await mutate();
       return toast.success('Banner is Permanently Deleted Successfully !');
-    } catch (error) {
+    } catch (error: any) {
+      if (error?.response?.data?.status == 'UNAUTHORIZED') {
+        localStorage.removeItem('admin');
+        const currentUrl = window.location.href;
+        const path = extractPathAndParams(currentUrl);
+        if (typeof window !== 'undefined') {
+          location.href = `/auth/sign-in?ref=${path}`;
+        }
+        return toast.error('Session Expired');
+      }
       console.log(error);
       return toast.error('Something went wrong');
     }
   };
   const onTemperoryDelete = async (id: string) => {
     try {
-      await axios.patch(`${BaseApi}${softDeleteBanner}/${id}`, {
-        isDeleted: false,
-      });
+      await axios.patch(
+        `${BaseApi}${softDeleteBanner}/${id}`,
+        {
+          isDeleted: false,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
+          },
+        }
+      );
       await mutate();
       return toast.success('Banner is Recycle Successfully !');
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
+      if (error?.response?.data?.status == 'UNAUTHORIZED') {
+        localStorage.removeItem('admin');
+        const currentUrl = window.location.href;
+        const path = extractPathAndParams(currentUrl);
+        if (typeof window !== 'undefined') {
+          location.href = `/auth/sign-in?ref=${path}`;
+        }
+        return toast.error('Session Expired');
+      }
       return toast.error('Something went wrong');
     }
   };
+
+  if (authstatus) {
+    localStorage.removeItem('admin');
+    toast.error('Session Expired');
+    const currentUrl = window.location.href;
+    const path = extractPathAndParams(currentUrl);
+    if (typeof window !== 'undefined') {
+      location.href = `/auth/sign-in?ref=${path}`;
+    }
+  }
+  
   return (
     <>
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
