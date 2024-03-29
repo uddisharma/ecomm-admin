@@ -1,5 +1,4 @@
 'use client';
-
 import { useState } from 'react';
 import WidgetCard from '@/component/cards/widget-card';
 import { DatePicker } from '@/component/ui/datepicker';

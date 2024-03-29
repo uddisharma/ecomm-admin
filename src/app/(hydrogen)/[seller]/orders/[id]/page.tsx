@@ -5,7 +5,7 @@ import { CartProvider } from '@/store/quick-cart/cart.context';
 import { PiDownloadSimpleBold } from 'react-icons/pi';
 import { FaTruck } from 'react-icons/fa';
 import OrderView from '@/component/ecommerce/order/order-view';
-import { BaseApi, singleOrder, updateOrders } from '@/constants';
+import { BaseApi, errorRetry, singleOrder, updateOrders } from '@/constants';
 import useSWR from 'swr';
 import axios from 'axios';
 import OrderDetailsLoadingPage from '@/component/loading/orderdetails';
@@ -13,30 +13,55 @@ import { toast } from 'sonner';
 import { Empty, SearchNotFoundIcon } from 'rizzui';
 import { useState } from 'react';
 import Link from 'next/link';
+import { useCookies } from 'react-cookie';
+import { fetcher } from '@/constants/fetcher';
+import { extractPathAndParams } from '@/utils/urlextractor';
 
 export default function OrderDetailsPage({ params }: any) {
-  const fetcher = (url: any) => axios.get(url).then((res) => res.data);
-  let { data, error, isLoading, mutate } = useSWR(
+  const [cookies] = useCookies(['admintoken']);
+  let { data, isLoading, error, mutate } = useSWR(
     `${BaseApi}${singleOrder}/${params?.id}`,
-    fetcher,
+    (url) => fetcher(url, cookies.admintoken),
     {
       refreshInterval: 3600000,
+      revalidateOnMount: true,
+      revalidateOnFocus: true,
       onErrorRetry({ retrycount }: any) {
-        if (retrycount > 3) {
+        if (retrycount > errorRetry) {
           return false;
         }
       },
     }
   );
-  const orderData = data?.data;
+
+  const authstatus = error?.response?.data?.status == 'UNAUTHORIZED' && true;
+
+  const orderData = data;
   const [loading, setLoading] = useState(false);
   const updateStatus = async (id: any, status: any) => {
     try {
       setLoading(true);
-      await axios.patch(`${BaseApi}${updateOrders}/${id}`, { status });
+      await axios.patch(
+        `${BaseApi}${updateOrders}/${id}`,
+        { status },
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
+          },
+        }
+      );
       await mutate();
       return toast.success(`Order Marked as ${status}`);
-    } catch (error) {
+    } catch (error: any) {
+      if (error?.response?.data?.status == 'UNAUTHORIZED') {
+        localStorage.removeItem('admin');
+        const currentUrl = window.location.href;
+        const path = extractPathAndParams(currentUrl);
+        if (typeof window !== 'undefined') {
+          location.href = `/auth/sign-in?ref=${path}`;
+        }
+        return toast.error('Session Expired');
+      }
       console.log(error);
       return toast.error('Something went wrong');
     } finally {
@@ -71,6 +96,17 @@ export default function OrderDetailsPage({ params }: any) {
       },
     ],
   };
+
+  if (authstatus) {
+    localStorage.removeItem('admin');
+    toast.error('Session Expired');
+    const currentUrl = window.location.href;
+    const path = extractPathAndParams(currentUrl);
+    if (typeof window !== 'undefined') {
+      location.href = `/auth/sign-in?ref=${path}`;
+    }
+  }
+
   return (
     <>
       <CartProvider>
@@ -127,8 +163,9 @@ export default function OrderDetailsPage({ params }: any) {
             )}
           </div>
         </PageHeader>
-        {isLoading && <OrderDetailsLoadingPage />}
-        {error && (
+        {isLoading ? (
+          <OrderDetailsLoadingPage />
+        ) : error ? (
           <div style={{ paddingBottom: '100px' }}>
             <Empty
               image={<SearchNotFoundIcon />}
@@ -136,8 +173,7 @@ export default function OrderDetailsPage({ params }: any) {
               className="h-full justify-center"
             />
           </div>
-        )}
-        {data == null && (
+        ) : data == null ? (
           <div style={{ paddingBottom: '100px' }}>
             <Empty
               image={<SearchNotFoundIcon />}
@@ -145,13 +181,15 @@ export default function OrderDetailsPage({ params }: any) {
               className="h-full justify-center"
             />
           </div>
-        )}
-        {orderData && orderData?.status && (
-          <OrderView
-            orderData={orderData}
-            updateStatus={updateStatus}
-            loading={loading}
-          />
+        ) : (
+          orderData &&
+          orderData?.status && (
+            <OrderView
+              orderData={orderData}
+              updateStatus={updateStatus}
+              loading={loading}
+            />
+          )
         )}
       </CartProvider>
     </>

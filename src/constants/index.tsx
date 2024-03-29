@@ -122,7 +122,7 @@ export const ticketReply = '/admin/ticket/reply';
 
 export const deleteTicket = '/admin/delete/ticket';
 
-export const sellerOrders = '/seller/api/v1/order/list';
+export const sellerOrders = '/admin/seller/order/list';
 
 export const adminOrders = '/admin/order/list';
 
@@ -130,7 +130,7 @@ export const orderPerPage = 2;
 
 export const singleOrder = '/admin/order';
 
-export const updateOrders = '/seller/api/v1/order/update';
+export const updateOrders = '/admin/order/update';
 
 export const softOrderDelete = '/admin/order/softDelete';
 
@@ -144,7 +144,7 @@ export const monthwiseRevenue1 = '/admin/seller/order/revenue/monthwise';
 
 export const adminmonthwiseRevenue = '/admin/order/revenue/monthwise';
 
-export const monthwiseOrders = '/seller/api/v1/order/orders/monthwise';
+export const monthwiseOrders = '/admin/seller/order/deleted/list';
 
 export const monthwiseOrders1 = '/admin/seller/order/orders/monthwise';
 

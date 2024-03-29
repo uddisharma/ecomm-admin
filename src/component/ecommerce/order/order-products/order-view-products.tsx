@@ -15,7 +15,7 @@ const columns = [
         <div className="relative aspect-square w-12 overflow-hidden rounded-lg">
           <Image
             alt={row?.productId?.name}
-            src={row.productId?.images && row?.productId?.images}
+            src={row.productId?.images && row?.productId?.images[0]}
             fill
             sizes="(max-width: 768px) 100vw"
             className="object-cover"
@@ -62,17 +62,15 @@ const columns = [
           alignItems: 'center',
         }}
       >
-        <div
+        {/* <div
           style={{
             height: '15px',
             width: '15px',
             borderRadius: '50%',
             backgroundColor: `${row?.color?.code}`,
           }}
-        ></div>
-        <Text className="text-center text-sm font-semibold">
-          {row?.color?.name}
-        </Text>
+        ></div> */}
+        <Text className="text-center text-sm font-semibold">{row?.color}</Text>
       </div>
     ),
   },

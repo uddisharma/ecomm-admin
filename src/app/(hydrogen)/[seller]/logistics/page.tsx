@@ -27,13 +27,16 @@ import PrevBtn from '@/component/ui/carousel/prev-btn';
 import PageHeader from '@/component/others/pageHeader';
 import { useEffect, useState } from 'react';
 import { z } from 'zod';
-import { BaseApi, singleSeller, updateSeller } from '@/constants';
+import { BaseApi, errorRetry, singleSeller, updateSeller } from '@/constants';
 import axios from 'axios';
 import { toast } from 'sonner';
 import useSWR from 'swr';
 import { useParams } from 'next/navigation';
 import { Skeleton } from '@/component/ui/skeleton';
 import Image from 'next/image';
+import { useCookies } from 'react-cookie';
+import { fetcher } from '@/constants/fetcher';
+import { extractPathAndParams } from '@/utils/urlextractor';
 
 const schema = z.object({
   name: z.string().min(1),
@@ -58,18 +61,42 @@ function PromoBanner() {
     ],
   };
 
-  const fetcher = (url: any) => axios.get(url).then((res) => res.data);
+  const [cookies] = useCookies(['admintoken']);
   const params = useParams();
+
   let {
     data,
-    error,
     isLoading: loading,
+    error,
     mutate,
-  } = useSWR(`${BaseApi}${singleSeller}/${params?.seller}`, fetcher, {
-    refreshInterval: 3600000,
-  });
+  } = useSWR(
+    `${BaseApi}${singleSeller}/${params?.seller}`,
+    (url) => fetcher(url, cookies.admintoken),
+    {
+      refreshInterval: 3600000,
+      revalidateOnMount: true,
+      revalidateOnFocus: true,
+      onErrorRetry({ retrycount }: any) {
+        if (retrycount > errorRetry) {
+          return false;
+        }
+      },
+    }
+  );
+
+  const authstatus = error?.response?.data?.status == 'UNAUTHORIZED' && true;
 
   const seller = data?.data?.user;
+
+  if (authstatus) {
+    localStorage.removeItem('admin');
+    toast.error('Session Expired');
+    const currentUrl = window.location.href;
+    const path = extractPathAndParams(currentUrl);
+    if (typeof window !== 'undefined') {
+      location.href = `/auth/sign-in?ref=${path}`;
+    }
+  }
 
   return (
     <>
@@ -264,6 +291,7 @@ const WareHouses = ({ data, data1, mutate }: any) => {
   const [warehouses, setWarehouses] = useState<any>([]);
   const [loading, setLoading] = useState(false);
   const params = useParams();
+  const [cookies] = useCookies(['admintoken']);
   useEffect(() => {
     setWarehouses(data);
   }, []);
@@ -287,6 +315,11 @@ const WareHouses = ({ data, data1, mutate }: any) => {
               warehouses: updatedWarehouses,
             },
           },
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
+          },
         }
       );
       if (res.data?.status == 'SUCCESS') {
@@ -299,7 +332,16 @@ const WareHouses = ({ data, data1, mutate }: any) => {
       } else {
         return toast.error('Something went wrong !');
       }
-    } catch (error) {
+    } catch (error: any) {
+      if (error?.response?.data?.status == 'UNAUTHORIZED') {
+        localStorage.removeItem('admin');
+        const currentUrl = window.location.href;
+        const path = extractPathAndParams(currentUrl);
+        if (typeof window !== 'undefined') {
+          location.href = `/auth/sign-in?ref=${path}`;
+        }
+        return toast.error('Session Expired');
+      }
       return toast.error('Something went wrong !');
     } finally {
       setLoading(false);
@@ -473,6 +515,7 @@ const WareHouse1 = ({ data }: any) => {
 function EditLogistics({ data, mutate, data1 }: any) {
   const { closeModal } = useModal();
   const [reset, setReset] = useState({});
+  const [cookies] = useCookies(['admintoken']);
   const initialValues: Schema = {
     name: data?.name ?? '',
     rate: data?.rate ?? '',
@@ -490,6 +533,11 @@ function EditLogistics({ data, mutate, data1 }: any) {
             personal: data,
             partner: data1?.deliverypartner?.partner,
           },
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
+          },
         }
       );
       if (res.data?.status == 'SUCCESS') {
@@ -499,7 +547,16 @@ function EditLogistics({ data, mutate, data1 }: any) {
       } else {
         return toast.error('Something went wrong !');
       }
-    } catch (error) {
+    } catch (error: any) {
+      if (error?.response?.data?.status == 'UNAUTHORIZED') {
+        localStorage.removeItem('admin');
+        const currentUrl = window.location.href;
+        const path = extractPathAndParams(currentUrl);
+        if (typeof window !== 'undefined') {
+          location.href = `/auth/sign-in?ref=${path}`;
+        }
+        return toast.error('Session Expired');
+      }
       return toast.error('Something went wrong !');
     } finally {
       setLoading(false);
