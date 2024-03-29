@@ -10,23 +10,27 @@ import useSWR from 'swr';
 import {
   BaseApi,
   deleteReferral,
+  errorRetry,
   getAllReferrals,
   referralsPerPage,
   updateReferral,
 } from '@/constants';
-import TransactionLoadingPage from '@/component/loading/transactions';
 import { Button, Empty, SearchNotFoundIcon } from 'rizzui';
 import { toast } from 'sonner';
 import Link from 'next/link';
 import { PiPlusBold } from 'react-icons/pi';
 import { LuScreenShare } from 'react-icons/lu';
 import DeletedReferralTable from '@/component/referrals/deleted/table';
+import { useCookies } from 'react-cookie';
+import { fetcher } from '@/constants/fetcher';
+import { extractPathAndParams } from '@/utils/urlextractor';
+import ReferralLoadingPage from '@/component/loading/referralsLoading';
 const metadata = {
   ...metaObject('Transactions'),
 };
 
 const pageHeader = {
-  title: 'Referrals',
+  title: 'Deleted Referrals',
   breadcrumb: [
     {
       href: '/',
@@ -50,29 +54,58 @@ export default function Transactions() {
     initialState
   );
   const [page, setPage] = useState(st?.page ? st?.page : 1);
-  const fetcher = (url: any) => axios.get(url).then((res) => res.data);
+
+  const [cookies] = useCookies(['admintoken']);
+
   let { data, isLoading, error, mutate } = useSWR(
     `${BaseApi}${getAllReferrals}?page=${page}&limit=${referralsPerPage}&isDeleted=${true}`,
-    fetcher,
+    (url) => fetcher(url, cookies.admintoken),
     {
       refreshInterval: 3600000,
+      revalidateOnMount: true,
+      revalidateOnFocus: true,
+      onErrorRetry({ retrycount }: any) {
+        if (retrycount > errorRetry) {
+          return false;
+        }
+      },
     }
   );
+
+  const authstatus = error?.response?.data?.status == 'UNAUTHORIZED' && true;
+
   const pagininator = data?.data?.paginator;
   data = data?.data?.data;
 
   const onDelete = async (id: any) => {
     try {
-      const res = await axios.patch(`${BaseApi}${updateReferral}/${id}`, {
-        isDeleted: false,
-      });
+      const res = await axios.patch(
+        `${BaseApi}${updateReferral}/${id}`,
+        {
+          isDeleted: false,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
+          },
+        }
+      );
       if (res.data?.status == 'SUCCESS') {
         await mutate();
         toast.success('Referral is Recycled Success');
       } else {
         return toast.error('Something went wrong');
       }
-    } catch (error) {
+    } catch (error: any) {
+      if (error?.response?.data?.status == 'UNAUTHORIZED') {
+        localStorage.removeItem('admin');
+        const currentUrl = window.location.href;
+        const path = extractPathAndParams(currentUrl);
+        if (typeof window !== 'undefined') {
+          location.href = `/auth/sign-in?ref=${path}`;
+        }
+        return toast.error('Session Expired');
+      }
       console.log(error);
       return toast.error('Something went wrong');
     }
@@ -80,16 +113,33 @@ export default function Transactions() {
 
   const updateOnboard = async (id: any, status: boolean) => {
     try {
-      const res = await axios.patch(`${BaseApi}${updateReferral}/${id}`, {
-        onboarded: status,
-      });
+      const res = await axios.patch(
+        `${BaseApi}${updateReferral}/${id}`,
+        {
+          onboarded: status,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
+          },
+        }
+      );
       if (res.data?.status == 'SUCCESS') {
         await mutate();
         toast.success('Onboarded Status Changed Successfully !');
       } else {
         return toast.error('Something went wrong');
       }
-    } catch (error) {
+    } catch (error: any) {
+      if (error?.response?.data?.status == 'UNAUTHORIZED') {
+        localStorage.removeItem('admin');
+        const currentUrl = window.location.href;
+        const path = extractPathAndParams(currentUrl);
+        if (typeof window !== 'undefined') {
+          location.href = `/auth/sign-in?ref=${path}`;
+        }
+        return toast.error('Session Expired');
+      }
       console.log(error);
       return toast.error('Something went wrong');
     }
@@ -97,16 +147,33 @@ export default function Transactions() {
 
   const updatePaid = async (id: any, status: boolean) => {
     try {
-      const res = await axios.patch(`${BaseApi}${updateReferral}/${id}`, {
-        status: status,
-      });
+      const res = await axios.patch(
+        `${BaseApi}${updateReferral}/${id}`,
+        {
+          status: status,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
+          },
+        }
+      );
       if (res.data?.status == 'SUCCESS') {
         await mutate();
         toast.success('Paid Status Changed Successfully !');
       } else {
         return toast.error('Something went wrong');
       }
-    } catch (error) {
+    } catch (error: any) {
+      if (error?.response?.data?.status == 'UNAUTHORIZED') {
+        localStorage.removeItem('admin');
+        const currentUrl = window.location.href;
+        const path = extractPathAndParams(currentUrl);
+        if (typeof window !== 'undefined') {
+          location.href = `/auth/sign-in?ref=${path}`;
+        }
+        return toast.error('Session Expired');
+      }
       console.log(error);
       return toast.error('Something went wrong');
     }
@@ -114,20 +181,44 @@ export default function Transactions() {
 
   const permanentlydelete = async (id: string) => {
     try {
-      const res = await axios.delete(`${BaseApi}${deleteReferral}/${id}`);
+      const res = await axios.delete(`${BaseApi}${deleteReferral}/${id}`, {
+        headers: {
+          Authorization: `Bearer ${cookies?.admintoken}`,
+        },
+      });
       if (res.data?.status == 'SUCCESS') {
         await mutate();
         toast.success('Referral is Permanently Deleted Successfully !');
       } else {
         return toast.error('Something went wrong');
       }
-    } catch (error) {
+    } catch (error: any) {
+      if (error?.response?.data?.status == 'UNAUTHORIZED') {
+        localStorage.removeItem('admin');
+        const currentUrl = window.location.href;
+        const path = extractPathAndParams(currentUrl);
+        if (typeof window !== 'undefined') {
+          location.href = `/auth/sign-in?ref=${path}`;
+        }
+        return toast.error('Session Expired');
+      }
       console.log(error);
       return toast.error('Something went wrong');
     }
   };
 
   const transactions: any = [];
+
+  if (authstatus) {
+    localStorage.removeItem('admin');
+    toast.error('Session Expired');
+    const currentUrl = window.location.href;
+    const path = extractPathAndParams(currentUrl);
+    if (typeof window !== 'undefined') {
+      location.href = `/auth/sign-in?ref=${path}`;
+    }
+  }
+
   return (
     <>
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
@@ -156,7 +247,7 @@ export default function Transactions() {
       </PageHeader>
 
       {isLoading ? (
-        <TransactionLoadingPage />
+        <ReferralLoadingPage />
       ) : error ? (
         <div style={{ paddingBottom: '100px' }}>
           <Empty

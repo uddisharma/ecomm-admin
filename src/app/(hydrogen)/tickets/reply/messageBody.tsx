@@ -37,8 +37,7 @@ export default function MessageBody({ chat }: any) {
       </div>
     );
   }
-  // console.log(chat1);
-  // console.log(chat);
+
   return (
     <div ref={chatContainerRef} className="max-h-[50rem] overflow-y-auto">
       {chat1?.map((e: any, i: any) => (

@@ -16,6 +16,8 @@ import { BaseApi, addReferral, findSingleSeller, findUsers } from '@/constants';
 import { toast } from 'sonner';
 import { GoArrowRight } from 'react-icons/go';
 import { IoIosSearch } from 'react-icons/io';
+import { useCookies } from 'react-cookie';
+import { extractPathAndParams } from '@/utils/urlextractor';
 const schema = z.object({
   amount: z.string().min(1, { message: 'Amount is Required' }),
   onboarded: z.boolean(),
@@ -78,13 +80,19 @@ export default function NewsLetterForm() {
     }
   }, [inputValue]);
 
+  const [cookies] = useCookies(['admintoken']);
+
   const findSeller = () => {
     if (inputValue == '') {
       return toast.warning('Please enter a keyword');
     }
     setLoading(true);
     axios
-      .get(`${BaseApi}${findSingleSeller}?term=${inputValue}`)
+      .get(`${BaseApi}${findSingleSeller}?term=${inputValue}`, {
+        headers: {
+          Authorization: `Bearer ${cookies?.admintoken}`,
+        },
+      })
       .then((res) => {
         if (res?.data?.data) {
           setSearchedData(res?.data?.data);
@@ -100,6 +108,15 @@ export default function NewsLetterForm() {
       })
       .catch((err) => {
         console.log(err);
+        if (err?.response?.data?.status == 'UNAUTHORIZED') {
+          localStorage.removeItem('admin');
+          const currentUrl = window.location.href;
+          const path = extractPathAndParams(currentUrl);
+          if (typeof window !== 'undefined') {
+            location.href = `/auth/sign-in?ref=${path}`;
+          }
+          return toast.error('Session Expired');
+        }
         return toast.error('Something went wrong');
       })
       .finally(() => {
@@ -110,7 +127,11 @@ export default function NewsLetterForm() {
   const findUser = () => {
     setIsLoading1(true);
     axios
-      .get(`${BaseApi}${findUsers}?term=${term}`)
+      .get(`${BaseApi}${findUsers}?term=${term}`, {
+        headers: {
+          Authorization: `Bearer ${cookies?.admintoken}`,
+        },
+      })
       .then((res) => {
         if (res?.data?.data) {
           setFilteredSuggestions1(res?.data?.data);
@@ -122,6 +143,15 @@ export default function NewsLetterForm() {
       })
       .catch((err) => {
         console.log(err);
+        if (err?.response?.data?.status == 'UNAUTHORIZED') {
+          localStorage.removeItem('admin');
+          const currentUrl = window.location.href;
+          const path = extractPathAndParams(currentUrl);
+          if (typeof window !== 'undefined') {
+            location.href = `/auth/sign-in?ref=${path}`;
+          }
+          return toast.error('Session Expired');
+        }
         return toast.error('Something went wrong');
       })
       .finally(() => {
@@ -154,13 +184,21 @@ export default function NewsLetterForm() {
     }
     setIsLoading(true);
     axios
-      .post(`${BaseApi}${addReferral}`, {
-        referringUser: term?.split('-')[2],
-        referredSeller: seller && seller[0]?.id,
-        amount: Number(data?.amount),
-        onboarded: data?.onboarded,
-        status: data?.status,
-      })
+      .post(
+        `${BaseApi}${addReferral}`,
+        {
+          referringUser: term?.split('-')[2],
+          referredSeller: seller && seller[0]?.id,
+          amount: Number(data?.amount),
+          onboarded: data?.onboarded,
+          status: data?.status,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
+          },
+        }
+      )
       .then((res) => {
         if (res.data?.status == 'SUCCESS') {
           setReset(initialValues);
@@ -173,6 +211,15 @@ export default function NewsLetterForm() {
       })
       .catch((err) => {
         console.log(err);
+        if (err?.response?.data?.status == 'UNAUTHORIZED') {
+          localStorage.removeItem('admin');
+          const currentUrl = window.location.href;
+          const path = extractPathAndParams(currentUrl);
+          if (typeof window !== 'undefined') {
+            location.href = `/auth/sign-in?ref=${path}`;
+          }
+          return toast.error('Session Expired');
+        }
         return toast.error('Something went wrong');
       })
       .finally(() => {

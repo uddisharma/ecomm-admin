@@ -1,7 +1,7 @@
 'use client';
 
 import { useAtomValue } from 'jotai';
-import { useState, useEffect, useContext } from 'react';
+import { useState, useContext } from 'react';
 import { Title } from '@/component/ui/text';
 import { Badge } from '@/component/ui/badge';
 import { Button } from '@/component/ui/button';
@@ -15,19 +15,12 @@ import { useMedia } from '@/hooks/use-media';
 import Spinner from '@/component/ui/spinner';
 import { ActionIcon, Empty, Input, SearchNotFoundIcon } from 'rizzui';
 import axios from 'axios';
-
 import useSWR from 'swr';
 import { useParams } from 'next/navigation';
 import { FaTelegramPlane } from 'react-icons/fa';
-import {
-  BaseApi,
-  errorRetry,
-  singleAdminTicket,
-  singleTicket,
-  ticketReply,
-} from '@/constants';
+import { BaseApi, errorRetry, singleTicket, ticketReply } from '@/constants';
 import { UserContext } from '@/store/user/context';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 import { useCookies } from 'react-cookie';
 import { extractPathAndParams } from '@/utils/urlextractor';
 import { fetcher } from '@/constants/fetcher';

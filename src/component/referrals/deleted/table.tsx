@@ -17,7 +17,7 @@ export default function DeletedReferralTable({
   return (
     <>
       <BasicTableWidget
-        title="Referrals"
+        title="Deleted Referrals"
         variant="minimal"
         data={data}
         key={Math.random()}
