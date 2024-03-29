@@ -14,12 +14,21 @@ import PageHeader from '@/component/others/pageHeader';
 import Link from 'next/link';
 import { Button, Empty, SearchNotFoundIcon } from 'rizzui';
 import axios from 'axios';
-import { BaseApi, findSingleSeller, updateTicket } from '@/constants';
+import {
+  BaseApi,
+  errorRetry,
+  findSingleSeller,
+  singleTicket,
+  updateTicket,
+} from '@/constants';
 import { toast } from 'sonner';
 import { useParams, useRouter } from 'next/navigation';
 import useSWR from 'swr';
 import { GoArrowRight } from 'react-icons/go';
 import { IoIosSearch } from 'react-icons/io';
+import { useCookies } from 'react-cookie';
+import { fetcher } from '@/constants/fetcher';
+import { extractPathAndParams } from '@/utils/urlextractor';
 const schema = z.object({
   seller: z.string().optional(),
   type: z.string().min(1, { message: 'Type is Required' }),
@@ -78,15 +87,29 @@ export default function NewsLetterForm() {
     ],
   };
 
-  const fetcher = (url: any) => axios.get(url).then((res) => res.data);
+  const [cookies] = useCookies(['admintoken']);
 
   let {
     data,
-    error,
     isLoading: loading,
-  } = useSWR(`${BaseApi}${'/admin/single/ticket'}/${params?.slug}`, fetcher, {
-    refreshInterval: 3600000,
-  });
+    error,
+  } = useSWR(
+    `${BaseApi}${singleTicket}/${params?.slug}`,
+    (url) => fetcher(url, cookies.admintoken),
+    {
+      refreshInterval: 3600000,
+      revalidateOnMount: true,
+      revalidateOnFocus: true,
+      onErrorRetry({ retrycount }: any) {
+        if (retrycount > errorRetry) {
+          return false;
+        }
+      },
+    }
+  );
+
+  const authstatus = error?.response?.data?.status == 'UNAUTHORIZED' && true;
+
   const initialValues = {
     seller: String(params?.seller),
     type: data?.data?.type,
@@ -133,7 +156,11 @@ export default function NewsLetterForm() {
     }
     setLoading(true);
     axios
-      .get(`${BaseApi}${findSingleSeller}?term=${inputValue}`)
+      .get(`${BaseApi}${findSingleSeller}?term=${inputValue}`, {
+        headers: {
+          Authorization: `Bearer ${cookies?.admintoken}`,
+        },
+      })
       .then((res) => {
         if (res?.data?.data) {
           setSearchedData(res?.data?.data);
@@ -147,8 +174,17 @@ export default function NewsLetterForm() {
           return toast.warning('Seller Not found');
         }
       })
-      .catch((err) => {
+      .catch((err: any) => {
         console.log(err);
+        if (err?.response?.data?.status == 'UNAUTHORIZED') {
+          localStorage.removeItem('admin');
+          const currentUrl = window.location.href;
+          const path = extractPathAndParams(currentUrl);
+          if (typeof window !== 'undefined') {
+            location.href = `/auth/sign-in?ref=${path}`;
+          }
+          return toast.error('Session Expired');
+        }
         return toast.error('Something went wrong');
       })
       .finally(() => {
@@ -171,10 +207,18 @@ export default function NewsLetterForm() {
 
     setIsLoading(true);
     axios
-      .patch(`${BaseApi}${updateTicket}/${params?.slug}`, {
-        ...data,
-        seller: seller2,
-      })
+      .patch(
+        `${BaseApi}${updateTicket}/${params?.slug}`,
+        {
+          ...data,
+          seller: seller2,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
+          },
+        }
+      )
       .then((res) => {
         if (res?.data?.status == 'SUCCESS') {
           setReset(initialValues);
@@ -192,6 +236,16 @@ export default function NewsLetterForm() {
         setIsLoading(false);
       });
   };
+
+  if (authstatus) {
+    localStorage.removeItem('admin');
+    toast.error('Session Expired');
+    const currentUrl = window.location.href;
+    const path = extractPathAndParams(currentUrl);
+    if (typeof window !== 'undefined') {
+      location.href = `/auth/sign-in?ref=${path}`;
+    }
+  }
 
   if (error) {
     return (
@@ -246,7 +300,7 @@ export default function NewsLetterForm() {
         <br />
         <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
           <Link
-            href={`/${params?.seller}/tickets`}
+            href={`/tickets`}
             className="mt-4 w-full @lg:mt-0 @lg:w-auto"
           >
             <Button

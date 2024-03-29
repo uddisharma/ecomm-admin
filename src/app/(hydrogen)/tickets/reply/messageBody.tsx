@@ -37,7 +37,8 @@ export default function MessageBody({ chat }: any) {
       </div>
     );
   }
-
+  // console.log(chat1);
+  // console.log(chat);
   return (
     <div ref={chatContainerRef} className="max-h-[50rem] overflow-y-auto">
       {chat1?.map((e: any, i: any) => (
@@ -45,8 +46,11 @@ export default function MessageBody({ chat }: any) {
           {st?.user?.id == e?.from ? (
             <div className="grid grid-cols-[32px_1fr] items-start gap-3 lg:gap-4 xl:grid-cols-[48px_1fr]">
               <Avatar
-                name={st?.user?.shopname}
-                src={st?.user?.cover}
+                name={st?.user?.name ?? ''}
+                src={
+                  st?.user?.profile ??
+                  'https://isomorphic-furyroad.s3.amazonaws.com/public/avatars-blur/avatar-11.webp'
+                }
                 className="!h-5 !w-5 bg-[#70C5E0] font-medium text-white xl:!h-8 xl:!w-8"
               />
 

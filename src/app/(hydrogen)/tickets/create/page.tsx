@@ -13,13 +13,13 @@ import SelectLoader from '@/component/loader/select-loader';
 import PageHeader from '@/component/others/pageHeader';
 import Link from 'next/link';
 import { Button } from 'rizzui';
-import { UserContext } from '@/store/user/context';
 import axios from 'axios';
 import { BaseApi, createTicket, findSingleSeller } from '@/constants';
 import { toast } from 'sonner';
-import { useParams } from 'next/navigation';
 import { IoIosSearch } from 'react-icons/io';
 import { GoArrowRight } from 'react-icons/go';
+import { useCookies } from 'react-cookie';
+import { extractPathAndParams } from '@/utils/urlextractor';
 const schema = z.object({
   type: z.string().min(1, { message: 'Type is Required' }),
   subject: z.string().min(1, { message: 'Subject is Required' }),
@@ -54,7 +54,7 @@ const types = [
 ];
 
 export default function NewsLetterForm() {
-  const params = useParams();
+
   const initialValues = {
     type: '',
     subject: '',
@@ -85,13 +85,19 @@ export default function NewsLetterForm() {
     }
   }, [inputValue]);
 
+  const [cookies] = useCookies(['admintoken']);
+
   const findSeller = () => {
     if (inputValue == '') {
       return toast.warning('Please enter a keyword');
     }
     setLoading(true);
     axios
-      .get(`${BaseApi}${findSingleSeller}?term=${inputValue}`)
+      .get(`${BaseApi}${findSingleSeller}?term=${inputValue}`, {
+        headers: {
+          Authorization: `Bearer ${cookies?.admintoken}`,
+        },
+      })
       .then((res) => {
         if (res?.data?.data) {
           setSearchedData(res?.data?.data);
@@ -107,6 +113,15 @@ export default function NewsLetterForm() {
       })
       .catch((err) => {
         console.log(err);
+        if (err?.response?.data?.status == 'UNAUTHORIZED') {
+          localStorage.removeItem('admin');
+          const currentUrl = window.location.href;
+          const path = extractPathAndParams(currentUrl);
+          if (typeof window !== 'undefined') {
+            location.href = `/auth/sign-in?ref=${path}`;
+          }
+          return toast.error('Session Expired');
+        }
         return toast.error('Something went wrong');
       })
       .finally(() => {
@@ -125,10 +140,18 @@ export default function NewsLetterForm() {
     }
     setIsLoading(true);
     axios
-      .post(`${BaseApi}${createTicket}`, {
-        ...data,
-        seller: seller && seller[0]?.id,
-      })
+      .post(
+        `${BaseApi}${createTicket}`,
+        {
+          ...data,
+          seller: seller && seller[0]?.id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
+          },
+        }
+      )
       .then((res) => {
         if (res?.data?.status == 'SUCCESS') {
           setReset(initialValues);
@@ -139,6 +162,15 @@ export default function NewsLetterForm() {
       })
       .catch((err) => {
         console.log(err);
+        if (err?.response?.data?.status == 'UNAUTHORIZED') {
+          localStorage.removeItem('admin');
+          const currentUrl = window.location.href;
+          const path = extractPathAndParams(currentUrl);
+          if (typeof window !== 'undefined') {
+            location.href = `/auth/sign-in?ref=${path}`;
+          }
+          return toast.error('Session Expired');
+        }
         return toast.error('Something went wrong');
       })
       .finally(() => {
@@ -166,10 +198,7 @@ export default function NewsLetterForm() {
     <>
       <br />
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
-        <Link
-          href={`/${params?.seller}/tickets`}
-          className="mt-4 w-full @lg:mt-0 @lg:w-auto"
-        >
+        <Link href={`/tickets`} className="mt-4 w-full @lg:mt-0 @lg:w-auto">
           <Button
             tag="span"
             className="w-full @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"

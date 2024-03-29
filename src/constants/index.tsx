@@ -106,21 +106,21 @@ export const changePassword = '/seller/vi/change/password';
 
 export const changeAdminPassword = '/admin/auth/change/password';
 
-export const createTicket = '/seller/vi/seller/ticket/create';
+export const createTicket = '/admin/ticket/create';
 
-export const updateTicket = '/seller/vi/seller/update/ticket';
+export const updateTicket = '/admin/update/ticket';
 
 export const sellerAllTickets = '/seller/vi/seller/tickets';
 
 export const ticketPerPage = 2;
 
-export const markTicket = '/seller/vi/seller/mark/resolved';
+export const markTicket = '/admin/mark/resolved';
 
-export const singleTicket = '/seller/vi/seller/single/ticket';
+export const singleTicket = '/admin/single/ticket';
 
-export const ticketReply = '/seller/vi/seller/ticket/reply';
+export const ticketReply = '/admin/ticket/reply';
 
-export const deleteTicket = '/seller/vi/seller/delete/ticket';
+export const deleteTicket = '/admin/delete/ticket';
 
 export const sellerOrders = '/seller/api/v1/order/list';
 
