@@ -5,8 +5,11 @@ import cn from '@/utils/class-names';
 import dynamic from 'next/dynamic';
 import SelectLoader from '@/component/loader/select-loader';
 import QuillLoader from '@/component/loader/quill-loader';
-import { useContext } from 'react';
-import { UserContext } from '@/store/user/context';
+import { useParams } from 'next/navigation';
+import { useCookies } from 'react-cookie';
+import useSWR from 'swr';
+import { BaseApi, errorRetry, sellerCategoriesByAdmin } from '@/constants';
+import { fetcher } from '@/constants/fetcher';
 const Select = dynamic(() => import('@/component/ui/select'), {
   ssr: false,
   loading: () => <SelectLoader />,
@@ -23,8 +26,23 @@ export default function ProductSummary({ className }: { className?: string }) {
     formState: { errors },
   } = useFormContext();
 
-  const { state } = useContext(UserContext);
-  const categories1 = state?.user?.sellingCategory?.map((e: any) => {
+  const params = useParams();
+  const [cookies] = useCookies(['admintoken']);
+  let { data, isLoading, error } = useSWR(
+    `${BaseApi}${sellerCategoriesByAdmin}/${params?.seller}`,
+    (url) => fetcher(url, cookies.admintoken),
+    {
+      refreshInterval: 3600000,
+      revalidateOnMount: true,
+      revalidateOnFocus: true,
+      onErrorRetry({ retrycount }: any) {
+        if (retrycount > errorRetry) {
+          return false;
+        }
+      },
+    }
+  );
+  const categories1 = data?.data?.sellingCategory?.map((e: any) => {
     return {
       name: (
         <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
@@ -57,22 +75,28 @@ export default function ProductSummary({ className }: { className?: string }) {
         error={errors.brand?.message as string}
       />
 
-      <Controller
-        name="category"
-        control={control}
-        render={({ field: { onChange, value } }) => (
-          <Select
-            options={categories1}
-            value={value}
-            onChange={onChange}
-            label="category"
-            className="col-span-full"
-            error={errors?.category?.message as string}
-            getOptionValue={(option) => option.value}
-            getOptionDisplayValue={(option) => option.name}
-          />
-        )}
-      />
+      {isLoading ? (
+        <p>Loading Categories...</p>
+      ) : error ? (
+        <p>Somehting went wrong while fetching categories</p>
+      ) : (
+        <Controller
+          name="category"
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <Select
+              options={categories1}
+              value={value}
+              onChange={onChange}
+              label="category"
+              className="col-span-full"
+              error={errors?.category?.message as string}
+              getOptionValue={(option) => option.value}
+              getOptionDisplayValue={(option) => option.name}
+            />
+          )}
+        />
+      )}
 
       <Controller
         control={control}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { Element } from 'react-scroll';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, FormProvider, SubmitHandler } from 'react-hook-form';
@@ -18,11 +18,19 @@ import FormFooter from '@/component/others/form-footer';
 import { CreateProductInput, productFormSchema } from './schema';
 import { useLayout } from '@/hooks/use-layout';
 import { LAYOUT_OPTIONS } from '@/config/enums';
-import { UserContext } from '@/store/user/context';
 import axios from 'axios';
-import { BaseApi, updateProduct } from '@/constants';
+import {
+  BaseApi,
+  errorRetry,
+  sellerCategoriesByAdmin,
+  updateProduct,
+} from '@/constants';
 import { useParams, useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { useCookies } from 'react-cookie';
+import { fetcher } from '@/constants/fetcher';
+import useSWR from 'swr';
+import { extractPathAndParams } from '@/utils/urlextractor';
 
 const MAP_STEP_TO_COMPONENT = {
   [formParts.summary]: ProductSummary,
@@ -49,7 +57,6 @@ export default function EditProduct({ slug, className, product }: IndexProps) {
     resolver: zodResolver(productFormSchema),
     defaultValues: defaultValues(product),
   });
-  const { state } = useContext(UserContext);
 
   function extractPostIdFromInstagramLink(link: any) {
     const regex = /\/p\/([^/?#]+)/;
@@ -73,9 +80,31 @@ export default function EditProduct({ slug, className, product }: IndexProps) {
     return true;
   }
 
-  const onSubmit: SubmitHandler<CreateProductInput> = (data) => {
-    const sellingCategories = state?.user?.sellingCategory;
+  const [cookies] = useCookies(['admintoken']);
+  let {
+    data,
+    isLoading: loading,
+    error,
+  } = useSWR(
+    `${BaseApi}${sellerCategoriesByAdmin}/${params?.seller}`,
+    (url) => fetcher(url, cookies.admintoken),
+    {
+      refreshInterval: 3600000,
+      revalidateOnMount: true,
+      revalidateOnFocus: true,
+      onErrorRetry({ retrycount }: any) {
+        if (retrycount > errorRetry) {
+          return false;
+        }
+      },
+    }
+  );
 
+  const sellingCategories = data?.data?.sellingCategory;
+
+  const authstatus = error?.response?.data?.status == 'UNAUTHORIZED' && true;
+
+  const onSubmit: SubmitHandler<CreateProductInput> = (data) => {
     let category = sellingCategories?.filter((e: any) => {
       return e.category?.name == data?.category?.split(' ')[0];
     });
@@ -119,17 +148,25 @@ export default function EditProduct({ slug, className, product }: IndexProps) {
 
     setLoading(true);
     axios
-      .patch(`${BaseApi}${updateProduct}/${slug}`, {
-        ...data,
-        sellerId: params?.seller,
-        colors,
-        sizes,
-        category,
-        instaId: instagramId,
-        images: data?.images?.map((e: any) => {
-          return e?.url;
-        }),
-      })
+      .patch(
+        `${BaseApi}${updateProduct}/${slug}`,
+        {
+          ...data,
+          sellerId: params?.seller,
+          colors,
+          sizes,
+          category,
+          instaId: instagramId,
+          images: data?.images?.map((e: any) => {
+            return e?.url;
+          }),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
+          },
+        }
+      )
       .then((res) => {
         if (res.data?.status == 'SUCCESS') {
           router.back();
@@ -139,12 +176,31 @@ export default function EditProduct({ slug, className, product }: IndexProps) {
         }
       })
       .catch((err) => {
+        if (err?.response?.data?.status == 'UNAUTHORIZED') {
+          localStorage.removeItem('admin');
+          const currentUrl = window.location.href;
+          const path = extractPathAndParams(currentUrl);
+          if (typeof window !== 'undefined') {
+            location.href = `/auth/sign-in?ref=${path}`;
+          }
+          return toast.error('Session Expired');
+        }
         return toast.error('Something went wrong !');
       })
       .finally(() => {
         setLoading(false);
       });
   };
+
+  if (authstatus) {
+    localStorage.removeItem('admin');
+    toast.error('Session Expired');
+    const currentUrl = window.location.href;
+    const path = extractPathAndParams(currentUrl);
+    if (typeof window !== 'undefined') {
+      location.href = `/auth/sign-in?ref=${path}`;
+    }
+  }
 
   return (
     <div className="@container">

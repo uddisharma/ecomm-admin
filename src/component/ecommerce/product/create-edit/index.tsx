@@ -25,9 +25,18 @@ import { useLayout } from '@/hooks/use-layout';
 import { LAYOUT_OPTIONS } from '@/config/enums';
 import { UserContext } from '@/store/user/context';
 import axios from 'axios';
-import { BaseApi, addProduct } from '@/constants';
+import {
+  BaseApi,
+  addProduct,
+  errorRetry,
+  sellerCategoriesByAdmin,
+} from '@/constants';
 import { toast } from 'sonner';
 import { useParams } from 'next/navigation';
+import { extractPathAndParams } from '@/utils/urlextractor';
+import { useCookies } from 'react-cookie';
+import useSWR from 'swr';
+import { fetcher } from '@/constants/fetcher';
 
 const MAP_STEP_TO_COMPONENT = {
   [formParts.summary]: ProductSummary,
@@ -57,7 +66,7 @@ export default function CreateEditProduct1({
     resolver: zodResolver(productFormSchema),
     defaultValues: defaultValues(product),
   });
-  const { state } = useContext(UserContext);
+  const [cookies] = useCookies(['admintoken']);
 
   function extractPostIdFromInstagramLink(link: any) {
     const regex = /\/p\/([^/?#]+)/;
@@ -81,10 +90,31 @@ export default function CreateEditProduct1({
     return true;
   }
 
+  let {
+    data,
+    isLoading: loading,
+    error,
+  } = useSWR(
+    `${BaseApi}${sellerCategoriesByAdmin}/${params?.seller}`,
+    (url) => fetcher(url, cookies.admintoken),
+    {
+      refreshInterval: 3600000,
+      revalidateOnMount: true,
+      revalidateOnFocus: true,
+      onErrorRetry({ retrycount }: any) {
+        if (retrycount > errorRetry) {
+          return false;
+        }
+      },
+    }
+  );
+
+  const sellingCategories = data?.data?.sellingCategory;
+
+  const authstatus = error?.response?.data?.status == 'UNAUTHORIZED' && true;
+
   const onSubmit: SubmitHandler<CreateProductInput> = (data) => {
     setLoading(true);
-
-    const sellingCategories = state?.user?.sellingCategory;
 
     let category = sellingCategories?.filter((e: any) => {
       return e.category?.name == data?.category?.split(' ')[0];
@@ -129,17 +159,25 @@ export default function CreateEditProduct1({
 
     setLoading(true);
     axios
-      .post(`${BaseApi}${addProduct}`, {
-        ...data,
-        sellerId: params?.seller,
-        colors,
-        sizes,
-        category,
-        instaId: instagramId,
-        images: data?.images?.map((e: any) => {
-          return e?.url;
-        }),
-      })
+      .post(
+        `${BaseApi}${addProduct}`,
+        {
+          ...data,
+          sellerId: params?.seller,
+          colors,
+          sizes,
+          category,
+          instaId: instagramId,
+          images: data?.images?.map((e: any) => {
+            return e?.url;
+          }),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
+          },
+        }
+      )
       .then((res) => {
         if (res.data?.status == 'SUCCESS') {
           methods.reset();
@@ -149,12 +187,31 @@ export default function CreateEditProduct1({
         }
       })
       .catch((err) => {
+        if (err?.response?.data?.status == 'UNAUTHORIZED') {
+          localStorage.removeItem('admin');
+          const currentUrl = window.location.href;
+          const path = extractPathAndParams(currentUrl);
+          if (typeof window !== 'undefined') {
+            location.href = `/auth/sign-in?ref=${path}`;
+          }
+          return toast.error('Session Expired');
+        }
         return toast.error('Something went wrong !');
       })
       .finally(() => {
         setLoading(false);
       });
   };
+
+  if (authstatus) {
+    localStorage.removeItem('admin');
+    toast.error('Session Expired');
+    const currentUrl = window.location.href;
+    const path = extractPathAndParams(currentUrl);
+    if (typeof window !== 'undefined') {
+      location.href = `/auth/sign-in?ref=${path}`;
+    }
+  }
 
   return (
     <div className="@container">

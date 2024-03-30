@@ -12,7 +12,7 @@ export const SearchSellerProducts = '/client/sellers/product/search/list';
 
 export const SellerBanners = '/client/seller/banner/list';
 
-export const SellerProducts = '/seller/product/list';
+export const SellerProducts = '/admin/sellers/product/list';
 
 export const ItemperPage = 2;
 
@@ -72,15 +72,15 @@ export const createSellerRequest = '/create-request';
 
 export const addCategory = '/admin/add/category';
 
-export const addProduct = '/seller/api/v1/product/create';
+export const addProduct = '/admin/product/create';
 
-export const singleProduct = '/seller/api/v1/product';
+export const singleProduct = '/admin/product';
 
-export const updateProduct = '/seller/api/v1/product/update';
+export const updateProduct = '/admin/product/update';
 
-export const deleteProduct = '/seller/api/v1/product/delete';
+export const deleteProduct = '/admin/product/delete';
 
-export const productsSoftDelete = '/seller/api/v1/product/softDelete';
+export const productsSoftDelete = '/admin/product/softDelete';
 
 export const coupons = '/admin/seller/coupon/list';
 

@@ -13,6 +13,7 @@ import {
   BaseApi,
   ItemperPage,
   SellerProducts,
+  errorRetry,
   productsSoftDelete,
 } from '@/constants';
 import { useFilterControls } from '@/hooks/use-filter-control';
@@ -21,6 +22,9 @@ import { toast } from 'sonner';
 import { useParams } from 'next/navigation';
 import { MdOutlineAutoDelete } from 'react-icons/md';
 import { useState } from 'react';
+import { useCookies } from 'react-cookie';
+import { fetcher } from '@/constants/fetcher';
+import { extractPathAndParams } from '@/utils/urlextractor';
 
 const pageHeader = {
   title: 'Products',
@@ -48,38 +52,70 @@ export default function ProductsPage() {
     initialState
   );
   const [page, setPage] = useState(st?.page ? st?.page : 1);
-  const fetcher = (url: any) => axios.get(url).then((res) => res.data);
+
+  const [cookies] = useCookies(['admintoken']);
+
   let { data, isLoading, error, mutate } = useSWR(
     `${BaseApi}${SellerProducts}/${params?.seller}?page=${page}&limit=${ItemperPage}&isDeleted=${false}`,
-    fetcher,
+    (url) => fetcher(url, cookies.admintoken),
     {
       refreshInterval: 3600000,
       revalidateOnMount: true,
       revalidateOnFocus: true,
       onErrorRetry({ retrycount }: any) {
-        if (retrycount > 3) {
+        if (retrycount > errorRetry) {
           return false;
         }
       },
     }
   );
+
+  const authstatus = error?.response?.data?.status == 'UNAUTHORIZED' && true;
+
   const pagininator = data?.data?.paginator;
   data = data?.data?.data;
 
   const onDelete = async (id: any) => {
     try {
-      await axios.patch(`${BaseApi}${productsSoftDelete}/${id}`, {
-        isDeleted: true,
-      });
+      await axios.patch(
+        `${BaseApi}${productsSoftDelete}/${id}`,
+        {
+          isDeleted: true,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
+          },
+        }
+      );
       await mutate();
       return toast.success('Product is Temperory deleted Successfully !');
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
+      if (error?.response?.data?.status == 'UNAUTHORIZED') {
+        localStorage.removeItem('admin');
+        const currentUrl = window.location.href;
+        const path = extractPathAndParams(currentUrl);
+        if (typeof window !== 'undefined') {
+          location.href = `/auth/sign-in?ref=${path}`;
+        }
+        return toast.error('Session Expired');
+      }
       return toast.error('Something went wrong');
     }
   };
 
   const products: any = [];
+
+  if (authstatus) {
+    localStorage.removeItem('admin');
+    toast.error('Session Expired');
+    const currentUrl = window.location.href;
+    const path = extractPathAndParams(currentUrl);
+    if (typeof window !== 'undefined') {
+      location.href = `/auth/sign-in?ref=${path}`;
+    }
+  }
 
   return (
     <>

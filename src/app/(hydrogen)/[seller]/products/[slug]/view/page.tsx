@@ -7,10 +7,14 @@ import { metaObject } from '@/config/site.config';
 import { Button } from '@/component/ui/button';
 import axios from 'axios';
 import useSWR from 'swr';
-import { BaseApi, singleProduct } from '@/constants';
+import { BaseApi, errorRetry, singleProduct } from '@/constants';
 import { Empty, EmptyProductBoxIcon } from 'rizzui';
 import Spinner from '@/component/ui/spinner';
 import ViewProduct from '@/component/ecommerce/product/view';
+import { useCookies } from 'react-cookie';
+import { fetcher } from '@/constants/fetcher';
+import { toast } from 'sonner';
+import { extractPathAndParams } from '@/utils/urlextractor';
 
 type Props = {
   params: { slug: string; seller: string };
@@ -56,17 +60,25 @@ export default function EditProductPage({
     return fullPostLink;
   }
 
-  const fetcher = (url: any) => axios.get(url).then((res) => res.data);
+  const [cookies] = useCookies(['admintoken']);
 
-  let { data, error, isLoading } = useSWR(
+  let { data, isLoading, error, mutate } = useSWR(
     `${BaseApi}${singleProduct}/${params.slug}`,
-    fetcher,
+    (url) => fetcher(url, cookies.admintoken),
     {
       refreshInterval: 3600000,
-      revalidateOnFocus: true,
       revalidateOnMount: true,
+      revalidateOnFocus: true,
+      onErrorRetry({ retrycount }: any) {
+        if (retrycount > errorRetry) {
+          return false;
+        }
+      },
     }
   );
+
+  const authstatus = error?.response?.data?.status == 'UNAUTHORIZED' && true;
+
   const product = {
     ...data?.data,
     instaId: generateInstagramPostLink(data?.data?.instaId),
@@ -74,6 +86,16 @@ export default function EditProductPage({
     stock: data?.data?.stock?.toString(),
     category: `${data?.data?.category?.name} in ${data?.data?.category?.parentCategoryId?.parentCategoryId?.name} ${data?.data?.category?.parentCategoryId?.name} Wear`,
   };
+
+  if (authstatus) {
+    localStorage.removeItem('admin');
+    toast.error('Session Expired');
+    const currentUrl = window.location.href;
+    const path = extractPathAndParams(currentUrl);
+    if (typeof window !== 'undefined') {
+      location.href = `/auth/sign-in?ref=${path}`;
+    }
+  }
 
   return (
     <>
