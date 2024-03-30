@@ -94,7 +94,7 @@ export const updateCoupon = '/admin/coupon/update';
 
 export const deleteCoupon = '/admin/coupon/delete';
 
-export const sellerTransactions = '/seller/api/v1/wallettransactions';
+export const sellerTransactions = '/admin/seller/wallettransactions';
 
 export const allTransactions = '/admin/transaction/list';
 
@@ -110,7 +110,7 @@ export const createTicket = '/admin/ticket/create';
 
 export const updateTicket = '/admin/update/ticket';
 
-export const sellerAllTickets = '/seller/vi/seller/tickets';
+export const sellerAllTickets = '/admin/tickets';
 
 export const ticketPerPage = 2;
 
@@ -172,8 +172,7 @@ export const deleteCategory1 = '/admin/seller/delete-category';
 
 export const deleteTransaction = '/admin/transaction/delete';
 
-export const softDeleteTransaction =
-  '/seller/api/v1/wallettransaction/softDelete';
+export const softDeleteTransaction = '/admin/transaction/softDelete';
 
 export const adminSoftDeleteTransactions = '/admin/transaction/softDelete';
 

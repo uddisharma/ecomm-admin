@@ -14,6 +14,9 @@ import { toast } from 'sonner';
 import dynamic from 'next/dynamic';
 import SelectLoader from '../loader/select-loader';
 import { PhoneNumber } from '../ui/phone-input';
+import { extractPathAndParams } from '@/utils/urlextractor';
+import { useCookies } from 'react-cookie';
+import { states } from '@/constants/states';
 
 const WarehouseSchema = z.object({
   name: z.string().min(1, { message: 'Name  is required' }),
@@ -32,61 +35,41 @@ const Select = dynamic(() => import('@/component/ui/select'), {
   ssr: false,
   loading: () => <SelectLoader />,
 });
-const states = [
-  { name: 'Andhra Pradesh', value: 'Andhra Pradesh' },
-  { name: 'Arunachal Pradesh', value: 'Arunachal Pradesh' },
-  { name: 'Assam', value: 'Assam' },
-  { name: 'Bihar', value: 'Bihar' },
-  { name: 'Chhattisgarh', value: 'Chhattisgarh' },
-  { name: 'Goa', value: 'Goa' },
-  { name: 'Gujarat', value: 'Gujarat' },
-  { name: 'Haryana', value: 'Haryana' },
-  { name: 'Himachal Pradesh', value: 'Himachal Pradesh' },
-  { name: 'Jharkhand', value: 'Jharkhand' },
-  { name: 'Karnataka', value: 'Karnataka' },
-  { name: 'Kerala', value: 'Kerala' },
-  { name: 'Madhya Pradesh', value: 'Madhya Pradesh' },
-  { name: 'Maharashtra', value: 'Maharashtra' },
-  { name: 'Manipur', value: 'Manipur' },
-  { name: 'Meghalaya', value: 'Meghalaya' },
-  { name: 'Mizoram', value: 'Mizoram' },
-  { name: 'Nagaland', value: 'Nagaland' },
-  { name: 'Odisha', value: 'Odisha' },
-  { name: 'Punjab', value: 'Punjab' },
-  { name: 'Rajasthan', value: 'Rajasthan' },
-  { name: 'Sikkim', value: 'Sikkim' },
-  { name: 'Tamil Nadu', value: 'Tamil Nadu' },
-  { name: 'Telangana', value: 'Telangana' },
-  { name: 'Tripura', value: 'Tripura' },
-  { name: 'Uttar Pradesh', value: 'Uttar Pradesh' },
-  { name: 'Uttarakhand', value: 'Uttarakhand' },
-  { name: 'West Bengal', value: 'West Bengal' },
-];
+
 export default function ProfileSettingsView() {
   const [isloading, setIsLoading] = useState(false);
   const { state, setSeller } = useContext(SellerContext);
   const params = useParams();
+  const [cookies] = useCookies(['admintoken']);
 
   const onSubmit: SubmitHandler<WarehouseFormTypes> = (data) => {
     setIsLoading(true);
     axios
-      .patch(`${BaseApi}${updateSeller}/${params?.seller}`, {
-        owner: {
-          personal: {
-            name: data?.name,
-            email: data?.email,
-            phone: data?.phone,
-          },
-          address: {
-            address1: data?.address1,
-            address2: data?.address2,
-            landmark: data?.landmark,
-            city: data?.city,
-            state: data?.state,
-            pincode: data?.pincode,
+      .patch(
+        `${BaseApi}${updateSeller}/${params?.seller}`,
+        {
+          owner: {
+            personal: {
+              name: data?.name,
+              email: data?.email,
+              phone: data?.phone,
+            },
+            address: {
+              address1: data?.address1,
+              address2: data?.address2,
+              landmark: data?.landmark,
+              city: data?.city,
+              state: data?.state,
+              pincode: data?.pincode,
+            },
           },
         },
-      })
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
+          },
+        }
+      )
       .then((res) => {
         if (res.data?.status == 'SUCCESS') {
           setSeller(res.data?.data);
@@ -97,6 +80,15 @@ export default function ProfileSettingsView() {
       })
       .catch((err) => {
         console.log(err);
+        if (err?.response?.data?.status == 'UNAUTHORIZED') {
+          localStorage.removeItem('admin');
+          const currentUrl = window.location.href;
+          const path = extractPathAndParams(currentUrl);
+          if (typeof window !== 'undefined') {
+            location.href = `/auth/sign-in?ref=${path}`;
+          }
+          return toast.error('Session Expired');
+        }
         return toast.error('Something went wrong !');
       })
       .finally(() => {
@@ -228,14 +220,7 @@ export default function ProfileSettingsView() {
                     {...register('pincode')}
                     error={errors.pincode?.message}
                   />
-                  {/* <Input
-                    className="col-grow"
-                    placeholder="State"
-                    label="State"
-                    prefixClassName="relative pe-2.5 before:w-[1px] before:h-[38px] before:absolute before:bg-gray-300 before:-top-[9px] before:right-0"
-                    {...register('state')}
-                    error={errors.state?.message}
-                  /> */}
+
                   <Controller
                     name="state"
                     control={control}

@@ -13,9 +13,13 @@ import PageHeader from '@/component/others/pageHeader';
 import Link from 'next/link';
 import { Button, Empty, SearchNotFoundIcon } from 'rizzui';
 import axios from 'axios';
-import { BaseApi, singleCoupon } from '@/constants';
+import { BaseApi, errorRetry, singleCoupon } from '@/constants';
 import { useParams } from 'next/navigation';
 import useSWR from 'swr';
+import { useCookies } from 'react-cookie';
+import { fetcher } from '@/constants/fetcher';
+import { extractPathAndParams } from '@/utils/urlextractor';
+import { toast } from 'sonner';
 const schema = z.object({
   code: z.string().min(1, { message: 'Code is Required' }),
   discount_type: z.string().min(1, { message: 'Discount Type is Required' }),
@@ -32,15 +36,28 @@ const Select = dynamic(() => import('@/component/ui/select'), {
 export default function NewsLetterForm() {
   const [reset, _setReset] = useState({});
   const params = useParams();
-  const fetcher = (url: any) => axios.get(url).then((res) => res.data);
+  const [cookies] = useCookies(['admintoken']);
 
   let {
     data,
-    error,
     isLoading: loading,
-  } = useSWR(`${BaseApi}${singleCoupon}/${params?.slug}`, fetcher, {
-    refreshInterval: 3600000,
-  });
+    error,
+  } = useSWR(
+    `${BaseApi}${singleCoupon}/${params?.slug}`,
+    (url) => fetcher(url, cookies.admintoken),
+    {
+      refreshInterval: 3600000,
+      revalidateOnMount: true,
+      revalidateOnFocus: true,
+      onErrorRetry({ retrycount }: any) {
+        if (retrycount > errorRetry) {
+          return false;
+        }
+      },
+    }
+  );
+
+  const authstatus = error?.response?.data?.status == 'UNAUTHORIZED' && true;
 
   const initialValues = {
     code: data?.data?.code ?? '',
@@ -79,6 +96,17 @@ export default function NewsLetterForm() {
       value: 'direct_amount',
     },
   ];
+
+  if (authstatus) {
+    localStorage.removeItem('admin');
+    toast.error('Session Expired');
+    const currentUrl = window.location.href;
+    const path = extractPathAndParams(currentUrl);
+    if (typeof window !== 'undefined') {
+      location.href = `/auth/sign-in?ref=${path}`;
+    }
+  }
+
   if (error) {
     return (
       <div>

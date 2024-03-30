@@ -51,7 +51,6 @@ export default function Coupons() {
   );
   const params = useParams();
   const [page, setPage] = useState(st?.page ? st?.page : 1);
-
   const [cookies] = useCookies(['admintoken']);
 
   let { data, isLoading, error, mutate } = useSWR(
@@ -103,6 +102,7 @@ export default function Coupons() {
       return toast.error('Something went wrong');
     }
   };
+
   if (authstatus) {
     localStorage.removeItem('admin');
     toast.error('Session Expired');

@@ -4,13 +4,13 @@ import { Button } from 'rizzui';
 import * as XLSX from 'xlsx';
 import PageHeader from '@/component/others/pageHeader';
 import { useEffect, useState } from 'react';
-import { UserContext } from '@/store/user/context';
 import { BaseApi, datewiseStats, sellerOrders } from '@/constants';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { PiArrowLineDownBold, PiArrowLineUpBold } from 'react-icons/pi';
-import useMedia from 'react-use/lib/useMedia';
+import { useCookies } from 'react-cookie';
+import { extractPathAndParams } from '@/utils/urlextractor';
 function convertDateFormat(inputDate: any) {
   const parsedDate = new Date(inputDate);
   if (isNaN(parsedDate.getTime())) {
@@ -27,7 +27,6 @@ function convertDateFormat(inputDate: any) {
 
 function PromoBanner() {
   const params = useParams();
-  const router = useRouter();
   const [date, setDate] = useState<string>('');
   const [loading1, setLoading1] = useState(false);
   const [loading2, setLoading2] = useState(false);
@@ -52,10 +51,16 @@ function PromoBanner() {
     ],
   };
 
+  const [cookies] = useCookies(['admintoken']);
+
   const comprehensive = () => {
     setLoading1(true);
     axios
-      .get(`${BaseApi}${datewiseStats}/${params?.seller}?date=${date}`)
+      .get(`${BaseApi}${datewiseStats}/${params?.seller}?date=${date}`, {
+        headers: {
+          Authorization: `Bearer ${cookies?.admintoken}`,
+        },
+      })
       .then((res) => {
         if (res.data?.status != 'SUCCESS') {
           return toast.error('Something went wrong ! while downloading report');
@@ -67,6 +72,15 @@ function PromoBanner() {
       })
       .catch((err) => {
         console.log(err);
+        if (err?.response?.data?.status == 'UNAUTHORIZED') {
+          localStorage.removeItem('admin');
+          const currentUrl = window.location.href;
+          const path = extractPathAndParams(currentUrl);
+          if (typeof window !== 'undefined') {
+            location.href = `/auth/sign-in?ref=${path}`;
+          }
+          return toast.error('Session Expired');
+        }
         return toast.error('Something went wrong ! while downloading report');
       })
       .finally(() => {
@@ -90,7 +104,12 @@ function PromoBanner() {
       .get(
         `${BaseApi}${sellerOrders}/${params?.seller}?date=${convertToISOFormat(
           date
-        )}&status=All&courior=All&page=${1}&limit=${100000}`
+        )}&status=All&courior=All&page=${1}&limit=${100000}`,
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
+          },
+        }
       )
       .then((res) => {
         if (res.data?.status == 'SUCCESS') {
@@ -139,6 +158,15 @@ function PromoBanner() {
       })
       .catch((err) => {
         console.log(err);
+        if (err?.response?.data?.status == 'UNAUTHORIZED') {
+          localStorage.removeItem('admin');
+          const currentUrl = window.location.href;
+          const path = extractPathAndParams(currentUrl);
+          if (typeof window !== 'undefined') {
+            location.href = `/auth/sign-in?ref=${path}`;
+          }
+          return toast.error('Session Expired');
+        }
         return toast.error('Something went wrong ! while downloading report');
       })
       .finally(() => {

@@ -2,11 +2,9 @@
 import { Controller, SubmitHandler } from 'react-hook-form';
 import { Form } from '@/component/ui/form';
 import { Input } from '@/component/ui/input';
-
 import { legalSchema, LegalFormTypes } from '@/utils/validators/legal.schema';
 import FormGroup from '../others/form-group';
 import { Checkbox } from 'rizzui';
-import cn from '@/utils/class-names';
 import Image from 'next/image';
 import { endsWith } from 'lodash';
 import { toast } from 'sonner';
@@ -14,13 +12,15 @@ import SelectLoader from '../loader/select-loader';
 import dynamic from 'next/dynamic';
 import UploadZone from '../ui/file-upload/upload-zone';
 import FormFooter from '../others/form-footer';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import axios from 'axios';
 import { BaseApi, updateSeller } from '@/constants';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { SellerContext } from '@/store/seller/context';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
+import { extractPathAndParams } from '@/utils/urlextractor';
+import { useCookies } from 'react-cookie';
 
 const Select = dynamic(() => import('@/component/ui/select'), {
   ssr: false,
@@ -44,48 +44,60 @@ const panTypes = [
 export default function Legal({ legal, name }: any) {
   const [isloading, setIsLoading] = useState(false);
   const params = useParams();
-  const router = useRouter();
+  const [cookies] = useCookies(['admintoken']);
   const { setSeller } = useContext(SellerContext);
 
   const handleDownload = async (fileLinks: any) => {
     const zip = new JSZip();
+    console.log(fileLinks);
+    try {
+      await Promise.all(
+        fileLinks.map(async (fileLink: any, index: any) => {
+          const response = await fetch(fileLink);
+          const arrayBuffer = await response.arrayBuffer();
 
-    await Promise.all(
-      fileLinks.map(async (fileLink: any, index: any) => {
-        const response = await fetch(fileLink);
-        const arrayBuffer = await response.arrayBuffer();
+          const fileExtension = fileLink.split('.').pop().toLowerCase();
 
-        const fileExtension = fileLink.split('.').pop().toLowerCase();
+          const fileName = `file_${index + 1}.${fileExtension}`;
+          zip.file(fileName, arrayBuffer);
+        })
+      );
 
-        const fileName = `file_${index + 1}.${fileExtension}`;
-        zip.file(fileName, arrayBuffer);
-      })
-    );
+      const content = await zip.generateAsync({ type: 'blob' });
 
-    const content = await zip.generateAsync({ type: 'blob' });
-
-    saveAs(content, `${name}_certificates.zip`);
+      saveAs(content, `${name}_certificates.zip`);
+    } catch (error) {
+      toast.error('Something went wrong while downloading certificates');
+    }
   };
 
   const onSubmit: SubmitHandler<LegalFormTypes> = (data) => {
     setIsLoading(true);
     axios
-      .patch(`${BaseApi}${updateSeller}/${params?.seller}`, {
-        legal: {
-          ...data,
-          pan: {
-            type: data?.pan?.type1,
-            name: data?.pan?.name,
-            pannumber: data?.pan?.pannumber,
-            signed: data?.pan?.signed,
+      .patch(
+        `${BaseApi}${updateSeller}/${params?.seller}`,
+        {
+          legal: {
+            ...data,
+            pan: {
+              type: data?.pan?.type1,
+              name: data?.pan?.name,
+              pannumber: data?.pan?.pannumber,
+              signed: data?.pan?.signed,
+            },
+            certificate: data?.certificate?.map((e: any) => {
+              return e?.url;
+            }),
+            gst: data?.gst,
+            taxid: data?.taxid,
           },
-          certificate: data?.certificate?.map((e: any) => {
-            return e?.url;
-          }),
-          gst: data?.gst,
-          taxid: data?.taxid,
         },
-      })
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
+          },
+        }
+      )
       .then((res) => {
         if (res?.data?.status == 'SUCCESS') {
           setSeller(res?.data?.data);
@@ -96,6 +108,15 @@ export default function Legal({ legal, name }: any) {
       })
       .catch((err) => {
         console.log(err);
+        if (err?.response?.data?.status == 'UNAUTHORIZED') {
+          localStorage.removeItem('admin');
+          const currentUrl = window.location.href;
+          const path = extractPathAndParams(currentUrl);
+          if (typeof window !== 'undefined') {
+            location.href = `/auth/sign-in?ref=${path}`;
+          }
+          return toast.error('Session Expired');
+        }
         toast.error('Something went wrong !');
       })
       .finally(() => {

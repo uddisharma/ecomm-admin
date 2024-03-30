@@ -1,5 +1,5 @@
 'use client';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { Controller, SubmitHandler } from 'react-hook-form';
 import { Input } from '@/component/ui/input';
 import { Form } from '@/component/ui/form';
@@ -13,12 +13,14 @@ import SelectLoader from '@/component/loader/select-loader';
 import PageHeader from '@/component/others/pageHeader';
 import Link from 'next/link';
 import { Button, Empty, SearchNotFoundIcon } from 'rizzui';
-import { UserContext } from '@/store/user/context';
 import axios from 'axios';
-import { BaseApi, createTicket, singleTicket, updateTicket } from '@/constants';
+import { BaseApi, errorRetry, singleTicket, updateTicket } from '@/constants';
 import { toast } from 'sonner';
 import { useParams, useRouter } from 'next/navigation';
 import useSWR from 'swr';
+import { useCookies } from 'react-cookie';
+import { fetcher } from '@/constants/fetcher';
+import { extractPathAndParams } from '@/utils/urlextractor';
 const schema = z.object({
   seller: z.string().optional(),
   type: z.string().min(1, { message: 'Type is Required' }),
@@ -58,10 +60,15 @@ export default function NewsLetterForm() {
   const router = useRouter();
   const [reset, setReset] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [cookies] = useCookies(['admintoken']);
   const onSubmit: SubmitHandler<Schema> = (data) => {
     setIsLoading(true);
     axios
-      .patch(`${BaseApi}${updateTicket}/${params?.slug}`, data)
+      .patch(`${BaseApi}${updateTicket}/${params?.slug}`, data, {
+        headers: {
+          Authorization: `Bearer ${cookies?.admintoken}`,
+        },
+      })
       .then((res) => {
         if (res?.data?.status == 'SUCCESS') {
           setReset(initialValues);
@@ -73,6 +80,15 @@ export default function NewsLetterForm() {
       })
       .catch((err) => {
         console.log(err);
+        if (err?.response?.data?.status == 'UNAUTHORIZED') {
+          localStorage.removeItem('admin');
+          const currentUrl = window.location.href;
+          const path = extractPathAndParams(currentUrl);
+          if (typeof window !== 'undefined') {
+            location.href = `/auth/sign-in?ref=${path}`;
+          }
+          return toast.error('Session Expired');
+        }
         return toast.error('Something went wrong');
       })
       .finally(() => {
@@ -96,15 +112,26 @@ export default function NewsLetterForm() {
     ],
   };
 
-  const fetcher = (url: any) => axios.get(url).then((res) => res.data);
-
   let {
     data,
-    error,
     isLoading: loading,
-  } = useSWR(`${BaseApi}${singleTicket}/${params?.slug}`, fetcher, {
-    refreshInterval: 3600000,
-  });
+    error,
+  } = useSWR(
+    `${BaseApi}${singleTicket}/${params?.slug}`,
+    (url) => fetcher(url, cookies.admintoken),
+    {
+      refreshInterval: 3600000,
+      revalidateOnMount: true,
+      revalidateOnFocus: true,
+      onErrorRetry({ retrycount }: any) {
+        if (retrycount > errorRetry) {
+          return false;
+        }
+      },
+    }
+  );
+
+  const authstatus = error?.response?.data?.status == 'UNAUTHORIZED' && true;
 
   const initialValues = {
     seller: String(params?.seller),
@@ -112,6 +139,16 @@ export default function NewsLetterForm() {
     subject: data?.data?.subject,
     description: data?.data?.description,
   };
+
+  if (authstatus) {
+    localStorage.removeItem('admin');
+    toast.error('Session Expired');
+    const currentUrl = window.location.href;
+    const path = extractPathAndParams(currentUrl);
+    if (typeof window !== 'undefined') {
+      location.href = `/auth/sign-in?ref=${path}`;
+    }
+  }
 
   if (error) {
     return (

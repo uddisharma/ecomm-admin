@@ -17,6 +17,8 @@ import axios from 'axios';
 import { BaseApi, changePassword } from '@/constants';
 import { toast } from 'sonner';
 import { useParams } from 'next/navigation';
+import { useCookies } from 'react-cookie';
+import { extractPathAndParams } from '@/utils/urlextractor';
 
 export default function PasswordSettingsView({
   settings,
@@ -26,13 +28,22 @@ export default function PasswordSettingsView({
   const [isLoading, setLoading] = useState(false);
   const [reset, setReset] = useState({});
   const params = useParams();
+  const [cookies] = useCookies(['admintoken']);
   const onSubmit: SubmitHandler<PasswordFormTypes> = (data) => {
     setLoading(true);
     axios
-      .patch(`${BaseApi}${changePassword}/${params?.seller}`, {
-        oldPassword: data?.currentPassword,
-        newPassword: data?.newPassword,
-      })
+      .patch(
+        `${BaseApi}${changePassword}/${params?.seller}`,
+        {
+          oldPassword: data?.currentPassword,
+          newPassword: data?.newPassword,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
+          },
+        }
+      )
       .then((res) => {
         if (res.data?.status == 'SUCCESS') {
           setReset({
@@ -49,6 +60,15 @@ export default function PasswordSettingsView({
       })
       .catch((err) => {
         console.log(err);
+        if (err?.response?.data?.status == 'UNAUTHORIZED') {
+          localStorage.removeItem('admin');
+          const currentUrl = window.location.href;
+          const path = extractPathAndParams(currentUrl);
+          if (typeof window !== 'undefined') {
+            location.href = `/auth/sign-in?ref=${path}`;
+          }
+          return toast.error('Session Expired');
+        }
         return toast.error('Something went wrong');
       })
       .finally(() => {

@@ -201,14 +201,9 @@ export const EventsColumn = ({
         />
 
         <RecyclePopover
-          title={`Recycle Deleted this Ticket`}
-          description={`Are you sure you want to recycle deleted this ticket? `}
-          onDelete={() => temperoryDelete(row.id)}
-        />
-        <RecyclePopover
           title={`Recycle Deleted Ticket`}
           description={`Are you sure you want to recycle deleted this ticket? `}
-          onDelete={() => onDeleteItem(row.id)}
+          onDelete={() => temperoryDelete(row.id)}
         />
 
         <DeletePopover

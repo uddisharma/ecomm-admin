@@ -14,6 +14,8 @@ import axios from 'axios';
 import { BaseApi, addTransaction } from '@/constants';
 import { toast } from 'sonner';
 import { useParams, useRouter } from 'next/navigation';
+import { extractPathAndParams } from '@/utils/urlextractor';
+import { useCookies } from 'react-cookie';
 const schema = z.object({
   transactionId: z.string().min(1, { message: 'Transaction ID is Required' }),
   amount: z.string().min(1, { message: 'Amount is Required' }),
@@ -28,6 +30,7 @@ export default function NewsLetterForm() {
   const [isLoading, setIsLoading] = useState(false);
   const params = useParams();
   const router = useRouter();
+  const [cookies] = useCookies(['admintoken']);
 
   function convertDateFormat(dateString: any) {
     const date = new Date(dateString);
@@ -40,7 +43,6 @@ export default function NewsLetterForm() {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
-
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
     const seconds = String(date.getSeconds()).padStart(2, '0');
@@ -66,12 +68,20 @@ export default function NewsLetterForm() {
   const onSubmit: SubmitHandler<Schema> = (data) => {
     setIsLoading(true);
     axios
-      .post(`${BaseApi}${addTransaction}`, {
-        ...data,
-        seller: params?.seller,
-        from: convertDateFormat(data?.from),
-        to: convertDateFormat(data?.to),
-      })
+      .post(
+        `${BaseApi}${addTransaction}`,
+        {
+          ...data,
+          seller: params?.seller,
+          from: convertDateFormat(data?.from),
+          to: convertDateFormat(data?.to),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
+          },
+        }
+      )
       .then((res) => {
         if (res.data?.status == 'SUCCESS') {
           setReset(initialValues);
@@ -83,6 +93,15 @@ export default function NewsLetterForm() {
       })
       .catch((err) => {
         console.log(err);
+        if (err?.response?.data?.status == 'UNAUTHORIZED') {
+          localStorage.removeItem('admin');
+          const currentUrl = window.location.href;
+          const path = extractPathAndParams(currentUrl);
+          if (typeof window !== 'undefined') {
+            location.href = `/auth/sign-in?ref=${path}`;
+          }
+          return toast.error('Session Expired');
+        }
         return toast.error('Something went wrong');
       })
       .finally(() => {

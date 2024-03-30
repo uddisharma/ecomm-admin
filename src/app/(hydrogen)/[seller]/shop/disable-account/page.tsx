@@ -11,6 +11,8 @@ import axios from 'axios';
 import { BaseApi, updateSeller } from '@/constants';
 import { toast } from 'sonner';
 import { SellerContext } from '@/store/seller/context';
+import { extractPathAndParams } from '@/utils/urlextractor';
+import { useCookies } from 'react-cookie';
 
 export default function Page() {
   const { openModal } = useModal();
@@ -140,12 +142,21 @@ function DisableAccount({ title }: any) {
   const { state, setSeller } = useContext(SellerContext);
   const [loading, setLoading] = useState(false);
   const isActive = state?.seller?.isActive;
+  const [cookies] = useCookies(['admintoken']);
   const onSubmit = () => {
     setLoading(true);
     axios
-      .patch(`${BaseApi}${updateSeller}/${state?.seller?.id}`, {
-        isActive: !isActive,
-      })
+      .patch(
+        `${BaseApi}${updateSeller}/${state?.seller?.id}`,
+        {
+          isActive: !isActive,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
+          },
+        }
+      )
       .then((res) => {
         if (res.data?.status == 'SUCCESS') {
           setSeller(res.data?.data);
@@ -161,6 +172,15 @@ function DisableAccount({ title }: any) {
       })
       .catch((err) => {
         console.log(err);
+        if (err?.response?.data?.status == 'UNAUTHORIZED') {
+          localStorage.removeItem('admin');
+          const currentUrl = window.location.href;
+          const path = extractPathAndParams(currentUrl);
+          if (typeof window !== 'undefined') {
+            location.href = `/auth/sign-in?ref=${path}`;
+          }
+          return toast.error('Session Expired');
+        }
         return toast.error('Something went wrong !');
       })
       .finally(() => {

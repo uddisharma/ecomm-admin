@@ -13,6 +13,8 @@ import axios from 'axios';
 import { BaseApi, updateSeller } from '@/constants';
 import { SellerContext } from '@/store/seller/context';
 import { useParams } from 'next/navigation';
+import { extractPathAndParams } from '@/utils/urlextractor';
+import { useCookies } from 'react-cookie';
 const profileFormSchema = z.object({
   facebook: z.string().optional(),
   instagram: z.string().min(1, { message: 'Instagram link is required' }),
@@ -25,12 +27,22 @@ export default function ProfileSettingsView() {
   const [Loading, setLoading] = useState(false);
   const { state, setSeller } = useContext(SellerContext);
   const params = useParams();
+  const [cookies] = useCookies(['admintoken']);
+
   const onSubmit: SubmitHandler<ProfileFormTypes> = (data) => {
     setLoading(true);
     axios
-      .patch(`${BaseApi}${updateSeller}/${params?.seller}`, {
-        socialLinks: data,
-      })
+      .patch(
+        `${BaseApi}${updateSeller}/${params?.seller}`,
+        {
+          socialLinks: data,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
+          },
+        }
+      )
       .then((res) => {
         if (res.data?.status == 'SUCCESS') {
           setSeller(res.data?.data);
@@ -41,6 +53,15 @@ export default function ProfileSettingsView() {
       })
       .catch((err) => {
         console.log(err);
+        if (err?.response?.data?.status == 'UNAUTHORIZED') {
+          localStorage.removeItem('admin');
+          const currentUrl = window.location.href;
+          const path = extractPathAndParams(currentUrl);
+          if (typeof window !== 'undefined') {
+            location.href = `/auth/sign-in?ref=${path}`;
+          }
+          return toast.error('Session Expired');
+        }
         return toast.error('Something went wrong !');
       })
       .finally(() => {

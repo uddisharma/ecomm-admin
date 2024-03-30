@@ -13,6 +13,8 @@ import { toast } from 'sonner';
 import axios from 'axios';
 import { BaseApi, updateSeller } from '@/constants';
 import { useParams, useRouter } from 'next/navigation';
+import { useCookies } from 'react-cookie';
+import { extractPathAndParams } from '@/utils/urlextractor';
 
 const WarehouseSchema = z.object({
   address1: z.string().min(1, { message: 'Address  is required' }),
@@ -64,13 +66,22 @@ export default function ProfileSettingsView() {
   const { state, setSeller } = useContext(SellerContext);
   const params = useParams();
   const router = useRouter();
+  const [cookies] = useCookies(['admintoken']);
 
   const onSubmit: SubmitHandler<WarehouseFormTypes> = (data) => {
     setIsLoading(true);
     axios
-      .patch(`${BaseApi}${updateSeller}/${params?.seller}`, {
-        shopaddress: data,
-      })
+      .patch(
+        `${BaseApi}${updateSeller}/${params?.seller}`,
+        {
+          shopaddress: data,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
+          },
+        }
+      )
       .then((res) => {
         if (res.data?.status == 'SUCCESS') {
           setSeller(res.data?.data);
@@ -81,6 +92,15 @@ export default function ProfileSettingsView() {
       })
       .catch((err) => {
         console.log(err);
+        if (err?.response?.data?.status == 'UNAUTHORIZED') {
+          localStorage.removeItem('admin');
+          const currentUrl = window.location.href;
+          const path = extractPathAndParams(currentUrl);
+          if (typeof window !== 'undefined') {
+            location.href = `/auth/sign-in?ref=${path}`;
+          }
+          return toast.error('Session Expired');
+        }
         return toast.error('Something went wrong !');
       })
       .finally(() => {

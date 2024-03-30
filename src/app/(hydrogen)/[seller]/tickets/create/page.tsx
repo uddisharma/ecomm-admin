@@ -17,6 +17,8 @@ import axios from 'axios';
 import { BaseApi, createTicket } from '@/constants';
 import { toast } from 'sonner';
 import { useParams } from 'next/navigation';
+import { extractPathAndParams } from '@/utils/urlextractor';
+import { useCookies } from 'react-cookie';
 const schema = z.object({
   seller: z.string().optional(),
   type: z.string().min(1, { message: 'Type is Required' }),
@@ -61,10 +63,16 @@ export default function NewsLetterForm() {
   };
   const [reset, setReset] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [cookies] = useCookies(['admintoken']);
+
   const onSubmit: SubmitHandler<Schema> = (data) => {
     setIsLoading(true);
     axios
-      .post(`${BaseApi}${createTicket}`, data)
+      .post(`${BaseApi}${createTicket}`, data, {
+        headers: {
+          Authorization: `Bearer ${cookies?.admintoken}`,
+        },
+      })
       .then((res) => {
         if (res?.data?.status == 'SUCCESS') {
           setReset(initialValues);
@@ -75,6 +83,15 @@ export default function NewsLetterForm() {
       })
       .catch((err) => {
         console.log(err);
+        if (err?.response?.data?.status == 'UNAUTHORIZED') {
+          localStorage.removeItem('admin');
+          const currentUrl = window.location.href;
+          const path = extractPathAndParams(currentUrl);
+          if (typeof window !== 'undefined') {
+            location.href = `/auth/sign-in?ref=${path}`;
+          }
+          return toast.error('Session Expired');
+        }
         return toast.error('Something went wrong');
       })
       .finally(() => {

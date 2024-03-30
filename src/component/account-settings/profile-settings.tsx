@@ -20,7 +20,7 @@ import { LAYOUT_OPTIONS } from '@/config/enums';
 import { useContext, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import axios from 'axios';
-import { BaseApi, singleSeller, updateSeller } from '@/constants';
+import { BaseApi, errorRetry, singleSeller, updateSeller } from '@/constants';
 import { useModal } from '../modal-views/use-modal';
 import { Button } from 'rizzui';
 import useSWR from 'swr';
@@ -32,6 +32,7 @@ import { PhoneNumber } from '../ui/phone-input';
 import AvatarUploadS3 from '../ui/file-upload/avatar-upload-s3';
 import { useCookies } from 'react-cookie';
 import { extractPathAndParams } from '@/utils/urlextractor';
+import { fetcher } from '@/constants/fetcher';
 const QuillEditor = dynamic(() => import('@/component/ui/quill-editor'), {
   ssr: false,
 });
@@ -84,22 +85,26 @@ export default function ProfileSettingsView() {
 
   const params = useParams();
 
-  const fetcher = (url: any) => axios.get(url).then((res) => res.data);
   let {
     data: seller,
     isLoading,
     error,
-    mutate,
-  } = useSWR(`${BaseApi}${singleSeller}/${params?.seller}`, fetcher, {
-    refreshInterval: 3600000,
-    revalidateOnMount: true,
-    revalidateOnFocus: true,
-    onErrorRetry({ retrycount }: any) {
-      if (retrycount > 3) {
-        return false;
-      }
-    },
-  });
+  } = useSWR(
+    `${BaseApi}${singleSeller}/${params?.seller}`,
+    (url) => fetcher(url, cookies.admintoken),
+    {
+      refreshInterval: 3600000,
+      revalidateOnMount: true,
+      revalidateOnFocus: true,
+      onErrorRetry({ retrycount }: any) {
+        if (retrycount > errorRetry) {
+          return false;
+        }
+      },
+    }
+  );
+
+  const authstatus = error?.response?.data?.status == 'UNAUTHORIZED' && true;
 
   seller = seller?.data?.user;
 
@@ -137,6 +142,16 @@ export default function ProfileSettingsView() {
       });
     }
   }, [seller]);
+
+  if (authstatus) {
+    localStorage.removeItem('admin');
+    toast.error('Session Expired');
+    const currentUrl = window.location.href;
+    const path = extractPathAndParams(currentUrl);
+    if (typeof window !== 'undefined') {
+      location.href = `/auth/sign-in?ref=${path}`;
+    }
+  }
 
   if (isLoading) {
     return (
