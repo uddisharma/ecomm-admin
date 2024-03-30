@@ -74,7 +74,6 @@ export default function NewsLetterForm() {
       2,
       '0'
     )}`;
-
     return formattedDateString;
   }
 

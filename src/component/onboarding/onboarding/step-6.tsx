@@ -1,7 +1,6 @@
 'use client';
 import { Button, Checkbox, Input, Text } from 'rizzui';
 import cn from '@/utils/class-names';
-import { FaHouseUser } from 'react-icons/fa';
 import { Controller, SubmitHandler } from 'react-hook-form';
 import FormSummary from './form-summary';
 import { Step5Schema, step5Schema } from '@/utils/validators/onboarding.schema';
@@ -14,7 +13,6 @@ import {
 } from 'react-icons/md';
 
 import UploadZone from '@/component/ui/file-upload/upload-zone';
-import { UserContext } from '@/store/user/context';
 import axios from 'axios';
 import { BaseApi, UpdateSeller } from '@/constants/index';
 import { toast } from 'sonner';
@@ -26,13 +24,15 @@ import Others from '../policies/others';
 import SelectLoader from '@/component/loader/select-loader';
 import dynamic from 'next/dynamic';
 import { OnboardingContext } from '@/store/onboarding/context';
+import { useCookies } from 'react-cookie';
+import { extractPathAndParams } from '@/utils/urlextractor';
 const Select = dynamic(() => import('@/component/ui/select'), {
   ssr: false,
   loading: () => <SelectLoader />,
 });
 export default function StepSix({ step, setStep }: any) {
   const { setOnboarding, state } = useContext(OnboardingContext);
-
+  const [cookies] = useCookies(['admintoken']);
   const seller = state?.onboarding;
   const aadhar = seller?.legal?.aadhar;
   const pan = seller?.legal?.pan;
@@ -73,22 +73,30 @@ export default function StepSix({ step, setStep }: any) {
   const onSubmit: SubmitHandler<Step5Schema> = (data) => {
     setLoading(true);
     axios
-      .patch(`${BaseApi}${UpdateSeller}/${seller?.id}`, {
-        legal: {
-          ...data,
-          pan: {
-            type: data?.pan?.ptype,
-            name: data?.pan?.name,
-            pannumber: data?.pan?.pannumber,
-            signed: data?.pan?.signed,
+      .patch(
+        `${BaseApi}${UpdateSeller}/${seller?.id}`,
+        {
+          legal: {
+            ...data,
+            pan: {
+              type: data?.pan?.ptype,
+              name: data?.pan?.name,
+              pannumber: data?.pan?.pannumber,
+              signed: data?.pan?.signed,
+            },
+            certificate: data?.certificate?.map((e: any) => {
+              return e?.url;
+            }),
+            gst: data?.gst,
+            taxid: data?.taxid,
           },
-          certificate: data?.certificate?.map((e: any) => {
-            return e?.url;
-          }),
-          gst: data?.gst,
-          taxid: data?.taxid,
         },
-      })
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
+          },
+        }
+      )
       .then((res) => {
         if (res?.data?.status == 'SUCCESS') {
           setOnboarding(res?.data?.data);
@@ -100,6 +108,15 @@ export default function StepSix({ step, setStep }: any) {
       })
       .catch((err) => {
         console.log(err);
+        if (err?.response?.data?.status == 'UNAUTHORIZED') {
+          localStorage.removeItem('admin');
+          const currentUrl = window.location.href;
+          const path = extractPathAndParams(currentUrl);
+          if (typeof window !== 'undefined') {
+            location.href = `/auth/sign-in?ref=${path}`;
+          }
+          return toast.error('Session Expired');
+        }
         toast.error('Something went wrong !');
       })
       .finally(() => {

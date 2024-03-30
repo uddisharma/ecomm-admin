@@ -14,7 +14,6 @@ import { Form } from '@/component/ui/form';
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from 'react-icons/md';
 import { FaTruck } from 'react-icons/fa';
 import { IoMdMail } from 'react-icons/io';
-import { UserContext } from '@/store/user/context';
 import axios from 'axios';
 import { BaseApi, UpdateSeller } from '@/constants/index';
 import { toast } from 'sonner';
@@ -23,12 +22,15 @@ import { useModal } from '@/component/modal-views/use-modal';
 import SelectLoader from '@/component/loader/select-loader';
 import dynamic from 'next/dynamic';
 import { OnboardingContext } from '@/store/onboarding/context';
+import { useCookies } from 'react-cookie';
+import { extractPathAndParams } from '@/utils/urlextractor';
 const Select = dynamic(() => import('@/component/ui/select'), {
   ssr: false,
   loading: () => <SelectLoader />,
 });
 export default function StepSeven({ step, setStep }: any) {
   const { setOnboarding, state } = useContext(OnboardingContext);
+  const [cookies] = useCookies(['admintoken']);
   const personal = state?.onboarding?.deliverypartner?.personal;
   const partner = state?.onboarding?.deliverypartner?.partner;
   const warehouses = partner.warehouses;
@@ -52,21 +54,29 @@ export default function StepSeven({ step, setStep }: any) {
   const onSubmit: SubmitHandler<Step6Schema> = (data) => {
     setLoading(true);
     axios
-      .patch(`${BaseApi}${UpdateSeller}/${state?.onboarding?.id}`, {
-        deliverypartner: {
-          ...data,
-          partner: {
-            email: data?.partner?.email,
-            password: data?.partner?.password,
-            warehouses: warehouses?.length > 0 ? warehouses : [],
-          },
-          personal: {
-            have: data?.personal?.have == 'Yes' ? true : false,
-            name: data?.personal?.name,
-            rate: Number(data?.personal?.rate),
+      .patch(
+        `${BaseApi}${UpdateSeller}/${state?.onboarding?.id}`,
+        {
+          deliverypartner: {
+            ...data,
+            partner: {
+              email: data?.partner?.email,
+              password: data?.partner?.password,
+              warehouses: warehouses?.length > 0 ? warehouses : [],
+            },
+            personal: {
+              have: data?.personal?.have == 'Yes' ? true : false,
+              name: data?.personal?.name,
+              rate: Number(data?.personal?.rate),
+            },
           },
         },
-      })
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
+          },
+        }
+      )
       .then((res) => {
         if (res?.data?.status == 'SUCCESS') {
           setOnboarding(res?.data?.data);
@@ -78,6 +88,15 @@ export default function StepSeven({ step, setStep }: any) {
       })
       .catch((err) => {
         console.log(err);
+        if (err?.response?.data?.status == 'UNAUTHORIZED') {
+          localStorage.removeItem('admin');
+          const currentUrl = window.location.href;
+          const path = extractPathAndParams(currentUrl);
+          if (typeof window !== 'undefined') {
+            location.href = `/auth/sign-in?ref=${path}`;
+          }
+          return toast.error('Session Expired');
+        }
         toast.error('Something went wrong !');
       })
       .finally(() => {

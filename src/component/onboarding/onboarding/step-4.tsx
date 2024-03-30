@@ -27,6 +27,8 @@ import { toast } from 'sonner';
 import { BaseApi, UpdateSeller } from '@/constants/index';
 import axios from 'axios';
 import { OnboardingContext } from '@/store/onboarding/context';
+import { useCookies } from 'react-cookie';
+import { extractPathAndParams } from '@/utils/urlextractor';
 const Select = dynamic(() => import('@/component/ui/select'), {
   ssr: false,
   loading: () => <SelectLoader />,
@@ -58,6 +60,7 @@ const productVariants = [
 export default function StepFour({ step, setStep }: any) {
   const [isLoading, setLoading] = useState(false);
   const { setOnboarding, state } = useContext(OnboardingContext);
+  const [cookies] = useCookies(['admintoken']);
 
   const seller = state?.onboarding;
   const s_categories = seller?.sellingCategory;
@@ -108,9 +111,17 @@ export default function StepFour({ step, setStep }: any) {
 
     setLoading(true);
     axios
-      .patch(`${BaseApi}${UpdateSeller}/${seller?.id}`, {
-        sellingCategory,
-      })
+      .patch(
+        `${BaseApi}${UpdateSeller}/${seller?.id}`,
+        {
+          sellingCategory,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
+          },
+        }
+      )
       .then((res) => {
         if (res?.data?.status == 'SUCCESS') {
           setOnboarding(res?.data?.data);
@@ -122,6 +133,15 @@ export default function StepFour({ step, setStep }: any) {
       })
       .catch((err) => {
         console.log(err);
+        if (err?.response?.data?.status == 'UNAUTHORIZED') {
+          localStorage.removeItem('admin');
+          const currentUrl = window.location.href;
+          const path = extractPathAndParams(currentUrl);
+          if (typeof window !== 'undefined') {
+            location.href = `/auth/sign-in?ref=${path}`;
+          }
+          return toast.error('Session Expired');
+        }
         toast.error('Something went wrong !');
       })
       .finally(() => {

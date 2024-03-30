@@ -220,7 +220,7 @@ export const RegisterSeller = '/seller/vi/seller/create';
 
 export const LoginSeller = '/seller/auth/login';
 
-export const UpdateSeller = '/seller/vi/seller/update';
+export const UpdateSeller = '/admin/seller/update';
 
 export const ForgotPasswordSeller = '/seller/auth/forgot-password';
 

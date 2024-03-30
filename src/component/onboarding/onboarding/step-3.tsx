@@ -14,44 +14,17 @@ import { toast } from 'sonner';
 import SelectLoader from '@/component/loader/select-loader';
 import dynamic from 'next/dynamic';
 import { OnboardingContext } from '@/store/onboarding/context';
+import { states } from '@/constants/states';
+import { useCookies } from 'react-cookie';
+import { extractPathAndParams } from '@/utils/urlextractor';
 const Select = dynamic(() => import('@/component/ui/select'), {
   ssr: false,
   loading: () => <SelectLoader />,
 });
 
-const states = [
-  { name: 'Andhra Pradesh', value: 'Andhra Pradesh' },
-  { name: 'Arunachal Pradesh', value: 'Arunachal Pradesh' },
-  { name: 'Assam', value: 'Assam' },
-  { name: 'Bihar', value: 'Bihar' },
-  { name: 'Chhattisgarh', value: 'Chhattisgarh' },
-  { name: 'Goa', value: 'Goa' },
-  { name: 'Gujarat', value: 'Gujarat' },
-  { name: 'Haryana', value: 'Haryana' },
-  { name: 'Himachal Pradesh', value: 'Himachal Pradesh' },
-  { name: 'Jharkhand', value: 'Jharkhand' },
-  { name: 'Karnataka', value: 'Karnataka' },
-  { name: 'Kerala', value: 'Kerala' },
-  { name: 'Madhya Pradesh', value: 'Madhya Pradesh' },
-  { name: 'Maharashtra', value: 'Maharashtra' },
-  { name: 'Manipur', value: 'Manipur' },
-  { name: 'Meghalaya', value: 'Meghalaya' },
-  { name: 'Mizoram', value: 'Mizoram' },
-  { name: 'Nagaland', value: 'Nagaland' },
-  { name: 'Odisha', value: 'Odisha' },
-  { name: 'Punjab', value: 'Punjab' },
-  { name: 'Rajasthan', value: 'Rajasthan' },
-  { name: 'Sikkim', value: 'Sikkim' },
-  { name: 'Tamil Nadu', value: 'Tamil Nadu' },
-  { name: 'Telangana', value: 'Telangana' },
-  { name: 'Tripura', value: 'Tripura' },
-  { name: 'Uttar Pradesh', value: 'Uttar Pradesh' },
-  { name: 'Uttarakhand', value: 'Uttarakhand' },
-  { name: 'West Bengal', value: 'West Bengal' },
-];
-
 export default function StepThree({ step, setStep }: any) {
   const { setOnboarding, state } = useContext(OnboardingContext);
+  const [cookies] = useCookies(['admintoken']);
 
   const seller = state?.onboarding;
   const initialValues: Step2Schema = {
@@ -67,9 +40,17 @@ export default function StepThree({ step, setStep }: any) {
   const onSubmit: SubmitHandler<Step2Schema> = (data) => {
     setLoading(true);
     axios
-      .patch(`${BaseApi}${UpdateSeller}/${seller?.id}`, {
-        shopaddress: data,
-      })
+      .patch(
+        `${BaseApi}${UpdateSeller}/${seller?.id}`,
+        {
+          shopaddress: data,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
+          },
+        }
+      )
       .then((res) => {
         if (res?.data?.status == 'SUCCESS') {
           setOnboarding(res?.data?.data);
@@ -81,6 +62,15 @@ export default function StepThree({ step, setStep }: any) {
       })
       .catch((err) => {
         console.log(err);
+        if (err?.response?.data?.status == 'UNAUTHORIZED') {
+          localStorage.removeItem('admin');
+          const currentUrl = window.location.href;
+          const path = extractPathAndParams(currentUrl);
+          if (typeof window !== 'undefined') {
+            location.href = `/auth/sign-in?ref=${path}`;
+          }
+          return toast.error('Session Expired');
+        }
         toast.error('Something went wrong !');
       })
       .finally(() => {

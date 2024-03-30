@@ -12,7 +12,6 @@ import { Button, Input, Text } from 'rizzui';
 import { MdKeyboardArrowLeft } from 'react-icons/md';
 import { PiPlusBold } from 'react-icons/pi';
 import TrashIcon from '@/component/icons/trash';
-import { UserContext } from '@/store/user/context';
 import { toast } from 'sonner';
 import axios from 'axios';
 import { BaseApi, UpdateSeller } from '@/constants/index';
@@ -21,41 +20,14 @@ import { useModal } from '@/component/modal-views/use-modal';
 import SelectLoader from '@/component/loader/select-loader';
 import dynamic from 'next/dynamic';
 import { OnboardingContext } from '@/store/onboarding/context';
+import { states } from '@/constants/states';
+import { useCookies } from 'react-cookie';
+import { extractPathAndParams } from '@/utils/urlextractor';
 
 const Select = dynamic(() => import('@/component/ui/select'), {
   ssr: false,
   loading: () => <SelectLoader />,
 });
-const states = [
-  { name: 'Andhra Pradesh', value: 'Andhra Pradesh' },
-  { name: 'Arunachal Pradesh', value: 'Arunachal Pradesh' },
-  { name: 'Assam', value: 'Assam' },
-  { name: 'Bihar', value: 'Bihar' },
-  { name: 'Chhattisgarh', value: 'Chhattisgarh' },
-  { name: 'Goa', value: 'Goa' },
-  { name: 'Gujarat', value: 'Gujarat' },
-  { name: 'Haryana', value: 'Haryana' },
-  { name: 'Himachal Pradesh', value: 'Himachal Pradesh' },
-  { name: 'Jharkhand', value: 'Jharkhand' },
-  { name: 'Karnataka', value: 'Karnataka' },
-  { name: 'Kerala', value: 'Kerala' },
-  { name: 'Madhya Pradesh', value: 'Madhya Pradesh' },
-  { name: 'Maharashtra', value: 'Maharashtra' },
-  { name: 'Manipur', value: 'Manipur' },
-  { name: 'Meghalaya', value: 'Meghalaya' },
-  { name: 'Mizoram', value: 'Mizoram' },
-  { name: 'Nagaland', value: 'Nagaland' },
-  { name: 'Odisha', value: 'Odisha' },
-  { name: 'Punjab', value: 'Punjab' },
-  { name: 'Rajasthan', value: 'Rajasthan' },
-  { name: 'Sikkim', value: 'Sikkim' },
-  { name: 'Tamil Nadu', value: 'Tamil Nadu' },
-  { name: 'Telangana', value: 'Telangana' },
-  { name: 'Tripura', value: 'Tripura' },
-  { name: 'Uttar Pradesh', value: 'Uttar Pradesh' },
-  { name: 'Uttarakhand', value: 'Uttarakhand' },
-  { name: 'West Bengal', value: 'West Bengal' },
-];
 
 interface Warehouse {
   warehouse_name: string;
@@ -86,11 +58,11 @@ interface StepSixProps {
 
 const StepEight: React.FC<StepSixProps> = ({ step, setStep }: any) => {
   const { setOnboarding, state } = useContext(OnboardingContext);
+  const [cookies] = useCookies(['admintoken']);
   const saved_warehouses =
     state?.onboarding?.deliverypartner?.partner?.warehouses;
   const personal = state?.onboarding?.deliverypartner?.personal;
   const partner = state?.onboarding?.deliverypartner?.partner;
-  // console.log(state?.onboarding);
   const [isLoading, setLoading] = useState(false);
   const [warehouses, setWarehouses] = useState<Warehouse[]>(
     saved_warehouses && saved_warehouses?.length > 0
@@ -198,21 +170,30 @@ const StepEight: React.FC<StepSixProps> = ({ step, setStep }: any) => {
         },
       });
       axios
-        .patch(`${BaseApi}${UpdateSeller}/${state?.onboarding?.id}`, {
-          deliverypartner: {
-            personal: personal,
-            partner: {
-              email: partner?.email,
-              password: partner?.password,
-              warehouses: warehouses,
+        .patch(
+          `${BaseApi}${UpdateSeller}/${state?.onboarding?.id}`,
+          {
+            deliverypartner: {
+              personal: personal,
+              partner: {
+                email: partner?.email,
+                password: partner?.password,
+                warehouses: warehouses,
+              },
             },
           },
-        })
+          {
+            headers: {
+              Authorization: `Bearer ${cookies?.admintoken}`,
+            },
+          }
+        )
         .then((res) => {
           if (res?.data?.status == 'SUCCESS') {
             setOnboarding(res?.data?.data);
             setStep(9);
             localStorage.removeItem('onboarding');
+
             return toast.success('Details saved Successfully');
           } else {
             toast.warning(res?.data?.message ?? 'Something went wrong!');
@@ -220,6 +201,15 @@ const StepEight: React.FC<StepSixProps> = ({ step, setStep }: any) => {
         })
         .catch((err) => {
           console.log(err);
+          if (err?.response?.data?.status == 'UNAUTHORIZED') {
+            localStorage.removeItem('admin');
+            const currentUrl = window.location.href;
+            const path = extractPathAndParams(currentUrl);
+            if (typeof window !== 'undefined') {
+              location.href = `/auth/sign-in?ref=${path}`;
+            }
+            return toast.error('Session Expired');
+          }
           toast.error('Something went wrong !');
         })
         .finally(() => {

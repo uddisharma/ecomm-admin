@@ -18,6 +18,8 @@ import { toast } from 'sonner';
 import axios from 'axios';
 import { BaseApi, UpdateSeller } from '@/constants/index';
 import { OnboardingContext } from '@/store/onboarding/context';
+import { useCookies } from 'react-cookie';
+import { extractPathAndParams } from '@/utils/urlextractor';
 
 export default function StepTwo({ step, setStep }: any) {
   const { setOnboarding, state } = useContext(OnboardingContext);
@@ -37,23 +39,32 @@ export default function StepTwo({ step, setStep }: any) {
     facebook: seller?.socialLinks?.facebook ?? '',
     youtube: seller?.socialLinks?.youtube ?? '',
   };
-  const [reset, setReset] = useState({});
+  const [reset, _setReset] = useState({});
   const [loading, setLoading] = useState(false);
+  const [cookies] = useCookies(['admintoken']);
   const onSubmit: SubmitHandler<Step1Schema> = (data) => {
     if (data?.cover == undefined) {
       return toast.warning('Please Add Shop Banner');
     }
     setLoading(true);
     axios
-      .patch(`${BaseApi}${UpdateSeller}/${seller?.id}`, {
-        ...data,
-        cover: data?.cover?.url,
-        socialLinks: {
-          instagram: data?.instagram,
-          facebook: data?.facebook,
-          youtube: data?.youtube,
+      .patch(
+        `${BaseApi}${UpdateSeller}/${seller?.id}`,
+        {
+          ...data,
+          cover: data?.cover?.url,
+          socialLinks: {
+            instagram: data?.instagram,
+            facebook: data?.facebook,
+            youtube: data?.youtube,
+          },
         },
-      })
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
+          },
+        }
+      )
       .then((res) => {
         if (res?.data?.status == 'SUCCESS') {
           setOnboarding(res?.data?.data);
@@ -65,6 +76,15 @@ export default function StepTwo({ step, setStep }: any) {
       })
       .catch((err) => {
         console.log(err);
+        if (err?.response?.data?.status == 'UNAUTHORIZED') {
+          localStorage.removeItem('admin');
+          const currentUrl = window.location.href;
+          const path = extractPathAndParams(currentUrl);
+          if (typeof window !== 'undefined') {
+            location.href = `/auth/sign-in?ref=${path}`;
+          }
+          return toast.error('Session Expired');
+        }
         toast.error('Something went wrong !');
       })
       .finally(() => {
