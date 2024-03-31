@@ -49,7 +49,7 @@ export default function Legal({ legal, name }: any) {
 
   const handleDownload = async (fileLinks: any) => {
     const zip = new JSZip();
-    console.log(fileLinks);
+
     try {
       await Promise.all(
         fileLinks.map(async (fileLink: any, index: any) => {

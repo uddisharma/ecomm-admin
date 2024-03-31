@@ -7,7 +7,12 @@ import { useModal } from '@/component/modal-views/use-modal';
 import { ActionIcon } from 'rizzui';
 import { PiXBold, PiArrowRightBold } from 'react-icons/pi';
 import axios from 'axios';
-import { BaseApi, updateSeller } from '@/constants';
+import {
+  BaseApi,
+  finalOnboardSeller,
+  unOnboardSeller,
+  updateSeller,
+} from '@/constants';
 import { toast } from 'sonner';
 import { SellerContext } from '@/store/seller/context';
 import { IoCheckmarkDoneOutline } from 'react-icons/io5';
@@ -143,48 +148,91 @@ function DisableAccount({ title }: any) {
   const [cookies] = useCookies(['admintoken']);
 
   const onSubmit = () => {
-    setLoading(true);
-    axios
-      .patch(
-        `${BaseApi}${updateSeller}/${state?.seller?.id}`,
-        {
-          isOnboarded: !isActive,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${cookies?.admintoken}`,
+    if (isActive == false) {
+      setLoading(true);
+      axios
+        .patch(
+          `${BaseApi}${finalOnboardSeller}/${state?.seller?.id}`,
+          {
+            ...state?.seller,
           },
-        }
-      )
-      .then((res) => {
-        if (res.data?.status == 'SUCCESS') {
-          setSeller(res.data?.data);
-          closeModal();
-          return toast.success(
-            `Account is ${
-              isActive ? 'Mark as Pending Onboarding' : 'Onboarded'
-            } Successfully !`
-          );
-        } else {
-          return toast.error('Something went wrong !');
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        if (err?.response?.data?.status == 'UNAUTHORIZED') {
-          localStorage.removeItem('admin');
-          const currentUrl = window.location.href;
-          const path = extractPathAndParams(currentUrl);
-          if (typeof window !== 'undefined') {
-            location.href = `/auth/sign-in?ref=${path}`;
+          {
+            headers: {
+              Authorization: `Bearer ${cookies?.admintoken}`,
+            },
           }
-          return toast.error('Session Expired');
-        }
-        return toast.error('Something went wrong !');
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+        )
+        .then((res) => {
+          if (res?.data?.valid == false) {
+            return toast.error(res?.data?.errors[0]);
+          }
+          if (res.data?.status == 'SUCCESS') {
+            setSeller(res.data?.data);
+            closeModal();
+            return toast.success(
+              `Account is Onboarded
+               Successfully !`
+            );
+          } else {
+            return toast.error('Something went wrong !');
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          // if (err?.response?.data?.status == 'UNAUTHORIZED') {
+          //   localStorage.removeItem('admin');
+          //   const currentUrl = window.location.href;
+          //   const path = extractPathAndParams(currentUrl);
+          //   if (typeof window !== 'undefined') {
+          //     location.href = `/auth/sign-in?ref=${path}`;
+          //   }
+          //   return toast.error('Session Expired');
+          // }
+          return toast.error('Something went wrong !');
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } else {
+      setLoading(true);
+      axios
+        .patch(
+          `${BaseApi}${unOnboardSeller}/${state?.seller?.id}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${cookies?.admintoken}`,
+            },
+          }
+        )
+        .then((res) => {
+          if (res.data?.status == 'SUCCESS') {
+            setSeller(res.data?.data);
+            closeModal();
+            return toast.success(
+              `Account is Mark as Pending Onboarding Successfully !`
+            );
+          } else {
+            return toast.error('Something went wrong !');
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          // if (err?.response?.data?.status == 'UNAUTHORIZED') {
+          //   localStorage.removeItem('admin');
+          //   const currentUrl = window.location.href;
+          //   const path = extractPathAndParams(currentUrl);
+          //   if (typeof window !== 'undefined') {
+          //     location.href = `/auth/sign-in?ref=${path}`;
+          //   }
+          //   return toast.error('Session Expired');
+          // }
+          return toast.error('Something went wrong !');
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
   };
   return (
     <div className="m-auto px-5 pb-8 pt-5 @lg:pt-6 @2xl:px-7">

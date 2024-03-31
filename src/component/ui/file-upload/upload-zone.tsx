@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 import isEmpty from 'lodash/isEmpty';
 import prettyBytes from 'pretty-bytes';
 import { useCallback, useState } from 'react';
@@ -95,11 +95,7 @@ export default function UploadZone({
           }));
           setValue(name, respondedUrls);
         }
-        toast.success(
-          <Text as="b" className="font-semibold">
-            portfolio Images updated
-          </Text>
-        );
+        toast.success('Files Uploaded Successfully'!);
       },
       onUploadError: (error: Error) => {
         // console.error(error);

@@ -102,6 +102,10 @@ export const transactionPerPage = 2;
 
 export const updateSeller = '/admin/seller/update';
 
+export const finalOnboardSeller = '/admin/seller/finalonboard';
+
+export const unOnboardSeller = '/admin/seller/unonboard';
+
 export const changePassword = '/seller/vi/change/password';
 
 export const changeAdminPassword = '/admin/auth/change/password';

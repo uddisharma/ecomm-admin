@@ -127,6 +127,7 @@ export default function ProfileSettingsView() {
     cover: data?.cover ?? undefined,
     discount: data?.discount ?? '',
     charge: data?.charge ?? '',
+    rating: data?.rating ?? '',
   };
 
   const { openModal } = useModal();
@@ -324,6 +325,59 @@ export default function ProfileSettingsView() {
                       error={errors.discount?.message}
                     />
                   </FormGroup>
+
+                  <FormGroup
+                    title="Rating"
+                    className="pt-7 @2xl:pt-9 @3xl:grid-cols-12 @3xl:pt-11"
+                  >
+                    <Input
+                      type="text"
+                      className=""
+                      prefixClassName="relative pe-2.5 before:w-[1px] before:h-[38px] before:absolute before:bg-gray-300 before:-top-[9px] before:right-0"
+                      placeholder="Rating"
+                      {...register('rating.rate')}
+                      error={errors.rating?.rate?.message}
+                    />
+                    <Input
+                      type="text"
+                      className=""
+                      prefixClassName="relative pe-2.5 before:w-[1px] before:h-[38px] before:absolute before:bg-gray-300 before:-top-[9px] before:right-0"
+                      placeholder="Rating total"
+                      {...register('rating.total')}
+                      error={errors.rating?.total?.message}
+                    />
+                  </FormGroup>
+                  {data?.referredBy && (
+                    <FormGroup
+                      title="Referred By"
+                      className="pt-7 @2xl:pt-9 @3xl:grid-cols-12 @3xl:pt-11"
+                    >
+                      <Link href={`/users/${data?.referredBy?.id}/view`}>
+                        <Input
+                          type="text"
+                          className="cursor-pointer"
+                          prefixClassName="relative pe-2.5 before:w-[1px] before:h-[38px] before:absolute before:bg-gray-300 before:-top-[9px] before:right-0"
+                          readOnly
+                          placeholder="User Name"
+                          value={data?.referredBy?.name || ''}
+                        />
+                      </Link>
+                      <Link
+                        className="cursor-pointer"
+                        href={`/users/${data?.referredBy?.id}/view`}
+                      >
+                        <Input
+                          type="text"
+                          className="cursor-pointer"
+                          prefixClassName="relative pe-2.5 before:w-[1px] before:h-[38px] before:absolute before:bg-gray-300 before:-top-[9px] before:right-0"
+                          readOnly
+                          placeholder="User Email"
+                          value={data?.referredBy?.email || ''}
+                        />
+                      </Link>
+                    </FormGroup>
+                  )}
+
                   <FormGroup
                     title="Charge"
                     className="pt-7 @2xl:pt-9 @3xl:grid-cols-12 @3xl:pt-11"
@@ -362,7 +416,6 @@ export function ProfileHeader({
   return (
     <div
       className={cn(
-        // 'relative z-0 -mx-4 px-4 pt-28 before:absolute before:start-0 before:top-0 before:h-40 before:w-full before:bg-gradient-to-r before:from-[#F8E1AF] before:to-[#F6CFCF] @3xl:pt-[190px] @3xl:before:h-[calc(100%-120px)] md:-mx-5 md:px-5 lg:-mx-8 lg:px-8 xl:-mx-6 xl:px-6 3xl:-mx-[33px] 3xl:px-[33px] 4xl:-mx-10 4xl:px-10 dark:before:from-[#bca981] dark:before:to-[#cbb4b4]',
         layout === LAYOUT_OPTIONS.BERYLLIUM && expandedLeft
           ? 'before:start-5 3xl:before:start-[25px]'
           : 'xl:before:w-[calc(100%_+_10px)]'
@@ -380,27 +433,7 @@ export function ProfileHeader({
           }}
           alt="cover"
         />
-        {/* <div className="relative -top-1/3 aspect-square w-[110px] overflow-hidden rounded-full border-[6px] border-white bg-gray-100 shadow-profilePic @2xl:w-[130px] @5xl:-top-2/3 @5xl:w-[150px] 3xl:w-[200px] dark:border-gray-50">
-          <Image
-            src="https://isomorphic-furyroad.s3.amazonaws.com/public/profile-image.webp"
-            alt="profile-pic"
-            fill
-            sizes="(max-width: 768px) 100vw"
-            className="aspect-auto"
-          />
-        </div>
-        <div>
-          <Title
-            as="h2"
-            className="mb-2 inline-flex items-center gap-3 text-xl font-bold text-gray-900"
-          >
-            {title}
-            <PiSealCheckFill className="h-5 w-5 text-primary md:h-6 md:w-6" />
-          </Title>
-          {description ? (
-            <Text className="text-sm text-gray-500">{description}</Text>
-          ) : null}
-        </div> */}
+
         {children}
       </div>
     </div>

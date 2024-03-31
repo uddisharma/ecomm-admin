@@ -15,6 +15,10 @@ export const profileFormSchema = z.object({
   cover: fileSchema.optional(),
   discount: z.string().min(1, { message: 'Discount is required' }),
   charge: z.string().min(1, { message: 'Charge is required' }),
+  rating: z.object({
+    rate: z.string().min(1, { message: 'Rating is required' }),
+    total: z.string().min(1, { message: 'Total is required' }),
+  }),
 });
 
 // generate form types from zod validation schema
