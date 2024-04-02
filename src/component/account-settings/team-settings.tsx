@@ -10,7 +10,6 @@ import { endsWith } from 'lodash';
 import { toast } from 'sonner';
 import SelectLoader from '../loader/select-loader';
 import dynamic from 'next/dynamic';
-import UploadZone from '../ui/file-upload/upload-zone';
 import FormFooter from '../others/form-footer';
 import { useContext, useState } from 'react';
 import axios from 'axios';
@@ -21,6 +20,7 @@ import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import { extractPathAndParams } from '@/utils/urlextractor';
 import { useCookies } from 'react-cookie';
+import UploadZoneS3 from '../ui/file-upload/upload-zone-s3';
 
 const Select = dynamic(() => import('@/component/ui/select'), {
   ssr: false,
@@ -344,7 +344,7 @@ export default function Legal({ legal, name }: any) {
                   >
                     Download Certificates
                   </p>
-                  <UploadZone
+                  <UploadZoneS3
                     name="certificate"
                     className="col-span-full"
                     label="Soft copies of Aadhaar, PAN, Bank, GST & TAX"
