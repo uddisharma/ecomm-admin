@@ -7,7 +7,7 @@ import FormGroup from '../others/form-group';
 import FormFooter from '../others/form-footer';
 import { useContext, useState } from 'react';
 import { SellerContext } from '@/store/seller/context';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import axios from 'axios';
 import { BaseApi, updateSeller } from '@/constants';
 import { toast } from 'sonner';
@@ -17,6 +17,8 @@ import { PhoneNumber } from '../ui/phone-input';
 import { extractPathAndParams } from '@/utils/urlextractor';
 import { useCookies } from 'react-cookie';
 import { states } from '@/constants/states';
+import AvatarUploadS3 from '../ui/file-upload/avatar-upload-s3';
+import { fileSchema } from '@/utils/validators/common-rules';
 
 const WarehouseSchema = z.object({
   name: z.string().min(1, { message: 'Name  is required' }),
@@ -28,6 +30,7 @@ const WarehouseSchema = z.object({
   city: z.string().min(1, { message: 'City is required' }),
   pincode: z.string().min(1, { message: 'Pincode is required' }),
   state: z.string().min(1, { message: 'State  is required' }),
+  signature: fileSchema,
 });
 type WarehouseFormTypes = z.infer<typeof WarehouseSchema>;
 
@@ -62,6 +65,7 @@ export default function ProfileSettingsView() {
               state: data?.state,
               pincode: data?.pincode,
             },
+            signature: data?.signature?.url,
           },
         },
         {
@@ -110,6 +114,11 @@ export default function ProfileSettingsView() {
     city: state?.seller?.owner?.address?.city ?? '',
     pincode: state?.seller?.owner?.address?.pincode ?? '',
     state: state?.seller?.owner?.address?.state ?? '',
+    signature: {
+      name: state?.seller?.owner?.personal?.name ?? '',
+      url: state?.seller?.owner?.signature ?? '',
+      size: 1024,
+    },
   };
 
   return (
@@ -237,6 +246,20 @@ export default function ProfileSettingsView() {
                       />
                     )}
                   />
+                </FormGroup>
+                <FormGroup
+                  title="Owner Signature"
+                  description="This will be displayed on your profile."
+                  className="pt-7 @2xl:pt-9 @3xl:grid-cols-12 @3xl:pt-11"
+                >
+                  <div className="col-span-2 flex flex-col items-center gap-4 @xl:flex-row">
+                    <AvatarUploadS3
+                      name="signature"
+                      setValue={setValue}
+                      getValues={getValues}
+                      error={errors?.signature?.message as string}
+                    />
+                  </div>
                 </FormGroup>
               </div>
               <FormFooter

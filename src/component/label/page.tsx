@@ -1,6 +1,5 @@
 'use client';
-import { UserContext } from '@/store/user/context';
-import React, { useContext, useRef } from 'react';
+import React, { useRef } from 'react';
 //@ts-ignore
 import html2pdf from 'html2pdf.js';
 import { Button } from 'rizzui';
@@ -19,13 +18,13 @@ function SellerLabel({ data }: any) {
     order_id,
     payment,
     date,
+    sellerId,
   } = data;
 
   const shippingAddress = customerId.shippingAddress.find(
     (address: any) => address.id === addressId
   );
-  const { state } = useContext(UserContext);
-  const seller = state?.user;
+
   const labelRef = useRef(null);
   const router = useRouter();
 
@@ -55,7 +54,7 @@ function SellerLabel({ data }: any) {
       >
         <div ref={labelRef} className="label-12">
           <h1 style={{ marginBottom: '5px' }} className="heading-12">
-            {seller?.shopname}
+            {sellerId?.shopname}
           </h1>
 
           <div
@@ -90,10 +89,10 @@ function SellerLabel({ data }: any) {
                     <td className="td-12">
                       {e.productId.name?.split(0, 15) + '...'}
                     </td>
-                    <td className="td-12">₹{e.productId.price}</td>
                     <td className="td-12">
-                      ₹{e.amount} * {e.quantity}
+                      ₹{e.productId.price} * {e.quantity}
                     </td>
+                    <td className="td-12">₹{e.amount}</td>
                   </tr>
                 ))}
               </tbody>
@@ -120,9 +119,11 @@ function SellerLabel({ data }: any) {
 
           <div className="section-12 user-details-12">
             {/* <h2>Pickup and Return Address:</h2> */}
+
             <div className="details-12">
-              <p>{`${seller?.shopaddress?.address1}, ${seller?.shopaddress?.address2}, ${seller?.shopaddress?.city}, ${seller?.shopaddress?.state},  ${seller?.shopaddress?.pincode}`}</p>
-              <p>Mobile No : {seller?.mobileNo}</p>
+              <p>{`${sellerId?.shopaddress?.address1}, ${sellerId?.shopaddress?.address2}, ${sellerId?.shopaddress?.city}, ${sellerId?.shopaddress?.state},  ${sellerId?.shopaddress?.pincode}`}</p>
+
+              <p>Mobile No : {sellerId?.mobileNo}</p>
             </div>
           </div>
         </div>

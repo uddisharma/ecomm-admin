@@ -122,13 +122,15 @@ export const getColumns = ({
           placement="top"
           color="invert"
         >
-          <ActionIcon
-            size="sm"
-            variant="outline"
-            aria-label={'Download Reciept'}
-          >
-            <FaFileDownload className="h-4 w-4" />
-          </ActionIcon>
+          <Link target="_blank" href={`/payout/${row?.id}`}>
+            <ActionIcon
+              size="sm"
+              variant="outline"
+              aria-label={'Download Reciept'}
+            >
+              <FaFileDownload className="h-4 w-4" />
+            </ActionIcon>
+          </Link>
         </Tooltip>
         <Tooltip
           size="sm"

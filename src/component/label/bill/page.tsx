@@ -1,6 +1,5 @@
 'use client';
-import { UserContext } from '@/store/user/context';
-import React, { useContext, useRef, useState } from 'react';
+import React, { useRef } from 'react';
 //@ts-ignore
 import html2pdf from 'html2pdf.js';
 import { Button } from 'rizzui';
@@ -19,12 +18,12 @@ const Bill = ({ data }: any) => {
     order_id,
     payment,
     date,
+    sellerId,
   } = data;
   const shippingAddress = customerId.shippingAddress.find(
     (address: any) => address.id === addressId
   );
-  const { state } = useContext(UserContext);
-  const seller = state?.user;
+
   const labelRef = useRef(null);
   const router = useRouter();
 
@@ -80,19 +79,19 @@ const Bill = ({ data }: any) => {
             {/* Assuming seller details are not available in the provided data */}
             <div className="address-box">
               <h4>SELL BY</h4>
-              <p>{seller?.shopname}</p>
-              <p>{seller?.shopaddress?.address1}</p>
+              <p>{sellerId?.shopname}</p>
+              <p>{sellerId?.shopaddress?.address1}</p>
               <p>
-                {`${seller?.shopaddress?.city}, ${seller?.shopaddress?.state},  ${seller?.shopaddress?.pincode}`}{' '}
+                {`${sellerId?.shopaddress?.city}, ${sellerId?.shopaddress?.state},  ${sellerId?.shopaddress?.pincode}`}{' '}
               </p>
-              <p>Email: {seller?.email}</p>
+              <p>Email: {sellerId?.email}</p>
             </div>
           </div>
           <table className="invoice-items">
             <thead>
               <tr>
                 <th>Product Name</th>
-                <th>Quantity</th>
+                <th>Price</th>
                 <th>Color</th>
                 <th>Size</th>
                 <th>Amount</th>
@@ -102,7 +101,9 @@ const Bill = ({ data }: any) => {
               {orderItems?.map((e: any, i: any) => (
                 <tr key={i}>
                   <td>{e.productId.name}</td>
-                  <td>{e.quantity}</td>
+                  <td>
+                    {e.productId.price} * {e.quantity}
+                  </td>
                   <td>{e.color.name}</td>
                   <td>{e.size}</td>
                   <td>{e.amount.toFixed(2)}</td>
@@ -154,7 +155,7 @@ const Bill = ({ data }: any) => {
                 <p>
                   <strong>Courior: </strong>
                   {courior == 'Local'
-                    ? seller?.deliverypartner?.personal?.name
+                    ? sellerId?.deliverypartner?.personal?.name
                     : courior}
                 </p>
                 <p>
@@ -169,17 +170,15 @@ const Bill = ({ data }: any) => {
             </div>
             <div className="signature-section">
               <div className="signature">
-                {/* Placeholder for seller signature */}
                 <img
-                  src="https://p.kindpng.com/picc/s/26-264820_signatures-samples-png-ron-paul-signature-transparent-png.png"
-                  alt="Signature"
-                  style={{ width: '150px', height: 'auto' }}
+                  src={sellerId?.owner?.signature}
+                  alt={`${sellerId?.shopname}'s Signature`}
                 />
               </div>
               <p>
                 _________________________
                 <br />
-                {seller?.shopname}
+                {sellerId?.shopname}
                 <br />
                 {date}
               </p>
@@ -207,7 +206,7 @@ const Bill = ({ data }: any) => {
         </Button>
         <Button className="mt-5" onClick={handleDownloadPDF} variant="solid">
           <FiDownloadCloud className="mr-2 h-4 w-4" />
-          Download Label
+          Download Bill
         </Button>
       </div>
     </>

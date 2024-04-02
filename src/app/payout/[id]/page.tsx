@@ -1,16 +1,16 @@
 'use client';
-import SellerLabel from '@/component/label/page';
+import Recipet from '@/component/transactions/Reciept/page';
 import Spinner from '@/component/ui/spinner';
-import { BaseApi, errorRetry, singleOrder } from '@/constants';
+import { BaseApi, singleTransaction } from '@/constants';
 import { fetcher } from '@/constants/fetcher';
 import { extractPathAndParams } from '@/utils/urlextractor';
-import axios from 'axios';
 import { useParams } from 'next/navigation';
 import React from 'react';
 import { useCookies } from 'react-cookie';
 import { Text } from 'rizzui';
 import { toast } from 'sonner';
 import useSWR from 'swr';
+
 const Page = () => {
   const params = useParams();
 
@@ -21,14 +21,14 @@ const Page = () => {
     isLoading,
     error,
   } = useSWR(
-    `${BaseApi}${singleOrder}/${params?.id}`,
+    `${BaseApi}${singleTransaction}/${params?.id}`,
     (url) => fetcher(url, cookies.admintoken),
     {
       refreshInterval: 3600000,
       revalidateOnMount: true,
       revalidateOnFocus: true,
       onErrorRetry({ retrycount }: any) {
-        if (retrycount > errorRetry) {
+        if (retrycount > 3) {
           return false;
         }
       },
@@ -37,10 +37,10 @@ const Page = () => {
 
   const authstatus = error?.response?.data?.status == 'UNAUTHORIZED' && true;
 
-  const orderData = data1;
+  console.log(data1?.data);
 
   if (authstatus) {
-    localStorage.removeItem('admin');
+    localStorage.removeItem('seller');
     toast.error('Session Expired');
     const currentUrl = window.location.href;
     const path = extractPathAndParams(currentUrl);
@@ -56,7 +56,7 @@ const Page = () => {
       ) : error ? (
         <Text className="mt-10 text-center">Something went wrong</Text>
       ) : (
-        orderData && <SellerLabel data={orderData} />
+        data1 && <Recipet data={data1?.data} />
       )}
     </div>
   );

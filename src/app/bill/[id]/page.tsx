@@ -37,7 +37,7 @@ const Page = () => {
 
   const authstatus = error?.response?.data?.status == 'UNAUTHORIZED' && true;
 
-  const orderData = data1?.data;
+  const orderData = data1;
 
   if (authstatus) {
     localStorage.removeItem('admin');
