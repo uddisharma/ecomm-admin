@@ -26,22 +26,6 @@ import { toast } from 'sonner';
 import useSWR from 'swr';
 
 const Page = () => {
-  const pageHeader = {
-    title: 'Temperory Deleted Sellers',
-    breadcrumb: [
-      {
-        href: '/',
-        name: 'Home',
-      },
-      {
-        href: '/sellers',
-        name: 'Sellers',
-      },
-      {
-        name: 'List',
-      },
-    ],
-  };
   const [loading, setLoading] = useState(false);
   const [searchedData, setSearchedData] = useState<any>([]);
   const [term, setTerm] = useState<string>('');
@@ -190,6 +174,23 @@ const Page = () => {
   }, [term]);
 
   const sellers: any = [];
+
+  const pageHeader = {
+    title: `Deleted Sellers (${pagininator?.itemCount ?? 0})`,
+    breadcrumb: [
+      {
+        href: '/',
+        name: 'Home',
+      },
+      {
+        href: '/',
+        name: 'Deleted Sellers',
+      },
+      {
+        name: 'List',
+      },
+    ],
+  };
 
   if (authstatus) {
     localStorage.removeItem('admin');

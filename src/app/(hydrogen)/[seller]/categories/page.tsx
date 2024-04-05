@@ -99,7 +99,9 @@ export default function CategoriesPage() {
   return (
     <>
       <CategoryPageHeader
-        title={pageHeader.title}
+        title={`${pageHeader.title} (${
+          data?.data?.sellingCategory?.length ?? 0
+        })`}
         breadcrumb={pageHeader.breadcrumb}
         data={data?.data?.sellingCategory}
       />

@@ -23,23 +23,6 @@ import { toast } from 'sonner';
 import useSWR from 'swr';
 
 const Page = () => {
-  const pageHeader = {
-    title: 'Onboarding Requests',
-    breadcrumb: [
-      {
-        href: '/',
-        name: 'Home',
-      },
-      {
-        href: '/sellers',
-        name: 'Sellers',
-      },
-      {
-        name: 'List',
-      },
-    ],
-  };
-
   const initialState = {
     page: '',
   };
@@ -142,6 +125,23 @@ const Page = () => {
   };
 
   const sellers: any = [];
+
+  const pageHeader = {
+    title: `Onboarding Requests (${pagininator?.itemCount ?? 0})`,
+    breadcrumb: [
+      {
+        href: '/',
+        name: 'Home',
+      },
+      {
+        href: '/',
+        name: 'Onboarding Requests',
+      },
+      {
+        name: 'List',
+      },
+    ],
+  };
 
   if (authstatus) {
     localStorage.removeItem('admin');

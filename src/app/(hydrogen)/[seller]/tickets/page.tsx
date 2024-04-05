@@ -26,23 +26,6 @@ import { Button, Empty, SearchNotFoundIcon } from 'rizzui';
 import { toast } from 'sonner';
 import useSWR from 'swr';
 
-const pageHeader = {
-  title: 'Tickets',
-  breadcrumb: [
-    {
-      href: '/',
-      name: 'Home',
-    },
-    {
-      href: '/tickets',
-      name: 'Tickets',
-    },
-    {
-      name: 'List',
-    },
-  ],
-};
-
 export default function BlankPage() {
   const initialState = {
     page: '',
@@ -154,6 +137,23 @@ export default function BlankPage() {
   const tickets: any = [];
 
   const user = params?.seller;
+
+  const pageHeader = {
+    title: `Tickets (${pagininator?.itemCount ?? 0})`,
+    breadcrumb: [
+      {
+        href: '/',
+        name: 'Home',
+      },
+      {
+        href: '/',
+        name: 'Tickets',
+      },
+      {
+        name: 'List',
+      },
+    ],
+  };
 
   if (authstatus) {
     localStorage.removeItem('admin');

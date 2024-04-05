@@ -15,6 +15,7 @@ import {
   validateEmail,
   validatePassword,
 } from '@/utils/validators/common-rules';
+import { useSearchParams } from 'next/navigation';
 
 const signUpSchema = z
   .object({
@@ -30,6 +31,7 @@ const signUpSchema = z
     password: validatePassword,
     confirmPassword: validateConfirmPassword,
     isAgreed: z.boolean(),
+    referral_code: z.any().optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: messages.passwordsDidNotMatch,
@@ -46,13 +48,17 @@ export default function StepZero({ step, setStep }: any) {
     isAgreed: true,
   };
   const [loading, setLoading] = useState(false);
-  const [reset, setReset] = useState({});
+  const [reset, _setReset] = useState({});
+  const params = useSearchParams();
   const onSubmit: SubmitHandler<SignUpSchema> = (data) => {
     if (!data?.isAgreed) {
       return toast.warning('Please accpect Terms & Conditions');
     }
     if (data?.password != data?.confirmPassword) {
       return toast.warning("Password doesn't match");
+    }
+    if (params?.has('referral_code')) {
+      data.referral_code = params?.get('referral_code');
     }
     setLoading(true);
     axios
@@ -155,6 +161,19 @@ export default function StepZero({ step, setStep }: any) {
                     className="mt-5 [&>label>span]:font-medium"
                     {...register('confirmPassword')}
                     error={errors.confirmPassword?.message}
+                  />
+                  <Input
+                    type="text"
+                    label="Referral Code"
+                    defaultValue={
+                      params?.has('referral_code')
+                        ? String(params?.get('referral_code'))
+                        : ''
+                    }
+                    placeholder="Referral Code (Optional)"
+                    color="info"
+                    className="mt-5 [&>label>span]:font-medium"
+                    {...register('referral_code')}
                   />
 
                   <div className="mb-5 mt-5 flex items-center justify-between">

@@ -26,23 +26,6 @@ import { useCookies } from 'react-cookie';
 import { fetcher } from '@/constants/fetcher';
 import { extractPathAndParams } from '@/utils/urlextractor';
 
-const pageHeader = {
-  title: 'Tickets',
-  breadcrumb: [
-    {
-      href: '/',
-      name: 'Home',
-    },
-    {
-      href: '/tickets',
-      name: 'Tickets',
-    },
-    {
-      name: 'List',
-    },
-  ],
-};
-
 export default function BlankPage() {
   const initialState = {
     page: '',
@@ -155,6 +138,23 @@ export default function BlankPage() {
   };
 
   const tickets: any = [];
+
+  const pageHeader = {
+    title: `Tickets (${pagininator?.itemCount ?? 0})`,
+    breadcrumb: [
+      {
+        href: '/',
+        name: 'Home',
+      },
+      {
+        href: '/',
+        name: 'Tickets',
+      },
+      {
+        name: 'List',
+      },
+    ],
+  };
 
   if (authstatus) {
     localStorage.removeItem('admin');

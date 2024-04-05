@@ -26,24 +26,7 @@ import { fetcher } from '@/constants/fetcher';
 import { extractPathAndParams } from '@/utils/urlextractor';
 import ReferralLoadingPage from '@/component/loading/referralsLoading';
 const metadata = {
-  ...metaObject('Transactions'),
-};
-
-const pageHeader = {
-  title: 'Deleted Referrals',
-  breadcrumb: [
-    {
-      href: '/',
-      name: 'Home',
-    },
-    {
-      href: '/referrals/all',
-      name: 'Referrals',
-    },
-    {
-      name: 'List',
-    },
-  ],
+  ...metaObject('Referrals'),
 };
 
 export default function Transactions() {
@@ -218,6 +201,23 @@ export default function Transactions() {
   };
 
   const transactions: any = [];
+
+  const pageHeader = {
+    title: `Deleted Referrals (${pagininator?.itemCount ?? 0})`,
+    breadcrumb: [
+      {
+        href: '/',
+        name: 'Home',
+      },
+      {
+        href: '/',
+        name: 'Deleted Referrals',
+      },
+      {
+        name: 'List',
+      },
+    ],
+  };
 
   if (authstatus) {
     localStorage.removeItem('admin');

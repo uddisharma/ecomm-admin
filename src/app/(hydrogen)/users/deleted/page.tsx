@@ -9,6 +9,7 @@ import useSWR from 'swr';
 import {
   BaseApi,
   deleteUser,
+  errorRetry,
   findUsers,
   temperoryDeleteUser,
   updateUser,
@@ -21,6 +22,9 @@ import { Empty, Input, SearchNotFoundIcon } from 'rizzui';
 import { toast } from 'sonner';
 import { CiSearch } from 'react-icons/ci';
 import DeletedUsersTable from '@/component/users/user-list/deleted/table';
+import { extractPathAndParams } from '@/utils/urlextractor';
+import { fetcher } from '@/constants/fetcher';
+import { useCookies } from 'react-cookie';
 
 const pageHeader = {
   title: 'Deleted Users',
@@ -50,21 +54,26 @@ export default function ProductsPage() {
     initialState
   );
   const [page, setPage] = useState(st?.page ? st?.page : 1);
-  const fetcher = (url: any) => axios.get(url).then((res) => res.data);
+
+  const [cookies] = useCookies(['admintoken']);
+
   let { data, isLoading, error, mutate } = useSWR(
     `${BaseApi}${userList}?page=${page}&limit=${userPerPage}&isDeleted=${true}`,
-    fetcher,
+    (url) => fetcher(url, cookies.admintoken),
     {
       refreshInterval: 3600000,
       revalidateOnMount: true,
       revalidateOnFocus: true,
       onErrorRetry({ retrycount }: any) {
-        if (retrycount > 3) {
+        if (retrycount > errorRetry) {
           return false;
         }
       },
     }
   );
+
+  const authstatus = error?.response?.data?.status == 'UNAUTHORIZED' && true;
+
   const pagininator = data?.data?.paginator;
   data = data?.data?.data;
 
@@ -81,7 +90,11 @@ export default function ProductsPage() {
   const findUser = () => {
     setLoading(true);
     axios
-      .get(`${BaseApi}${findUsers}?term=${term}`)
+      .get(`${BaseApi}${findUsers}?term=${term}`, {
+        headers: {
+          Authorization: `Bearer ${cookies?.admintoken}`,
+        },
+      })
       .then((res) => {
         console.log(res?.data?.data);
         if (res?.data?.data) {
@@ -91,6 +104,15 @@ export default function ProductsPage() {
         }
       })
       .catch((err) => {
+        if (err?.response?.data?.status == 'UNAUTHORIZED') {
+          localStorage.removeItem('admin');
+          const currentUrl = window.location.href;
+          const path = extractPathAndParams(currentUrl);
+          if (typeof window !== 'undefined') {
+            location.href = `/auth/sign-in?ref=${path}`;
+          }
+          return toast.error('Session Expired');
+        }
         console.log(err);
         return toast.error('Something went wrong');
       })
@@ -106,14 +128,27 @@ export default function ProductsPage() {
 
   const onDelete = async (id: any) => {
     try {
-      const res = await axios.delete(`${BaseApi}${deleteUser}/${id}`);
+      const res = await axios.delete(`${BaseApi}${deleteUser}/${id}`, {
+        headers: {
+          Authorization: `Bearer ${cookies?.admintoken}`,
+        },
+      });
       if (res?.data?.status == 'SUCCESS') {
         await mutate();
         return toast.success('User is Permanently Deleted Successfully !');
       } else {
         toast.error('Something went wrong !');
       }
-    } catch (error) {
+    } catch (error: any) {
+      if (error?.response?.data?.status == 'UNAUTHORIZED') {
+        localStorage.removeItem('admin');
+        const currentUrl = window.location.href;
+        const path = extractPathAndParams(currentUrl);
+        if (typeof window !== 'undefined') {
+          location.href = `/auth/sign-in?ref=${path}`;
+        }
+        return toast.error('Session Expired');
+      }
       console.log(error);
       return toast.error('Something went wrong');
     }
@@ -121,22 +156,67 @@ export default function ProductsPage() {
 
   const temperoryDelete = async (id: any) => {
     try {
-      const res = await axios.patch(`${BaseApi}${updateUser}/${id}`, {
-        isDeleted: false,
-      });
+      const res = await axios.patch(
+        `${BaseApi}${updateUser}/${id}`,
+        {
+          isDeleted: false,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
+          },
+        }
+      );
       if (res.data?.status == 'SUCCESS') {
         await mutate();
         toast.success('User is Recycled Successfully !');
       } else {
         return toast.error('Something went wrong');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
+      if (error?.response?.data?.status == 'UNAUTHORIZED') {
+        localStorage.removeItem('admin');
+        const currentUrl = window.location.href;
+        const path = extractPathAndParams(currentUrl);
+        if (typeof window !== 'undefined') {
+          location.href = `/auth/sign-in?ref=${path}`;
+        }
+        return toast.error('Session Expired');
+      }
       return toast.error('Something went wrong');
     }
   };
 
   const users: any = [];
+
+  const pageHeader = {
+    title: `Deleted Users (${pagininator?.itemCount ?? 0})`,
+    breadcrumb: [
+      {
+        href: '/',
+        name: 'Home',
+      },
+      {
+        href: '/',
+        name: 'Deleted Users',
+      },
+      {
+        name: 'List',
+      },
+    ],
+  };
+
+  if (authstatus) {
+    localStorage.removeItem('admin');
+    toast.error('Session Expired');
+    const currentUrl = window.location.href;
+    const path = extractPathAndParams(currentUrl);
+    if (typeof window !== 'undefined') {
+      location.href = `/auth/sign-in?ref=${path}`;
+    }
+  }
+
   return (
     <>
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>

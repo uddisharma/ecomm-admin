@@ -26,23 +26,6 @@ import { useCookies } from 'react-cookie';
 import { fetcher } from '@/constants/fetcher';
 import { extractPathAndParams } from '@/utils/urlextractor';
 
-const pageHeader = {
-  title: 'Products',
-  breadcrumb: [
-    {
-      href: '/',
-      name: 'Home',
-    },
-    {
-      href: '/products',
-      name: 'Products',
-    },
-    {
-      name: 'List',
-    },
-  ],
-};
-
 export default function ProductsPage() {
   const params = useParams();
   const initialState = {
@@ -116,6 +99,23 @@ export default function ProductsPage() {
   };
 
   const products: any = [];
+
+  const pageHeader = {
+    title: `Products (${pagininator?.itemCount ?? 0})`,
+    breadcrumb: [
+      {
+        href: '/',
+        name: 'Home',
+      },
+      {
+        href: '/',
+        name: 'Products',
+      },
+      {
+        name: 'List',
+      },
+    ],
+  };
 
   if (authstatus) {
     localStorage.removeItem('admin');

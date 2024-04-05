@@ -67,23 +67,6 @@ const Courieres = [
   },
 ];
 
-const pageHeader = {
-  title: 'Deleted Orders',
-  breadcrumb: [
-    {
-      href: '/',
-      name: 'Home',
-    },
-    {
-      href: '/',
-      name: 'Orders',
-    },
-    {
-      name: 'List',
-    },
-  ],
-};
-
 const orders: any = [];
 
 export default function OrdersPage() {
@@ -103,7 +86,7 @@ export default function OrdersPage() {
 
   const formattedDate = today.toISOString().split('T')[0];
 
-  const [filters, setFilters] = useState({
+  const [filters, _setFilters] = useState({
     date: state?.date ? state?.date : formattedDate,
     status: state?.status ? state?.status : 'All',
     courier: state?.courier ? state?.courier : 'All',
@@ -141,40 +124,43 @@ export default function OrdersPage() {
     return totalQuantity;
   };
 
-  const newdata = data?.map((e: any) => {
-    return {
-      orderId: e.order_id,
-      customer: e.customerId
-        ? `${e.customerId.name} ${e.customerId.email}`
-        : '',
-      shippingAddress: e.customerId
-        ? `${e.customerId.shippingAddress.find(
-            (address: any) => address._id === e.addressId
-          )?.address} ${e.customerId.shippingAddress.find(
-            (address: any) => address._id === e.addressId
-          )?.district} ${e.customerId.shippingAddress.find(
-            (address: any) => address._id === e.addressId
-          )?.state}`
-        : '',
-      orderedProducts: e.orderItems
-        .map((item: any) => {
-          const formattedProduct = item.productId
-            ? `name : ${item.productId.name} - qty : ${item.quantity} - color : ${item.color} - size : ${item.size}`
-            : '';
-          return formattedProduct;
+  const newdata =
+    pagininator?.itemCount > 0
+      ? data?.map((e: any) => {
+          return {
+            orderId: e.order_id,
+            customer: e.customerId
+              ? `${e.customerId.name} ${e.customerId.email}`
+              : '',
+            shippingAddress: e.customerId
+              ? `${e.customerId.shippingAddress.find(
+                  (address: any) => address._id === e.addressId
+                )?.address} ${e.customerId.shippingAddress.find(
+                  (address: any) => address._id === e.addressId
+                )?.district} ${e.customerId.shippingAddress.find(
+                  (address: any) => address._id === e.addressId
+                )?.state}`
+              : '',
+            orderedProducts: e.orderItems
+              .map((item: any) => {
+                const formattedProduct = item.productId
+                  ? `name : ${item.productId.name} - qty : ${item.quantity} - color : ${item.color} - size : ${item.size}`
+                  : '';
+                return formattedProduct;
+              })
+              .join(' | '),
+            totalAmount: e.totalAmount,
+            totalItems: calculateTotalQuantity(e.orderItems),
+            shippingCost: e.shipping,
+            discount: e.discount,
+            courier: e.courior == 'Local' ? 'Local' : 'Serviceable',
+            note: e.note,
+            paymentStatus: e.payment ? 'paid' : 'Not Paid',
+            orderStatus: e.status,
+            charge: e.charge,
+          };
         })
-        .join(' | '),
-      totalAmount: e.totalAmount,
-      totalItems: calculateTotalQuantity(e.orderItems),
-      shippingCost: e.shipping,
-      discount: e.discount,
-      courier: e.courior == 'Local' ? 'Local' : 'Serviceable',
-      note: e.note,
-      paymentStatus: e.payment ? 'paid' : 'Not Paid',
-      orderStatus: e.status,
-      charge: e.charge,
-    };
-  });
+      : [];
   const updateStatus = async (id: any, status: any) => {
     try {
       await axios.patch(
@@ -254,6 +240,23 @@ export default function OrdersPage() {
       }
       return toast.error('Something went wrong');
     }
+  };
+
+  const pageHeader = {
+    title: `Deleted Orders (${pagininator?.itemCount ?? 0})`,
+    breadcrumb: [
+      {
+        href: '/',
+        name: 'Home',
+      },
+      {
+        href: '/',
+        name: 'Deleted Orders',
+      },
+      {
+        name: 'List',
+      },
+    ],
   };
 
   if (authstatus) {

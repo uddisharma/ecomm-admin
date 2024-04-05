@@ -30,23 +30,6 @@ const metadata = {
   ...metaObject('Coupons'),
 };
 
-const pageHeader = {
-  title: 'Coupons',
-  breadcrumb: [
-    {
-      href: '/',
-      name: 'Home',
-    },
-    {
-      href: '/',
-      name: 'Coupons',
-    },
-    {
-      name: 'List',
-    },
-  ],
-};
-
 export default function Coupons() {
   const initialState = {
     page: '',
@@ -141,6 +124,23 @@ export default function Coupons() {
   };
 
   const coupons1: any = [];
+
+  const pageHeader = {
+    title: `Deleted Coupons (${pagininator?.itemCount ?? 0})`,
+    breadcrumb: [
+      {
+        href: '/',
+        name: 'Home',
+      },
+      {
+        href: '/',
+        name: 'Deleted Coupons',
+      },
+      {
+        name: 'List',
+      },
+    ],
+  };
 
   if (authstatus) {
     localStorage.removeItem('admin');

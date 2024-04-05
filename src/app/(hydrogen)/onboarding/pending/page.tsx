@@ -25,22 +25,6 @@ import { toast } from 'sonner';
 import useSWR from 'swr';
 
 const Page = () => {
-  const pageHeader = {
-    title: 'Onboarding Pending Sellers',
-    breadcrumb: [
-      {
-        href: '/',
-        name: 'Home',
-      },
-      {
-        href: '/sellers',
-        name: 'Sellers',
-      },
-      {
-        name: 'List',
-      },
-    ],
-  };
   const [loading, setLoading] = useState(false);
   const [searchedData, setSearchedData] = useState<any>([]);
   const [term, setTerm] = useState<string>('');
@@ -162,6 +146,23 @@ const Page = () => {
   }, [term]);
 
   const sellers: any = [];
+
+  const pageHeader = {
+    title: `Pending Onboarding (${pagininator?.itemCount ?? 0})`,
+    breadcrumb: [
+      {
+        href: '/',
+        name: 'Home',
+      },
+      {
+        href: '/',
+        name: 'Pending Onboarding',
+      },
+      {
+        name: 'List',
+      },
+    ],
+  };
 
   if (authstatus) {
     localStorage.removeItem('admin');

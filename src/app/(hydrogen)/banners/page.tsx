@@ -24,23 +24,6 @@ import { fetcher } from '@/constants/fetcher';
 import { useCookies } from 'react-cookie';
 import { extractPathAndParams } from '@/utils/urlextractor';
 
-const pageHeader = {
-  title: 'Banners',
-  breadcrumb: [
-    {
-      href: '/',
-      name: 'Home',
-    },
-    {
-      href: '/',
-      name: 'Banners',
-    },
-    {
-      name: 'List',
-    },
-  ],
-};
-
 export default function Coupons() {
   const initialState = {
     page: '',
@@ -113,6 +96,23 @@ export default function Coupons() {
       }
       return toast.error('Something went wrong');
     }
+  };
+
+  const pageHeader = {
+    title: `Banners (${pagininator?.itemCount ?? 0})`,
+    breadcrumb: [
+      {
+        href: '/',
+        name: 'Home',
+      },
+      {
+        href: '/',
+        name: 'Banners',
+      },
+      {
+        name: 'List',
+      },
+    ],
   };
 
   if (authstatus) {

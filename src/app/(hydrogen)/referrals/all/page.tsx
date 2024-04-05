@@ -28,23 +28,6 @@ const metadata = {
   ...metaObject('Transactions'),
 };
 
-const pageHeader = {
-  title: 'Referrals',
-  breadcrumb: [
-    {
-      href: '/',
-      name: 'Home',
-    },
-    {
-      href: '/referrals/all',
-      name: 'Referrals',
-    },
-    {
-      name: 'List',
-    },
-  ],
-};
-
 export default function Transactions() {
   const initialState = {
     page: '',
@@ -189,6 +172,23 @@ export default function Transactions() {
   };
 
   const transactions: any = [];
+
+  const pageHeader = {
+    title: `Referrals (${pagininator?.itemCount ?? 0})`,
+    breadcrumb: [
+      {
+        href: '/',
+        name: 'Home',
+      },
+      {
+        href: '/',
+        name: 'Referrals',
+      },
+      {
+        name: 'List',
+      },
+    ],
+  };
 
   if (authstatus) {
     localStorage.removeItem('admin');

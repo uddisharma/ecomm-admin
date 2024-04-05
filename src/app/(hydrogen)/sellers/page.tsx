@@ -125,6 +125,9 @@ const Page = () => {
       <header className={cn('mb-3 @container xs:-mt-2 lg:mb-7')}>
         <div className="flex flex-col @lg:flex-row @lg:items-center @lg:justify-between">
           <div className="mt-4 flex items-center gap-3 @lg:mt-0">
+            <p className="text-2xl font-bold text-white">
+              {pagininator?.itemCount ?? 0}
+            </p>
             <Link href={`/seller/onboarding`}>
               <Button
                 tag="span"
