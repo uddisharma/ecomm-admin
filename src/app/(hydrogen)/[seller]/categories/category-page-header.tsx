@@ -1,10 +1,8 @@
 'use client';
-
 import React from 'react';
 import PageHeader from '@/component/others/pageHeader';
 import { Button } from '@/component/ui/button';
 import { PiPlusBold } from 'react-icons/pi';
-import { useModal } from '@/component/modal-views/use-modal';
 import Link from 'next/link';
 import ExportButton from '@/component/others/export-button';
 import { useParams } from 'next/navigation';
@@ -20,13 +18,23 @@ export default function CategoryPageHeader({
   className,
   data,
 }: PageHeaderTypes) {
-  const { openModal } = useModal();
   const params = useParams();
+  const categories = data?.map((e: any) => {
+    return {
+      category: e?.category?.name,
+      parentCategory:
+        e?.category?.parentCategoryId?.parentCategoryId?.name == 'All'
+          ? e?.category?.parentCategoryId?.name
+          : `${e?.category?.parentCategoryId?.parentCategoryId?.name} ${e?.category?.parentCategoryId?.name} wear`,
+      isActive: 'Yes',
+    };
+  });
+
   return (
     <>
       <PageHeader title={title} breadcrumb={breadcrumb} className={className}>
         <div className="mt-4 flex items-center gap-3 @lg:mt-0">
-          <ExportButton data={data} fileName="category_data" header="" />
+          <ExportButton data={categories} fileName="category_data" header="" />
           <Link href={`/${params?.seller}/categories/create`}>
             <Button
               tag="span"

@@ -144,17 +144,23 @@ export default function OrdersPage() {
   const newdata = data?.map((e: any) => {
     return {
       orderId: e.order_id,
-      customer: `${e.customerId.name} ${e.customerId.email}`,
-      shippingAddress: `${e.customerId.shippingAddress.find(
-        (address: any) => address._id === e.addressId
-      )?.address} ${e.customerId.shippingAddress.find(
-        (address: any) => address._id === e.addressId
-      )?.district} ${e.customerId.shippingAddress.find(
-        (address: any) => address._id === e.addressId
-      )?.state}`,
+      customer: e.customerId
+        ? `${e.customerId.name} ${e.customerId.email}`
+        : '',
+      shippingAddress: e.customerId
+        ? `${e.customerId.shippingAddress.find(
+            (address: any) => address._id === e.addressId
+          )?.address} ${e.customerId.shippingAddress.find(
+            (address: any) => address._id === e.addressId
+          )?.district} ${e.customerId.shippingAddress.find(
+            (address: any) => address._id === e.addressId
+          )?.state}`
+        : '',
       orderedProducts: e.orderItems
         .map((item: any) => {
-          const formattedProduct = `${item.productId.name}-${item.quantity}-${item.color.name}-${item.size}`;
+          const formattedProduct = item.productId
+            ? `name : ${item.productId.name} - qty : ${item.quantity} - color : ${item.color} - size : ${item.size}`
+            : '';
           return formattedProduct;
         })
         .join(' | '),
@@ -266,7 +272,7 @@ export default function OrdersPage() {
         <div className="mt-4 flex items-center gap-3 @lg:mt-0">
           <ExportButton
             data={newdata}
-            fileName={`order_data_${date}`}
+            fileName={`deleted_order_data_${date}`}
             header=""
           />
           <Link href={`/${params?.seller}/orders`}>

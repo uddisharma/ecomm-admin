@@ -76,6 +76,16 @@ export default function BlankPage() {
   const pagininator = data?.data?.paginator;
   data = data?.data?.data;
 
+  const downlaodableTickets = data?.map((e: any) => {
+    return {
+      TicketType: e?.type,
+      Subject: e?.subject,
+      Description: e?.description,
+      isResolved: e?.closed ? 'Yes' : 'No',
+      CreatedAt: e?.createdAt?.slice(0, 10),
+    };
+  });
+
   const onDeleteItem = async (id: any) => {
     try {
       const res = await axios.patch(
@@ -160,7 +170,11 @@ export default function BlankPage() {
       <br />
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
         <div className="mt-4 flex items-center gap-3 @lg:mt-0">
-          <ExportButton data={data} fileName="tickets_data" header="" />
+          <ExportButton
+            data={downlaodableTickets}
+            fileName="tickets_data"
+            header=""
+          />
           <Link
             href={`/${params?.seller}/tickets/create`}
             className="w-full @lg:w-auto"

@@ -79,6 +79,15 @@ export default function Coupons() {
   const pagininator = data?.data?.paginator;
   data = data?.data?.data;
 
+  const downlaodablecoupons = data?.map((e: any) => {
+    return {
+      CouponCode: e?.code,
+      DiscountType: e?.discount_type,
+      Discount: e?.discount,
+      isActive: e?.isDeleted ? 'No' : 'Yes',
+    };
+  });
+
   const onDelete = async (id: any) => {
     try {
       await axios.delete(`${BaseApi}${deleteCoupon}/${id}`, {
@@ -149,7 +158,11 @@ export default function Coupons() {
     <>
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
         <div className="mt-4 flex items-center gap-3 @lg:mt-0">
-          <ExportButton data={data} fileName="coupons_data" header="" />
+          <ExportButton
+            data={downlaodablecoupons}
+            fileName="coupons_data"
+            header=""
+          />
           <Link
             href={`/${params?.seller}/coupons/create`}
             className="w-full @lg:w-auto"

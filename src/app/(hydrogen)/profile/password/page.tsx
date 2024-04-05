@@ -1,10 +1,7 @@
 'use client';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { SubmitHandler, Controller } from 'react-hook-form';
-import { PiDesktop } from 'react-icons/pi';
-import cn from '@/utils/class-names';
 import { Form } from '@/component/ui/form';
-import { Title, Text } from '@/component/ui/text';
 import { Password } from '@/component/ui/password';
 import HorizontalFormBlockWrapper from '@/component/account-settings/horiozontal-block';
 import {
@@ -14,20 +11,29 @@ import {
 import FormFooter from '@/component/others/form-footer';
 import axios from 'axios';
 import { BaseApi, changeAdminPassword } from '@/constants';
-import { UserContext } from '@/store/user/context';
 import { toast } from 'sonner';
+import { useCookies } from 'react-cookie';
+import { extractPathAndParams } from '@/utils/urlextractor';
 
 export default function PasswordSettingsView() {
   const [isLoading, setLoading] = useState(false);
   const [reset, setReset] = useState({});
-  const { state } = useContext(UserContext);
+  const [cookies] = useCookies(['admintoken']);
   const onSubmit: SubmitHandler<PasswordFormTypes> = (data) => {
     setLoading(true);
     axios
-      .patch(`${BaseApi}${changeAdminPassword}/${state?.user?.id}`, {
-        oldPassword: data?.currentPassword,
-        newPassword: data?.newPassword,
-      })
+      .patch(
+        `${BaseApi}${changeAdminPassword}`,
+        {
+          oldPassword: data?.currentPassword,
+          newPassword: data?.newPassword,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
+          },
+        }
+      )
       .then((res) => {
         if (res.data?.status == 'SUCCESS') {
           setReset({
@@ -44,6 +50,15 @@ export default function PasswordSettingsView() {
       })
       .catch((err) => {
         console.log(err);
+        if (err?.response?.data?.status == 'UNAUTHORIZED') {
+          localStorage.removeItem('admin');
+          const currentUrl = window.location.href;
+          const path = extractPathAndParams(currentUrl);
+          if (typeof window !== 'undefined') {
+            location.href = `/auth/sign-in?ref=${path}`;
+          }
+          return toast.error('Session Expired');
+        }
         return toast.error('Something went wrong');
       })
       .finally(() => {

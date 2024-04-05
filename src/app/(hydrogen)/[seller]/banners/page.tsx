@@ -73,6 +73,17 @@ export default function Coupons() {
   const pagininator = data?.data?.paginator;
   data = data?.data?.data;
 
+  
+
+  const downloadablebanners = data?.map((e: any) => {
+    return {
+      desktopBanner: e?.images[0]?.desktop?.url,
+      phoneBanner: e?.images[0]?.mobile?.url,
+      redirectLink: e?.redirectLink,
+      isActive: e?.isDeleted ? 'No' : 'Yes',
+    };
+  });
+
   const onDelete = async (id: any) => {
     try {
       await axios.patch(
@@ -117,7 +128,11 @@ export default function Coupons() {
     <>
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
         <div className="mt-4 flex items-center gap-3 @lg:mt-0">
-          <ExportButton data={data} fileName="coupons_data" header="" />
+          <ExportButton
+            data={downloadablebanners}
+            fileName="banners_data"
+            header=""
+          />
           <Link
             href={`/${params?.seller}/banners/create`}
             className="w-full @lg:w-auto"

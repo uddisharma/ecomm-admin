@@ -73,37 +73,37 @@ export default function SellerDashboard() {
   const data = [
     {
       name: 'Total Revenue',
-      value: `₹${revenue && formatNumber(revenue)}`,
+      value: `₹${revenue ? formatNumber(revenue) : 0}`,
       percentage: 75,
       color: '#3872FA',
     },
     {
       name: 'Total Orders',
-      value: `${orders && formatNumber(orders)}`,
+      value: `${orders ? formatNumber(orders) : 0}`,
       percentage: 60,
       color: '#10b981',
     },
     {
       name: 'Selling Products',
-      value: `${products && formatNumber(products)}`,
+      value: `${products ? formatNumber(products) : 0}`,
       percentage: 50,
       color: '#f1416c',
     },
     {
       name: 'Selling Categories',
-      value: `${coupons && formatNumber(Categorycount)}`,
+      value: `${coupons ? formatNumber(Categorycount) : 0}`,
       percentage: 50,
       color: '#f1416c',
     },
     {
       name: 'Total Coupons',
-      value: `${coupons && formatNumber(coupons)}`,
+      value: `${coupons ? formatNumber(coupons) : 0}`,
       percentage: 60,
       color: '#10b981',
     },
     {
       name: 'Total Tickets',
-      value: `${tickets && formatNumber(tickets)}`,
+      value: `${tickets ? formatNumber(tickets) : 0}`,
       percentage: 75,
       color: '#3872FA',
     },

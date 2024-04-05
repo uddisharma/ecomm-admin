@@ -61,6 +61,15 @@ export default function ProductsPage() {
   const pagininator = data?.data?.paginator;
   data = data?.data?.data;
 
+  const downlaodableList = data?.map((e: any) => {
+    return {
+      name: e?.name,
+      email: e?.email,
+      phone: e?.mobileNo,
+      createdAt: e?.createdAt?.slice(0, 10),
+    };
+  });
+
   const findUser = () => {
     setLoading(true);
     axios
@@ -144,7 +153,7 @@ export default function ProductsPage() {
       location.href = `/auth/sign-in?ref=${path}`;
     }
   }
-  
+
   return (
     <>
       <header className={cn('mb-3 @container xs:-mt-2 lg:mb-7')}>
@@ -171,7 +180,11 @@ export default function ProductsPage() {
                 Deleted
               </Button>
             </Link>
-            <ExportButton data={data} fileName="product_data" header="" />
+            <ExportButton
+              data={downlaodableList}
+              fileName="users_data"
+              header=""
+            />
             <Input
               prefix={<CiSearch className="h-auto w-5" />}
               type="text"

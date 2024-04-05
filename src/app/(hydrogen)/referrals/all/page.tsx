@@ -76,6 +76,16 @@ export default function Transactions() {
   const pagininator = data?.data?.paginator;
   data = data?.data?.data;
 
+  const downloadabeList = data?.map((e: any) => {
+    return {
+      seller: e?.referredSeller?.shopname,
+      user: e?.referringUser?.name,
+      amount: e?.amount,
+      onboarded: e?.onboarded ? 'Yes' : 'No',
+      paid: e?.status ? 'Yes' : 'No',
+    };
+  });
+
   const onDelete = async (id: any) => {
     try {
       const res = await axios.patch(
@@ -194,7 +204,11 @@ export default function Transactions() {
     <>
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
         <div className="mt-4 flex items-center gap-3 @lg:mt-0">
-          <ExportButton data={data} fileName="payout_data" header="" />
+          <ExportButton
+            data={downloadabeList}
+            fileName="referrals_data"
+            header=""
+          />
           <Link href={`/referrals/create`}>
             <Button
               tag="span"

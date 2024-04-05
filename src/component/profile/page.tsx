@@ -24,6 +24,8 @@ import { PhoneNumber } from '../ui/phone-input';
 import { z } from 'zod';
 import { fileSchema, validateEmail } from '@/utils/validators/common-rules';
 import AvatarUploadS3 from '../ui/file-upload/avatar-upload-s3';
+import { useCookies } from 'react-cookie';
+import { extractPathAndParams } from '@/utils/urlextractor';
 
 const profileFormSchema = z.object({
   name: z.string().min(1, { message: 'Name is required' }),
@@ -37,7 +39,7 @@ type ProfileFormTypes = z.infer<typeof profileFormSchema>;
 
 export default function ProfileSettingsView() {
   const { state, setUser } = useContext(UserContext);
-
+  const [cookies] = useCookies(['admintoken']);
   const [loading, setLoading] = useState(false);
   const onSubmit: SubmitHandler<ProfileFormTypes> = (data) => {
     if (!data?.profile?.url) {
@@ -45,10 +47,18 @@ export default function ProfileSettingsView() {
     }
     setLoading(true);
     axios
-      .patch(`${BaseApi}${adminUpdate}/${state?.user?.id}`, {
-        ...data,
-        profile: data?.profile?.url,
-      })
+      .patch(
+        `${BaseApi}${adminUpdate}`,
+        {
+          ...data,
+          profile: data?.profile?.url,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
+          },
+        }
+      )
       .then((res) => {
         if (res.data?.status == 'SUCCESS') {
           setUser(res.data?.data);
@@ -59,6 +69,15 @@ export default function ProfileSettingsView() {
       })
       .catch((err) => {
         console.log(err);
+        if (err?.response?.data?.status == 'UNAUTHORIZED') {
+          localStorage.removeItem('admin');
+          const currentUrl = window.location.href;
+          const path = extractPathAndParams(currentUrl);
+          if (typeof window !== 'undefined') {
+            location.href = `/auth/sign-in?ref=${path}`;
+          }
+          return toast.error('Session Expired');
+        }
         return toast.error('Something went wrong !');
       })
       .finally(() => {

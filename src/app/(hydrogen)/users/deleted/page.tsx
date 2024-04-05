@@ -68,6 +68,16 @@ export default function ProductsPage() {
   const pagininator = data?.data?.paginator;
   data = data?.data?.data;
 
+  const downlaodableList = data?.map((e: any) => {
+    return {
+      name: e?.name,
+      email: e?.email,
+      phone: e?.mobileNo,
+      createdAt: e?.createdAt?.slice(0, 10),
+      isDeleted: 'Yes',
+    };
+  });
+
   const findUser = () => {
     setLoading(true);
     axios
@@ -131,7 +141,11 @@ export default function ProductsPage() {
     <>
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
         <div className="mt-4 flex items-center gap-3 @lg:mt-0">
-          <ExportButton data={data} fileName="product_data" header="" />
+          <ExportButton
+            data={downlaodableList}
+            fileName="deleted_user_data"
+            header=""
+          />
           <Input
             prefix={<CiSearch className="h-auto w-5" />}
             type="text"

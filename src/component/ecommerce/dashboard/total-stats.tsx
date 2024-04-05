@@ -48,7 +48,7 @@ export default function TotalStats({
                   {isLoading ? (
                     <Spinner />
                   ) : error ? (
-                    <Text className="text-xs">Something went wrong</Text>
+                    <Text className="text-xs">0</Text>
                   ) : (
                     item.value
                   )}

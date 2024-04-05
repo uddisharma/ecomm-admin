@@ -75,6 +75,16 @@ export default function ProductsPage() {
   const pagininator = data?.data?.paginator;
   data = data?.data?.data;
 
+  const productsdata = data?.map((e: any) => {
+    return {
+      name: e?.name,
+      price: e?.price,
+      mrp: e?.mrp,
+      stockleft: e?.stock,
+      isActive: e?.isDeleted ? 'No' : 'Yes',
+    };
+  });
+
   const onDelete = async (id: any) => {
     try {
       await axios.patch(
@@ -121,7 +131,7 @@ export default function ProductsPage() {
     <>
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
         <div className="mt-4 flex items-center gap-3 @lg:mt-0">
-          <ExportButton data={data} fileName="product_data" header="" />
+          <ExportButton data={productsdata} fileName="product_data" header="" />
           <Link
             href={`/${params?.seller}/products/create`}
             className="w-full @lg:w-auto"

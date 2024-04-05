@@ -30,10 +30,17 @@ export default function ProductSummary({ className }: { className?: string }) {
       name: (
         <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
           <img style={{ height: '25px', width: '25px' }} src={e.photo} alt="" />
-          <p>{`${e?.category?.name} in ${e?.category?.parentCategoryId?.parentCategoryId?.name} ${e?.category?.parentCategoryId?.name} wear`}</p>
+          <p>
+            {e?.category?.parentCategoryId?.parentCategoryId?.name == 'All'
+              ? `${e?.category?.name} ${e?.category?.parentCategoryId?.name}`
+              : `${e?.category?.name} in ${e?.category?.parentCategoryId?.parentCategoryId?.name} ${e?.category?.parentCategoryId?.name} wear`}
+          </p>
         </div>
       ),
-      value: `${e?.category?.name} in ${e?.category?.parentCategoryId?.parentCategoryId?.name} ${e?.category?.parentCategoryId?.name} wear`,
+      value:
+        e?.category?.parentCategoryId?.parentCategoryId?.name == 'All'
+          ? `${e?.category?.name} ${e?.category?.parentCategoryId?.name}`
+          : `${e?.category?.name} in ${e?.category?.parentCategoryId?.parentCategoryId?.name} ${e?.category?.parentCategoryId?.name} wear`,
       id: e?.category?.id,
     };
   });

@@ -68,6 +68,16 @@ const Page = () => {
   const pagininator = data?.data?.paginator;
   data = data?.data?.data;
 
+  const downloadablelist = data?.map((e: any) => {
+    return {
+      name: e?.seller_name,
+      email: e?.email,
+      phone: e?.phone,
+      address: e?.store_address,
+      monthly_orders: e?.monthly_orders,
+    };
+  });
+
   const onDeleteItem = async (id: any) => {
     try {
       const res = await axios.delete(`${BaseApi}${deleteRequest}/${id}`, {
@@ -147,7 +157,11 @@ const Page = () => {
     <div>
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
         <div className="mt-4 flex items-center gap-3 @lg:mt-0">
-          <ExportButton data={data} fileName="product_data" header="" />
+          <ExportButton
+            data={downloadablelist}
+            fileName="onboarding_request_data"
+            header=""
+          />
         </div>
       </PageHeader>
 

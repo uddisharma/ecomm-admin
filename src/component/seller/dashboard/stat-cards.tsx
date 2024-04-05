@@ -177,7 +177,7 @@ export default function StatCards({ className }: { className?: string }) {
       id: '1',
       icon: <PiGiftDuotone className="h-6 w-6" />,
       title: 'Todays Orders',
-      metric: data?.data?.orders,
+      metric: data?.data?.orders ?? 0,
       increased: true,
       decreased: false,
       percentage: '+32.40',
@@ -189,21 +189,21 @@ export default function StatCards({ className }: { className?: string }) {
     {
       id: '2',
       icon: <PiChartPieSliceDuotone className="h-6 w-6" />,
-      title: 'Sales',
-      metric: `₹${data?.data ? formatNumber(data?.data?.sales) : ''}`,
+      title: 'Todays Sales',
+      metric: `₹${data?.data ? formatNumber(data?.data?.sales) : 0}`,
       increased: false,
       decreased: true,
       percentage: '-4.40',
       style: 'text-[#10b981]',
       fill: '#10b981',
       chart: salesData,
-      desc: `Sale of day  ₹${data ? data?.data?.sales : ''}`,
+      desc: `Sale of day  ₹${data ? data?.data?.sales : 0}`,
     },
     {
       id: '3',
       icon: <PiBankDuotone className="h-6 w-6" />,
-      title: 'Revenue',
-      metric: `₹${data?.data && formatNumber(data?.data?.revenue)}`,
+      title: 'Todays Revenue',
+      metric: `₹${data?.data ? formatNumber(data?.data?.revenue) : 0}`,
       increased: true,
       decreased: false,
       percentage: '+32.40',
@@ -211,8 +211,8 @@ export default function StatCards({ className }: { className?: string }) {
       fill: '#7928ca',
       chart: revenueData,
       desc: `Revenue of day ₹${
-        data?.data ? data?.data?.revenue : ''
-      } and Platform fee ₹${data ? data?.data?.charge : ''}`,
+        data?.data ? data?.data?.revenue : 0
+      } and Platform fee ₹${data ? data?.data?.charge : 0}`,
     },
   ];
 

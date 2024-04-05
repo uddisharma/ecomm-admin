@@ -57,6 +57,20 @@ const Page = () => {
   const pagininator = data?.data?.paginator;
   data = data?.data?.data;
 
+  const downlaoadablelist = data?.map((e: any) => {
+    return {
+      ShopName: e?.shopname,
+      Username: e?.username,
+      Email: e?.email,
+      MobileNo: e?.mobileNo,
+      MobileNo2: e?.alternatemobileNo,
+      ShopAddress: `${e?.shopaddress?.address1} ${e?.shopaddress?.address2} ${e?.shopaddress?.city} ${e?.shopaddress?.landmark} ${e?.shopaddress?.pincode} ${e?.shopaddress?.state}`,
+      isActive: e?.isActive ? 'Yes' : 'No',
+      isDeleted: e?.isDeleted ? 'Yes' : 'No',
+      isOnboarded: e?.isOnboarded ? 'Yes' : 'No',
+    };
+  });
+
   const findSeller = () => {
     setLoading(true);
     axios
@@ -141,7 +155,11 @@ const Page = () => {
                 Deleted
               </Button>
             </Link>
-            <ExportButton data={data} fileName="product_data" header="" />
+            <ExportButton
+              data={downlaoadablelist}
+              fileName="sellers_data"
+              header=""
+            />
             <Input
               prefix={<CiSearch className="h-auto w-5" />}
               type="text"

@@ -141,7 +141,9 @@ function PromoBanner() {
                   : '',
                 orderedProducts: e.orderItems
                   .map((item: any) => {
-                    const formattedProduct = `${item.productId.name}-${item.quantity}-${item.color.name}-${item.size}`;
+                    const formattedProduct = item.productId
+                      ? `name : ${item.productId.name} - qty : ${item.quantity} - color : ${item.color} - size : ${item.size}`
+                      : '';
                     return formattedProduct;
                   })
                   .join(' | '),

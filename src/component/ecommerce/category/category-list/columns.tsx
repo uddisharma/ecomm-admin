@@ -50,7 +50,9 @@ export const getColumns = ({
     onHeaderCell: () => onHeaderCellClick('name'),
     render: (name: string, row: any) => (
       <Title as="h6" className="!text-sm font-medium">
-        {row?.category?.name}
+        {row?.category?.name}{' '}
+        {row?.category?.parentCategoryId?.parentCategoryId?.name == 'All' &&
+          row?.category?.parentCategoryId?.name}
       </Title>
     ),
   },
@@ -61,8 +63,9 @@ export const getColumns = ({
     width: 80,
     render: (_: string, row: any) => (
       <Text className="truncate !text-sm ">
-        {row?.category?.parentCategoryId?.parentCategoryId?.name}{' '}
-        {row?.category?.parentCategoryId?.name + ' '}
+        {row?.category?.parentCategoryId?.parentCategoryId?.name == 'All'
+          ? row?.category?.parentCategoryId?.name
+          : `${row?.category?.parentCategoryId?.parentCategoryId?.name} ${row?.category?.parentCategoryId?.name} wear`}
         wear
       </Text>
     ),

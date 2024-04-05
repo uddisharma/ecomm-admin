@@ -51,7 +51,7 @@ export default function BlankPage() {
   const { state: st, paginate } = useFilterControls<typeof initialState, any>(
     initialState
   );
-  
+
   const [page, setPage] = useState(st?.page ? st?.page : 1);
 
   const { state } = useContext(UserContext);
@@ -77,6 +77,18 @@ export default function BlankPage() {
 
   const pagininator = data?.data?.paginator;
   data = data?.data?.data;
+
+  const downlaodableTickets = data?.map((e: any) => {
+    return {
+      Seller: e?.seller?.shopname,
+      TicketType: e?.type,
+      Subject: e?.subject,
+      Description: e?.description,
+      isResolved: e?.closed ? 'Yes' : 'No',
+      CreatedAt: e?.createdAt?.slice(0, 10),
+      isDeleted: 'Yes',
+    };
+  });
 
   const onDeleteItem = async (id: any) => {
     try {
@@ -185,7 +197,11 @@ export default function BlankPage() {
       <br />
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
         <div className="mt-4 flex items-center gap-3 @lg:mt-0">
-          <ExportButton data={data} fileName="tickets_data" header="" />
+          <ExportButton
+            data={downlaodableTickets}
+            fileName="deleted_tickets_data"
+            header=""
+          />
           <Link href={'/tickets/create'} className="w-full @lg:w-auto">
             <Button
               tag="span"

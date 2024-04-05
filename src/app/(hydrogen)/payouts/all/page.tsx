@@ -76,6 +76,17 @@ export default function Transactions() {
   const pagininator = data?.data?.paginator;
   data = data?.data?.data;
 
+  const downloadblepayouts = data?.map((e: any) => {
+    return {
+      Seller: e?.seller?.shopname,
+      TransactionId: e?.transactionId,
+      Amount: e?.amount,
+      FromDate: e?.from?.slice(0, 10),
+      ToDate: e?.to?.slice(0, 10),
+      Paid: 'Yes',
+    };
+  });
+
   const onDelete = async (id: any) => {
     try {
       const res = await axios.patch(
@@ -126,7 +137,11 @@ export default function Transactions() {
     <>
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
         <div className="mt-4 flex items-center gap-3 @lg:mt-0">
-          <ExportButton data={data} fileName="payout_data" header="" />
+          <ExportButton
+            data={downloadblepayouts}
+            fileName="payout_data"
+            header=""
+          />
           <Link href={`/payouts/create`}>
             <Button
               tag="span"

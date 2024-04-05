@@ -14,7 +14,6 @@ import { UserContext } from '@/store/user/context';
 import { formatNumber } from '@/utils/format-number';
 import useSWR from 'swr';
 import { BaseApi, admintotalCount, errorRetry } from '@/constants';
-import axios from 'axios';
 import { BsActivity } from 'react-icons/bs';
 import { useCookies } from 'react-cookie';
 import { fetcher } from '@/constants/fetcher';
@@ -73,38 +72,38 @@ export default function EcommerceDashboard() {
   const data = [
     {
       name: 'Total Sales',
-      value: `₹${totalSales && formatNumber(totalSales)}`,
+      value: `₹${totalSales ? formatNumber(totalSales) : 0}`,
       percentage: 75,
       color: '#3872FA',
     },
     {
       name: 'Platform Revenue',
-      value: `₹${platformRevenue && formatNumber(platformRevenue)}`,
+      value: `₹${platformRevenue ? formatNumber(platformRevenue) : 0}`,
       percentage: 50,
       color: '#f1416c',
     },
     {
       name: 'Total Orders',
-      value: `${orders && formatNumber(orders)}`,
+      value: `${orders ? formatNumber(orders) : 0}`,
       percentage: 60,
       color: '#10b981',
     },
     {
       name: 'Total Products',
-      value: `${products && formatNumber(products)}`,
+      value: `${products ? formatNumber(products) : 0}`,
       percentage: 50,
       color: '#f1416c',
     },
 
     {
       name: 'Total Coupons',
-      value: `${coupons && formatNumber(coupons)}`,
+      value: `${coupons ? formatNumber(coupons) : 0}`,
       percentage: 60,
       color: '#10b981',
     },
     {
       name: 'Total Tickets',
-      value: `${tickets && formatNumber(tickets)}`,
+      value: `${tickets ? formatNumber(tickets) : 0}`,
       percentage: 75,
       color: '#3872FA',
     },
