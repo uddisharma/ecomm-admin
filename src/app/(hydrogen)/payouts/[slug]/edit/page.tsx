@@ -115,6 +115,8 @@ export default function NewsLetterForm() {
     }
   );
 
+  const sellerId = data?.data?.seller?.id;
+
   const authstatus = error?.response?.data?.status == 'UNAUTHORIZED' && true;
 
   function convertToSimpleDateFormat(dateString: any) {
@@ -212,7 +214,7 @@ export default function NewsLetterForm() {
 
   const onSubmit: SubmitHandler<Schema> = (data) => {
     const seller2 =
-      seller && seller?.length <= 0 ? params?.slug : seller && seller[0]?.id;
+      seller && seller?.length <= 0 ? sellerId : seller && seller[0]?.id;
     if (seller2 == undefined || null) {
       return toast.error('Unable to get details of seller');
     }
@@ -226,6 +228,7 @@ export default function NewsLetterForm() {
           seller: seller2,
           from: convertDateFormat(data?.from),
           to: convertDateFormat(data?.to),
+          amount: data?.amount,
         },
         {
           headers: {

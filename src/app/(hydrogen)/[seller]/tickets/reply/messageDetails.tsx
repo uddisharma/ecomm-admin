@@ -19,8 +19,16 @@ import axios from 'axios';
 import useSWR from 'swr';
 import { useParams } from 'next/navigation';
 import { FaTelegramPlane } from 'react-icons/fa';
-import { BaseApi, singleAdminTicket, ticketReply } from '@/constants';
+import {
+  BaseApi,
+  errorRetry,
+  singleAdminTicket,
+  ticketReply,
+} from '@/constants';
 import { toast } from 'sonner';
+import { fetcher } from '@/constants/fetcher';
+import { useCookies } from 'react-cookie';
+import { extractPathAndParams } from '@/utils/urlextractor';
 
 export default function ReplyDetails({ className }: { className?: string }) {
   const data = useAtomValue(dataAtom);
@@ -36,15 +44,29 @@ export default function ReplyDetails({ className }: { className?: string }) {
 
   const isMobile = useMedia('(max-width: 767px)', true);
 
-  const fetcher = (url: any) => axios.get(url).then((res) => res.data);
+  const [cookies] = useCookies(['admintoken']);
 
-  const {
+  let {
     data: data2,
     isLoading,
+    error,
     mutate,
-  } = useSWR(`${BaseApi}${singleAdminTicket}/${params?.id}`, fetcher, {
-    refreshInterval: 3600000,
-  });
+  } = useSWR(
+    `${BaseApi}${singleAdminTicket}/${params?.id}`,
+    (url) => fetcher(url, cookies.admintoken),
+    {
+      refreshInterval: 3600000,
+      revalidateOnMount: true,
+      revalidateOnFocus: true,
+      onErrorRetry({ retrycount }: any) {
+        if (retrycount > errorRetry) {
+          return false;
+        }
+      },
+    }
+  );
+
+  const authstatus = error?.response?.data?.status == 'UNAUTHORIZED' && true;
 
   const message = data.find((m) => m.id === messageId) ?? data[0];
 
@@ -70,24 +92,55 @@ export default function ReplyDetails({ className }: { className?: string }) {
     return formattedDateTime;
   }
   const [r_message, setRMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const sendReply = async () => {
     try {
       if (r_message == '') {
         return;
       }
-      await axios.patch(`${BaseApi}${ticketReply}`, {
-        ticketId: params?.id,
-        from: params?.seller,
-        message: r_message,
-        time: getCurrentDateTimeIndia(),
-      });
+      setLoading(true);
+      await axios.patch(
+        `${BaseApi}${ticketReply}`,
+        {
+          ticketId: params?.id,
+          from: params?.seller,
+          message: r_message,
+          time: getCurrentDateTimeIndia(),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.admintoken}`,
+          },
+        }
+      );
       await mutate();
       setRMessage('');
-    } catch (error) {
+    } catch (error: any) {
+      if (error?.response?.data?.status == 'UNAUTHORIZED') {
+        localStorage.removeItem('admin');
+        const currentUrl = window.location.href;
+        const path = extractPathAndParams(currentUrl);
+        if (typeof window !== 'undefined') {
+          location.href = `/auth/sign-in?ref=${path}`;
+        }
+        return toast.error('Session Expired');
+      }
       return toast.error('Something went wrong');
+    } finally {
+      setLoading(false);
     }
   };
+
+  if (authstatus) {
+    localStorage.removeItem('admin');
+    toast.error('Session Expired');
+    const currentUrl = window.location.href;
+    const path = extractPathAndParams(currentUrl);
+    if (typeof window !== 'undefined') {
+      location.href = `/auth/sign-in?ref=${path}`;
+    }
+  }
 
   if (isLoading) {
     return (
@@ -153,6 +206,7 @@ export default function ReplyDetails({ className }: { className?: string }) {
               name={'Seller'}
               initials={initials}
               src={
+                (data2 && data2?.data?.seller?.cover) ??
                 'https://isomorphic-furyroad.s3.amazonaws.com/public/avatars-blur/avatar-11.webp'
               }
               className="!h-5 !w-5 bg-[#70C5E0] font-medium text-white xl:!h-8 xl:!w-8"
@@ -178,6 +232,7 @@ export default function ReplyDetails({ className }: { className?: string }) {
               <div className="relative mb-2.5 flex items-center justify-between">
                 <Button
                   type="button"
+                  isLoading={loading}
                   onClick={sendReply}
                   className="dark:bg-gray-200 dark:text-white"
                 >

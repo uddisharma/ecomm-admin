@@ -37,6 +37,20 @@ const QuillEditor = dynamic(() => import('@/component/ui/quill-editor'), {
   ssr: false,
 });
 
+function setFormattedDate(dateString: any) {
+  const dateParts = dateString.split('T')[0].split('-');
+  const formattedDate = `${dateParts[0]}-${dateParts[1]}-${dateParts[2]}`;
+  return formattedDate;
+}
+
+function convertToDbDateFormat(formattedDate: any) {
+  const dateParts = formattedDate.split('-');
+  const year = dateParts[0];
+  const month = dateParts[1];
+  const day = dateParts[2];
+  return `${year}-${month}-${day}T00:00:00.000Z`;
+}
+
 export default function ProfileSettingsView() {
   const { state, setSeller } = useContext(SellerContext);
   const [loading, setLoading] = useState(false);
@@ -50,6 +64,7 @@ export default function ProfileSettingsView() {
         {
           ...data,
           cover: data?.cover?.url,
+          onboardAt: convertToDbDateFormat(data?.onboardAt),
         },
         {
           headers: {
@@ -128,6 +143,8 @@ export default function ProfileSettingsView() {
     discount: data?.discount ?? '',
     charge: data?.charge ?? '',
     rating: data?.rating ?? '',
+    priorCharge: data?.priorCharge ?? '',
+    onboardAt: setFormattedDate(data?.onboardAt) ?? '',
   };
 
   const { openModal } = useModal();
@@ -384,11 +401,25 @@ export default function ProfileSettingsView() {
                   >
                     <Input
                       type="text"
-                      className="col-span-full"
                       prefixClassName="relative pe-2.5 before:w-[1px] before:h-[38px] before:absolute before:bg-gray-300 before:-top-[9px] before:right-0"
                       placeholder="Charge"
                       {...register('charge')}
                       error={errors.charge?.message}
+                    />
+                    <Input
+                      type="text"
+                      prefixClassName="relative pe-2.5 before:w-[1px] before:h-[38px] before:absolute before:bg-gray-300 before:-top-[9px] before:right-0"
+                      placeholder="priorCharge"
+                      {...register('priorCharge')}
+                      error={errors.priorCharge?.message}
+                    />
+                    <Input
+                      type="date"
+                      className="col-span-full"
+                      prefixClassName="relative pe-2.5 before:w-[1px] before:h-[38px] before:absolute before:bg-gray-300 before:-top-[9px] before:right-0"
+                      placeholder="onboardAt"
+                      {...register('onboardAt')}
+                      error={errors.onboardAt?.message}
                     />
                   </FormGroup>
                 </div>

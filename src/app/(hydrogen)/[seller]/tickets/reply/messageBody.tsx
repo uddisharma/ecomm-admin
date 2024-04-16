@@ -45,8 +45,11 @@ export default function MessageBody({ chat }: any) {
           {params?.seller !== e?.from ? (
             <div className="grid grid-cols-[32px_1fr] items-start gap-3 lg:gap-4 xl:grid-cols-[48px_1fr]">
               <Avatar
-                name={state?.user?.shopname}
-                src={state?.user?.cover}
+                name={state?.user?.name ?? ''}
+                src={
+                  state?.user?.profile ??
+                  'https://isomorphic-furyroad.s3.amazonaws.com/public/avatars-blur/avatar-11.webp'
+                }
                 className="!h-5 !w-5 bg-[#70C5E0] font-medium text-white xl:!h-8 xl:!w-8"
               />
               <div className="-mt-1.5 lg:mt-0">

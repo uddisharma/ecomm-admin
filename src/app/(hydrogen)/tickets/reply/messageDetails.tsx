@@ -88,12 +88,14 @@ export default function ReplyDetails({ className }: { className?: string }) {
     return formattedDateTime;
   }
   const [r_message, setRMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const sendReply = async () => {
     try {
       if (r_message == '') {
         return;
       }
+      setLoading(true);
       await axios.patch(
         `${BaseApi}${ticketReply}`,
         {
@@ -121,6 +123,8 @@ export default function ReplyDetails({ className }: { className?: string }) {
         return toast.error('Session Expired');
       }
       return toast.error('Something went wrong');
+    } finally {
+      setLoading(false);
     }
   };
   if (authstatus) {
@@ -240,6 +244,7 @@ export default function ReplyDetails({ className }: { className?: string }) {
               </div>
               <div className="relative mb-2.5 flex items-center justify-between">
                 <Button
+                  isLoading={loading}
                   type="button"
                   onClick={sendReply}
                   className="dark:bg-gray-200 dark:text-white"

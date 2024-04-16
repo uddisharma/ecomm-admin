@@ -29,9 +29,9 @@ export const getColumns = ({
     width: 80,
     render: (_: any, row: any) => (
       <AvatarCard
-        src={row?.seller_name}
-        name={row?.seller_name}
-        description={row?.email}
+        src={row?.seller_name && row?.seller_name}
+        name={row?.seller_name && row?.seller_name}
+        description={row?.email && row?.email}
       />
     ),
   },

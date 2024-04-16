@@ -160,7 +160,7 @@ export default function ProductsPage() {
         <div className="flex flex-col @lg:flex-row @lg:items-end @lg:justify-between">
           <div className="mt-4 flex items-center gap-3 @lg:mt-0">
             <p className="text-2xl font-bold text-white">
-              {pagininator?.itemCount ?? 0}
+              ({pagininator?.itemCount ?? 0})
             </p>
             <Link href={`/users/create`}>
               <Button
