@@ -1,7 +1,12 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
+import {
+  Controller,
+  useFieldArray,
+  useFormContext,
+  useWatch,
+} from 'react-hook-form';
 import { Input } from '@/component/ui/input';
 import FormGroup from '@/component/others/form-group';
 import cn from '@/utils/class-names';
@@ -10,12 +15,20 @@ import { Button } from '@/component/ui/button';
 import { ActionIcon } from '@/component/ui/action-icon';
 import TrashIcon from '@/component/icons/trash';
 import { PiPlusBold, PiXBold } from 'react-icons/pi';
+import dynamic from 'next/dynamic';
+import SelectLoader from '@/component/loader/select-loader';
+import { commoncolors } from '@/constants/color-size';
+const Select = dynamic(() => import('@/component/ui/select'), {
+  ssr: false,
+  loading: () => <SelectLoader />,
+});
 const colors = [
   {
     name: '',
     code: '',
   },
 ];
+
 export default function ShippingInfo({ className }: { className?: string }) {
   const {
     control,
@@ -43,12 +56,21 @@ export default function ShippingInfo({ className }: { className?: string }) {
     >
       {fields.map((item, index) => (
         <div key={item.id} className="col-span-full flex gap-4 xl:gap-7">
-          <Input
-            label="Color Name"
-            placeholder="Red"
-            className="flex-grow"
-            {...register(`colors.${index}.name`)}
-            error={errors?.colors?.message as string}
+          <Controller
+            name={`colors.${index}.name`}
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <Select
+                options={commoncolors}
+                value={value}
+                onChange={onChange}
+                label="Select Color"
+                className="flex-grow"
+                error={errors?.colors?.message as string}
+                getOptionValue={(option) => option.value}
+                getOptionDisplayValue={(option) => option.name}
+              />
+            )}
           />
           <input
             type="color"
@@ -56,7 +78,6 @@ export default function ShippingInfo({ className }: { className?: string }) {
             className="h-15 flex-grow "
             style={{ height: '40px', borderRadius: '7px', marginTop: '25px' }}
             {...register(`colors.${index}.code`)}
-            // error={errors?.colors?.message as string}
           />
           {fields.length > 1 && (
             <ActionIcon
@@ -114,18 +135,23 @@ function ItemCrud({ name, items, setItems }: ItemCrudProps): JSX.Element {
   return (
     <div>
       <div className="flex items-center">
-        <Input
+        <Select
+          options={commoncolors}
           value={itemText}
-          placeholder={`Enter a ${name}`}
-          onChange={(e) => setItemText(e.target.value)}
           prefix={<TbResize className="h-4 w-4" />}
+          placeholder={`Enter a ${name}`}
+          onChange={(e: any) => setItemText(e)}
+          label="Select Size"
           className="w-full"
+          error={errors?.colors?.message as string}
+          getOptionValue={(option) => option.value}
+          getOptionDisplayValue={(option) => option.name}
         />
 
         <input type="hidden" {...register('sizes', { value: items })} />
         <Button
           onClick={handleItemAdd}
-          className="ms-4 shrink-0 text-sm @lg:ms-5 dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+          className="ms-4 mt-6 shrink-0 text-sm @lg:ms-5 dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
         >
           Add {name}
         </Button>
