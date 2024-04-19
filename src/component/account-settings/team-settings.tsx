@@ -20,7 +20,7 @@ import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import { extractPathAndParams } from '@/utils/urlextractor';
 import { useCookies } from 'react-cookie';
-import UploadZoneS3 from '../ui/file-upload/upload-zone-s3';
+import UploadZoneS3 from '../ui/file-upload/upload-zone';
 
 const Select = dynamic(() => import('@/component/ui/select'), {
   ssr: false,

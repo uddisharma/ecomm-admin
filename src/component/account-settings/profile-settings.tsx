@@ -38,7 +38,7 @@ const QuillEditor = dynamic(() => import('@/component/ui/quill-editor'), {
 });
 
 function setFormattedDate(dateString: any) {
-  const dateParts = dateString.split('T')[0].split('-');
+  const dateParts = dateString?.split('T')[0].split('-');
   const formattedDate = `${dateParts[0]}-${dateParts[1]}-${dateParts[2]}`;
   return formattedDate;
 }
@@ -144,7 +144,7 @@ export default function ProfileSettingsView() {
     charge: data?.charge ?? '',
     rating: data?.rating ?? '',
     priorCharge: data?.priorCharge ?? '',
-    onboardAt: setFormattedDate(data?.onboardAt) ?? '',
+    onboardAt: data?.onboardAt && setFormattedDate(data?.onboardAt),
   };
 
   const { openModal } = useModal();
