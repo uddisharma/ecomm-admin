@@ -24,10 +24,12 @@ export default function SignInPage() {
         <div className="relative mx-auto aspect-[1/1.015] w-[540px] xl:w-[600px] 2xl:w-[636px]">
           <Image
             src={
-              'https://isomorphic-furyroad.s3.amazonaws.com/public/auth/sign-in-thumb5.webp'
+              '/login.png'
             }
             alt="Sign Up Thumbnail"
-            fill
+            style={{ scale: '0.7' }}
+            width={1000}
+            height={1000}
             priority
             sizes="(max-width: 768px) 100vw"
             className="object-cover"

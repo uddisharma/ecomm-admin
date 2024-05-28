@@ -63,7 +63,7 @@ export default function AuthWrapperFive({
       >
         <div
           className={cn(
-            'flex items-center justify-center lg:mx-auto lg:w-full lg:max-w-5xl lg:justify-start xl:w-auto xl:max-w-7xl xl:ps-[60px] 2xl:max-w-[1432px] 2xl:ps-0 backhome',
+            'backhome flex items-center justify-center lg:mx-auto lg:w-full lg:max-w-5xl lg:justify-start xl:w-auto xl:max-w-7xl xl:ps-[60px] 2xl:max-w-[1432px] 2xl:ps-0',
             backHomeClassName
           )}
         >
@@ -89,7 +89,16 @@ export default function AuthWrapperFive({
                 href={'/'}
                 className="mb-6 inline-block max-w-[168px] xl:mb-8"
               >
-                <Image src={siteConfig.logo} alt={siteConfig.title} />
+                <Image
+                  className="block dark:hidden"
+                  src={siteConfig.logo}
+                  alt={siteConfig.title}
+                />
+                <Image
+                  className=" hidden dark:block"
+                  src={siteConfig.logoWhite}
+                  alt={siteConfig.title}
+                />
               </Link>
               <Title
                 as="h2"

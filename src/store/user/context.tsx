@@ -1,8 +1,6 @@
+'use client';
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 
-// const initialState: any = {
-//   user: JSON.parse(localStorage.getItem('seller') as string) || null,
-// };
 
 const initialState: any = {
   user:

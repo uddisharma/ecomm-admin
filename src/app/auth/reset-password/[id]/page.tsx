@@ -13,7 +13,7 @@ export default function SignIn() {
             Reset your{' '}
             <span className="relative px-2 text-white">
               <span className="relative z-10"> password!</span>{' '}
-              <WaveShape className="absolute left-0 top-1/2 h-11 w-24 -translate-y-1/2 text-primary md:h-[52px] md:w-28 xl:h-14 xl:w-[120px] 2xl:w-[132px]" />
+              <WaveShape className="absolute left-0 top-1/2 h-11 w-[600] -translate-y-1/2 text-primary md:h-[52px] md:w-[500] xl:h-14 xl:w-[500] 2xl:w-[500]" />
             </span>{' '}
           </>
         </>
@@ -21,11 +21,11 @@ export default function SignIn() {
       pageImage={
         <div className="relative mx-auto aspect-[4/3.37] w-[500px] xl:w-[620px] 2xl:w-[820px]">
           <Image
-            src={
-              'https://isomorphic-furyroad.s3.amazonaws.com/public/auth/sign-in-thumb5.webp'
-            }
+            src={'/reset-password.png'}
             alt="Reset Password Thumbnail"
-            fill
+            style={{ scale: '0.7' }}
+            width={1000}
+            height={1000}
             priority
             sizes="(max-width: 768px) 100vw"
             className="object-cover"

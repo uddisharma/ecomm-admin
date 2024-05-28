@@ -1,10 +1,10 @@
-'use client';
+
 import dynamic from 'next/dynamic';
 import { Toaster } from 'react-hot-toast';
 import GlobalDrawer from '@/component/drawer-views/container';
 import GlobalModal from '@/component/modal-views/container';
 import { ThemeProvider } from '@/component/others/theme-provider';
-import { siteConfig } from '@/config/site.config';
+
 import { inter, lexendDeca } from '@/app/fonts';
 import cn from '@/utils/class-names';
 import { Toaster1 } from '@/component/ui/toast';
@@ -17,11 +17,9 @@ import '@/app/globals.css';
 import { UserProvider } from '@/store/user/context';
 import { OnboardingProvider } from '@/store/onboarding/context';
 import { SellerProvider } from '@/store/seller/context';
+import { siteConfig } from '@/constants/site-config';
 
-const metadata = {
-  title: siteConfig.title,
-  description: siteConfig.description,
-};
+export const metadata = siteConfig;
 
 export default function RootLayout({
   children,

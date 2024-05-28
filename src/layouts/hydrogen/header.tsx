@@ -9,6 +9,8 @@ import Logo from '@/component/others/logo';
 import { useIsMounted } from '@/hooks/use-is-mounted';
 import { useWindowScroll } from '@/hooks/use-window-scroll';
 import HeaderMenuRight from '@/layouts/header-menu-right';
+import Image from 'next/image';
+import { siteConfig } from '@/config/site.config';
 
 export default function Header() {
   const isMounted = useIsMounted();
@@ -25,15 +27,23 @@ export default function Header() {
         <HamburgerButton
           view={<Sidebar className="static w-full 2xl:w-full" />}
         />
-        <Link
-          href={'/'}
-          aria-label="Site Logo"
-          className="me-4 w-9 shrink-0 lg:me-5 xl:hidden"
-        >
-          <Logo iconOnly={true} />
-        </Link>
-
-        <SearchWidget />
+        <div className="flex justify-center xl:hidden">
+          <Link href={'/'}>
+            <Image
+              className="block w-full dark:hidden"
+              src={siteConfig.logo}
+              alt={siteConfig.title}
+            />
+            <Image
+              className=" flex hidden w-full justify-center dark:block"
+              src={siteConfig.logoWhite}
+              alt={siteConfig.title}
+            />
+          </Link>
+        </div>
+        <div className="ml-3">
+          <SearchWidget />
+        </div>
       </div>
 
       <HeaderMenuRight />

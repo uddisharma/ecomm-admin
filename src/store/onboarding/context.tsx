@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
+'use client'
+import React, { createContext, useReducer, useEffect } from 'react';
 
 const initialState: any = {
   onboarding:

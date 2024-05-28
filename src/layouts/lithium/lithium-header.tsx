@@ -27,6 +27,8 @@ import { useIsMounted } from '@/hooks/use-is-mounted';
 import { useWindowScroll } from '@/hooks/use-window-scroll';
 import { Tooltip } from 'rizzui';
 import { UserContext } from '@/store/user/context';
+import Image from 'next/image';
+import { siteConfig } from '@/config/site.config';
 
 function HeaderMenusLeft() {
   const pathname = usePathname();
@@ -148,19 +150,26 @@ export default function Header() {
           <HamburgerButton
             view={<Sidebar className="static w-full 2xl:w-full" />}
           />
-          <Link
-            aria-label="Site Logo"
-            href={'/'}
-            className="me-4 w-9 shrink-0 text-gray-900 lg:me-5 xl:hidden"
-          >
-            <Logo iconOnly={true} />
+          <Link className="xl:hidden" href={'/'}>
+            <Image
+              className="block w-[120px] dark:hidden"
+              src={siteConfig.logo}
+              alt={siteConfig.title}
+            />
+            <Image
+              className=" flex hidden w-[120px] justify-center dark:block"
+              src={siteConfig.logoWhite}
+              alt={siteConfig.title}
+            />
           </Link>
-          <SearchWidget
-            icon={<PiMagnifyingGlassDuotone className="h-[20px] w-[20px]" />}
-            className={cn(
-              'text-gray-700 hover:text-gray-900 focus-visible:outline-0 active:translate-y-0 xl:border-0 xl:p-0 xl:shadow-none xl:backdrop-blur-none xl:hover:border-0 xl:hover:outline-0 xl:focus:outline-0 xl:focus-visible:outline-0 [&_.magnifying-glass]:me-0 [&_.placeholder-text]:hidden [&_.search-command]:ms-2 [&_.search-command]:hidden [&_.search-command]:lg:text-gray-0'
-            )}
-          />
+          <div className="ml-3">
+            <SearchWidget
+              icon={<PiMagnifyingGlassDuotone className="h-[20px] w-[20px]" />}
+              className={cn(
+                'text-gray-700 hover:text-gray-900 focus-visible:outline-0 active:translate-y-0 xl:border-0 xl:p-0 xl:shadow-none xl:backdrop-blur-none xl:hover:border-0 xl:hover:outline-0 xl:focus:outline-0 xl:focus-visible:outline-0 [&_.magnifying-glass]:me-0 [&_.placeholder-text]:hidden [&_.search-command]:ms-2 [&_.search-command]:hidden [&_.search-command]:lg:text-gray-0'
+              )}
+            />
+          </div>
         </div>
         <HeaderMenuRight />
       </div>

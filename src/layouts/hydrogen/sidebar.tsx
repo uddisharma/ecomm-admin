@@ -22,7 +22,7 @@ export default function Sidebar({ className }: { className?: string }) {
         className
       )}
     >
-      <div className="sticky top-0 z-40 bg-gray-0/10 px-6 pb-5 pt-5 2xl:px-8 2xl:pt-6 dark:bg-gray-100/5">
+      <div className="sticky top-0 z-40 bg-gray-0/10 px-6 pb-0 pt-3 2xl:px-8 2xl:pt-6 dark:bg-gray-100/5">
         <Link href={'/'} aria-label="Site Logo">
           <Logo className="max-w-[155px]" />
         </Link>
