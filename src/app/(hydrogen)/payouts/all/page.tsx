@@ -136,30 +136,36 @@ export default function Transactions() {
   return (
     <>
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
-        <div className="mt-4 flex items-center gap-3 @lg:mt-0">
+        <div className="mt-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:flex-wrap lg:mt-0">
           <ExportButton
             data={downloadblepayouts}
             fileName="payout_data"
             header=""
+            className="w-full lg:w-auto"
           />
-          <Link href={`/payouts/create`}>
-            <Button
-              tag="span"
-              className="mt-4 w-full cursor-pointer @lg:mt-0 @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
-            >
-              <PiPlusBold className="me-1 h-4 w-4" />
-              Create Transaction
-            </Button>
-          </Link>
-          <Link href={`/payouts/deleted`}>
-            <Button className=" w-full gap-2 @lg:w-auto" variant="outline">
-              <MdOutlineAutoDelete className="h-4 w-4" />
-              Deleted
-            </Button>
-          </Link>
+          <div className="flex flex-col gap-3 lg:flex-row lg:gap-3 w-full lg:w-auto">
+            <Link href={`/payouts/create`} className="w-full lg:w-auto">
+              <Button
+                tag="span"
+                className="w-full cursor-pointer dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+              >
+                <PiPlusBold className="me-1 h-4 w-4" />
+                Create Transaction
+              </Button>
+            </Link>
+            <Link href={`/payouts/deleted`} className="w-full lg:w-auto">
+              <Button
+                tag="span"
+                className="w-full cursor-pointer dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+              >
+                <MdOutlineAutoDelete className="me-1 h-4 w-4" />
+                Deleted
+              </Button>
+            </Link>
+          </div>
         </div>
       </PageHeader>
-      {}
+      { }
       {isLoading ? (
         <TransactionLoadingPage />
       ) : error ? (

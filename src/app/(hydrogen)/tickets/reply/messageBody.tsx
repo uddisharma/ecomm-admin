@@ -41,7 +41,7 @@ export default function MessageBody({ chat }: any) {
   return (
     <div ref={chatContainerRef} className="max-h-[50rem] overflow-y-auto">
       {chat1?.map((e: any, i: any) => (
-        <div style={{ marginTop: '20px' }} key={i}>
+        <div style={{ marginTop: i !== 0 ? '20px' : "0px" }} key={i}>
           {st?.user?.id == e?.from ? (
             <div className="grid grid-cols-[32px_1fr] items-start gap-3 lg:gap-4 xl:grid-cols-[48px_1fr]">
               <Avatar

@@ -1,4 +1,6 @@
-export const BaseApi = 'http://localhost:5000';
+export const BaseApi = 'http://192.168.1.12:5000';
+
+export const MainDomain = 'http://localhost:3000';
 
 export const errorRetry = 3;
 
@@ -166,7 +168,7 @@ export const admintotalCount = '/admin/stats/count';
 
 export const allsellers = '/admin/seller/list';
 
-export const sellerLimit = 2;
+export const sellerLimit = 1;
 
 export const findSingleSeller = '/admin/seller/find';
 

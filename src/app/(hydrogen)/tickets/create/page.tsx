@@ -196,7 +196,6 @@ export default function NewsLetterForm() {
 
   return (
     <>
-      <br />
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
         <Link href={`/tickets`} className="mt-4 w-full @lg:mt-0 @lg:w-auto">
           <Button
@@ -232,7 +231,7 @@ export default function NewsLetterForm() {
                 <div className="mb-10 grid gap-7 divide-y divide-dashed divide-gray-200 @2xl:gap-9 @3xl:gap-11">
                   <FormGroup
                     title="Ticket Type"
-                    className="pt-7 @2xl:pt-9 @3xl:grid-cols-12 @3xl:pt-11"
+                    className=""
                   >
                     <div className="relative col-span-full">
                       <Input
@@ -267,7 +266,7 @@ export default function NewsLetterForm() {
                         </ul>
                       )}
                     </div>
-                    <div className="mb-5 @3xl:col-span-2">
+                    <div className=" @3xl:col-span-2">
                       <Controller
                         name="type"
                         control={control}

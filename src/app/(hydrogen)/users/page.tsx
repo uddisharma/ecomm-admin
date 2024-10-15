@@ -22,10 +22,12 @@ import { CiSearch } from 'react-icons/ci';
 import cn from '@/utils/class-names';
 import Link from 'next/link';
 import { MdOutlineAutoDelete } from 'react-icons/md';
-import { FiUserPlus } from 'react-icons/fi';
+import { FiMoreHorizontal, FiUserPlus } from 'react-icons/fi';
 import { useCookies } from 'react-cookie';
 import { fetcher } from '@/constants/fetcher';
 import { extractPathAndParams } from '@/utils/urlextractor';
+import PageHeader from '@/component/others/pageHeader';
+import { useModal } from '@/component/modal-views/use-modal';
 
 export default function ProductsPage() {
   const [loading, setLoading] = useState(false);
@@ -144,6 +146,23 @@ export default function ProductsPage() {
 
   const users: any = [];
 
+  const pageHeader = {
+    title: `Users (${pagininator?.itemCount ?? 0})`,
+    breadcrumb: [
+      {
+        href: '/',
+        name: 'Home',
+      },
+      {
+        href: '/',
+        name: 'Users',
+      },
+      {
+        name: 'List',
+      },
+    ],
+  };
+
   if (authstatus) {
     localStorage.removeItem('admin');
     toast.error('Session Expired');
@@ -156,58 +175,10 @@ export default function ProductsPage() {
 
   return (
     <>
-      <header className={cn('mb-3 @container xs:-mt-2 lg:mb-7')}>
-        <div className="flex flex-col @lg:flex-row @lg:items-end @lg:justify-between">
-          <div className="mt-4 flex items-center gap-3 @lg:mt-0">
-            <p className="text-2xl font-bold text-white">
-              ({pagininator?.itemCount ?? 0})
-            </p>
-            <Link href={`/users/create`}>
-              <Button
-                tag="span"
-                variant="outline"
-                className="mt-4 w-full cursor-pointer @lg:mt-0 @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
-              >
-                <FiUserPlus className="me-1 h-4 w-4" />
-                New User
-              </Button>
-            </Link>
+      <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}> </PageHeader>
 
-            <Link href={`/users/deleted`}>
-              <Button
-                tag="span"
-                variant="outline"
-                className="mt-4 w-full cursor-pointer @lg:mt-0 @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
-              >
-                <MdOutlineAutoDelete className="me-1 h-4 w-4" />
-                Deleted
-              </Button>
-            </Link>
-            <ExportButton
-              data={downlaodableList}
-              fileName="users_data"
-              header=""
-            />
-            <Input
-              prefix={<CiSearch className="h-auto w-5" />}
-              type="text"
-              value={term}
-              onChange={(e) => {
-                setTerm(e.target?.value);
-              }}
-              placeholder="Search for Users..."
-            />
-            <Button
-              isLoading={loading}
-              disabled={!term}
-              onClick={() => findUser()}
-              className="w-full gap-2 @lg:w-auto"
-            >
-              Search
-            </Button>
-          </div>
-        </div>
-      </header>
+      <Header pagininator={pagininator} downlaoadablelist={downlaodableList} term={term} setTerm={setTerm} findUser={findUser} loading={loading} />
+
       {isLoading ? (
         <ProductLoadingPage />
       ) : (
@@ -274,3 +245,106 @@ export default function ProductsPage() {
     </>
   );
 }
+
+
+const Header = ({ downlaoadablelist, term, setTerm, findUser, loading }: any) => {
+  const { openModal, closeModal } = useModal();
+
+  const handleMoreOptionsClick = () => {
+    openModal({
+      view: (
+        <div className="p-4">
+          <Link href={`/users/create`}>
+            <Button
+              tag="span"
+              variant="outline"
+              className="mt-4 w-full cursor-pointer dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+            >
+              <FiUserPlus className="me-1 h-4 w-4" />
+              New User
+            </Button>
+          </Link>
+          <Link href={`/users/deleted`}>
+            <Button
+              tag="span"
+              variant="outline"
+              className="mt-4 w-full cursor-pointer dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+            >
+              <MdOutlineAutoDelete className="me-1 h-4 w-4" />
+              Deleted
+            </Button>
+          </Link>
+
+          <ExportButton
+            data={downlaoadablelist}
+            fileName="sellers_data"
+            header=""
+            className="mt-4 w-full"
+          />
+        </div>
+      ),
+      customSize: '1000px',
+    });
+  };
+
+  return (
+    <header className={cn('mb-3 container xs:mt-2 lg:mb-7')}>
+      <div className="hidden lg:flex">
+        <div className="mt-4 flex items-center gap-3 lg:mt-0">
+          <Link href={`/users/create`}>
+            <Button
+              tag="span"
+              variant="outline"
+              className="mt-4 w-full cursor-pointer lg:mt-0 lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+            >
+              <FiUserPlus className="me-1 h-4 w-4" />
+              New User
+            </Button>
+          </Link>
+          <Link href={`/users/deleted`}>
+            <Button
+              tag="span"
+              variant="outline"
+              className="mt-4 w-full cursor-pointer lg:mt-0 lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+            >
+              <MdOutlineAutoDelete className="me-1 h-4 w-4" />
+              Deleted
+            </Button>
+          </Link>
+          <ExportButton
+            data={downlaoadablelist}
+            fileName="sellers_data"
+            header=""
+            className="mt-4 w-full lg:mt-0 lg:w-auto"
+          />
+        </div>
+      </div>
+      <div className='mt-[-10px] mb-5 lg:mb-0 lg:mt-4 lg:flex items-center lg:gap-3 grid grid-cols-1'>
+        <Button
+          onClick={() => handleMoreOptionsClick()}
+          className="mt-4 w-full lg:w-auto lg:mt-0 lg:hidden"
+        >
+          More Options <FiMoreHorizontal className="ml-1 mt-0" />
+        </Button>
+        <Input
+          prefix={<CiSearch className="h-auto w-full" />}
+          type="text"
+          value={term}
+          onChange={(e) => {
+            setTerm(e.target?.value);
+          }}
+          placeholder="Search for Seller..."
+          className="mt-4 flex-grow lg:mt-0 lg:w-auto"
+        />
+        <Button
+          isLoading={loading}
+          disabled={!term}
+          onClick={() => findUser()}
+          className="mt-4 w-full lg:w-auto lg:mt-0"
+        >
+          Search
+        </Button>
+      </div>
+    </header>
+  );
+};

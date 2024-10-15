@@ -16,6 +16,7 @@ import { endsWith } from 'lodash';
 import { toast } from 'sonner';
 import axios from 'axios';
 import { BaseApi } from '@/constants';
+import { useCookies } from 'react-cookie';
 
 interface UploadZoneProps {
   label?: string;
@@ -41,7 +42,7 @@ export default function UploadZoneS3({
   error,
 }: UploadZoneProps) {
   const [files, setFiles] = useState<File[]>([]);
-
+  const [cookies] = useCookies(['admintoken']);
   const onDrop = useCallback(
     (acceptedFiles: FileWithPath[]) => {
       setFiles([
@@ -90,6 +91,7 @@ export default function UploadZoneS3({
       }>(`${BaseApi}/seller/upload`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${cookies?.admintoken}`,
         },
       });
       if (response.data.status == 'SUCCESS') {
@@ -132,7 +134,7 @@ export default function UploadZoneS3({
   });
 
   return (
-    <div className={cn('grid', className)}>
+    <div  className={cn('grid', className)}>
       {label && (
         <span className="mb-1.5 block font-semibold text-gray-900">
           {label}
@@ -247,7 +249,7 @@ function UploadButtons({
   onUpload: () => void;
 }) {
   return (
-    <div className="flex items-center gap-4">
+    <div className="md:flex items-center gap-4 py-5 md:py-0">
       <Button
         variant="outline"
         className="gap-2"
@@ -257,7 +259,8 @@ function UploadButtons({
         <PiTrashBold />
         Clear {files.length} files
       </Button>
-      <Button className="gap-2" isLoading={isLoading} onClick={onUpload}>
+      
+      <Button className="gap-2 mt-3 md:mt-0" isLoading={isLoading} onClick={onUpload}>
         <PiUploadSimpleBold /> Upload {files.length} files
       </Button>
     </div>

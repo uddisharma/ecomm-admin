@@ -238,7 +238,7 @@ export default function NewsLetterForm() {
                   <FormGroup
                     title="Transaction Details"
                     description="Enter Transaction Details"
-                    className="pt-7 @2xl:pt-9 @3xl:pt-11"
+                    className=""
                   >
                     <div className="relative col-span-full">
                       <Input

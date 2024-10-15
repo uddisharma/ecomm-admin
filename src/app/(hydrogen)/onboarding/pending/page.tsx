@@ -177,7 +177,7 @@ const Page = () => {
   return (
     <div>
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
-        <div className="mt-4 flex items-center gap-3 @lg:mt-0">
+        <div className="mt-4 grid grid-cols-1 md:flex  items-center gap-3 @lg:mt-0">
           <ExportButton
             data={downlaoadablelist}
             fileName="onboarding_pending_sellers_data"

@@ -205,7 +205,7 @@ const Page = () => {
   return (
     <div>
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
-        <div className="mt-4 flex items-center gap-3 @lg:mt-0">
+        <div className="mt-4 grid grid-cols-1 md:flex  items-center gap-3 @lg:mt-0">
           <ExportButton
             data={downlaoadablelist}
             fileName="deleted_sellers_data"
@@ -224,7 +224,7 @@ const Page = () => {
             isLoading={loading}
             disabled={!term}
             onClick={() => findSeller()}
-            className=" ml-5 w-full gap-2 @lg:w-auto"
+            className="w-full gap-2 @lg:w-auto"
           >
             Search
           </Button>

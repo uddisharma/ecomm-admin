@@ -170,27 +170,30 @@ export default function BlankPage() {
     <>
       <br />
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
-        <div className="mt-4 flex items-center gap-3 @lg:mt-0">
+        <div className="mt-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:flex-wrap lg:mt-0">
           <ExportButton
             data={downlaodableTickets}
             fileName="tickets_data"
             header=""
+            className="w-full lg:w-auto"
           />
-          <Link href={'/tickets/create'} className="w-full @lg:w-auto">
-            <Button
-              tag="span"
-              className="w-full @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
-            >
-              <PiPlusBold className="me-1.5 h-[17px] w-[17px]" />
-              Create Ticket
-            </Button>
-          </Link>
-          <Link href={`/tickets/deleted`}>
-            <Button className=" w-full gap-2 @lg:w-auto" variant="outline">
-              <MdOutlineAutoDelete className="h-4 w-4" />
-              Deleted
-            </Button>
-          </Link>
+          <div className="flex flex-col gap-3 lg:flex-row lg:gap-3 w-full lg:w-auto">
+            <Link href={'/tickets/create'} className="w-full lg:w-auto">
+              <Button
+                tag="span"
+                className="w-full lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+              >
+                <PiPlusBold className="me-1.5 h-[17px] w-[17px]" />
+                Create Ticket
+              </Button>
+            </Link>
+            <Link href={`/tickets/deleted`} className="w-full lg:w-auto">
+              <Button className="w-full gap-2 lg:w-auto" variant="outline">
+                <MdOutlineAutoDelete className="h-4 w-4" />
+                Deleted
+              </Button>
+            </Link>
+          </div>
         </div>
       </PageHeader>
       {isLoading ? (

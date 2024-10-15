@@ -131,7 +131,7 @@ export default function AssetInit() {
   };
   return (
     <>
-      <br />
+
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
         <Link href={`/banners`} className="mt-4 w-full @lg:mt-0 @lg:w-auto">
           <Button
@@ -172,9 +172,10 @@ export default function AssetInit() {
                   <FormGroup
                     title="Upload Banner For Desktop"
                     description="This will shown in big screens"
-                    className="pt-7 @2xl:pt-9 @3xl:grid-cols-12 @3xl:pt-11"
+                    className=""
                   >
                     <UploadZoneS3
+                    
                       className="col-span-full"
                       name="desktop"
                       getValues={getValues}

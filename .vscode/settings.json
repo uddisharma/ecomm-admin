@@ -16,5 +16,7 @@
     "Shahjalal",
     "tailwindcss",
     "Tripfinder"
-  ]
+  ],
+  "pieces.cloudCapabilities": "Blended",
+  "pieces.telemetry": true
 }
