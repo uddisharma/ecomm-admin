@@ -32,22 +32,6 @@ async function generateMetadata({ params }: Props): Promise<Metadata> {
   return metaObject(`Edit ${slug}`);
 }
 
-const pageHeader = {
-  title: 'View Product',
-  breadcrumb: [
-    {
-      href: '/',
-      name: 'Home',
-    },
-    {
-      href: '/products',
-      name: 'Products',
-    },
-    {
-      name: 'View',
-    },
-  ],
-};
 
 export default function EditProductPage({
   params,
@@ -97,9 +81,25 @@ export default function EditProductPage({
     }
   }
 
+  const pageHeader = {
+    title: 'Product Details',
+    breadcrumb: [
+      {
+        href: '/',
+        name: 'Home',
+      },
+      {
+        href: `/${params?.seller}/dashboard`,
+        name: 'Seller',
+      },
+      {
+        name: 'Product Details',
+      },
+    ],
+  };
+
   return (
     <>
-      <br />
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
         <Link
           href={`/${params?.seller}/products/create`}
@@ -107,7 +107,8 @@ export default function EditProductPage({
         >
           <Button
             tag="span"
-            className="w-full @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+            className="w-full @lg:w-auto dark:text-white "
+            variant='outline'
           >
             <PiPlusBold className="me-1.5 h-[17px] w-[17px]" />
             Add Product

@@ -156,10 +156,10 @@ const Page = () => {
       },
       {
         href: '/',
-        name: 'Pending Onboarding',
+        name: 'Sellers',
       },
       {
-        name: 'List',
+        name: 'Pending Onboarding',
       },
     ],
   };

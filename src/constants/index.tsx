@@ -1,4 +1,4 @@
-export const BaseApi = 'http://192.168.1.12:5000';
+export const BaseApi = 'http://192.168.1.15:5000';
 
 export const MainDomain = 'http://localhost:3000';
 
@@ -142,7 +142,7 @@ export const softOrderDelete = '/admin/order/softDelete';
 
 export const deleteOrder1 = '/admin/order/delete';
 
-export const deletedOrder = '/seller/api/v1/order/deleted/list';
+export const deletedOrder = '/admin/seller/order/deleted/list';
 
 export const monthwiseRevenue = '/seller/api/v1/order/revenue/monthwise';
 

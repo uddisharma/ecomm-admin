@@ -108,11 +108,11 @@ export default function ProductsPage() {
         name: 'Home',
       },
       {
-        href: '/',
-        name: 'Products',
+        href: `/${params?.seller}/dashboard`,
+        name: 'Seller',
       },
       {
-        name: 'List',
+        name: 'Products',
       },
     ],
   };
@@ -136,12 +136,9 @@ export default function ProductsPage() {
             href={`/${params?.seller}/products/create`}
             className="w-full @lg:w-auto"
           >
-            <Button
-              tag="span"
-              className="w-full @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
-            >
-              <PiPlusBold className="me-1.5 h-[17px] w-[17px]" />
-              Add Product
+           <Button className=" w-full gap-2 @lg:w-auto" variant="outline">
+              <PiPlusBold className="h-4 w-4" />
+              Add  
             </Button>
           </Link>
           <Link href={`/${params?.seller}/products/deleted`}>

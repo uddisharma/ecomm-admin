@@ -26,22 +26,6 @@ async function generateMetadata({ params }: Props): Promise<Metadata> {
   return metaObject(`Edit ${slug}`);
 }
 
-const pageHeader = {
-  title: 'Edit Product',
-  breadcrumb: [
-    {
-      href: '/',
-      name: 'Home',
-    },
-    {
-      href: '/products',
-      name: 'Products',
-    },
-    {
-      name: 'Edit',
-    },
-  ],
-};
 
 export default function EditProductPage({
   params,
@@ -91,9 +75,25 @@ export default function EditProductPage({
     }
   }
 
+  const pageHeader = {
+    title: 'Edit Product',
+    breadcrumb: [
+      {
+        href: '/',
+        name: 'Home',
+      },
+      {
+        href: `/${params?.seller}/dashboard`,
+        name: 'Seller',
+      },
+      {
+        name: 'Edit Product',
+      },
+    ],
+  };
+
   return (
     <>
-      <br />
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
         <Link
           href={`/${params?.seller}/products/create`}

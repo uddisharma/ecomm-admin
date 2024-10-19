@@ -157,7 +157,7 @@ export default function Header() {
               alt={siteConfig.title}
             />
             <Image
-              className=" flex hidden w-[120px] justify-center dark:block"
+              className="hidden w-[120px] justify-center dark:block"
               src={siteConfig.logoWhite}
               alt={siteConfig.title}
             />

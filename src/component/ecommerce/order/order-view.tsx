@@ -180,7 +180,7 @@ export default function OrderView({ orderData, updateStatus, loading }: any) {
           </div>
         </div>
       )}
-      <div className="items-start pt-10 @5xl:grid @5xl:grid-cols-12 @5xl:gap-7 @6xl:grid-cols-10 @7xl:gap-10">
+      <div className="items-start @5xl:grid @5xl:grid-cols-12 @5xl:gap-7 @6xl:grid-cols-10 @7xl:gap-10">
         <div className="space-y-7 @5xl:col-span-8 @5xl:space-y-10 @6xl:col-span-7">
           {orderData?.note && (
             <div className="mt-3">
@@ -218,7 +218,7 @@ export default function OrderView({ orderData, updateStatus, loading }: any) {
             title="Customer Details"
             childrenWrapperClass="py-5 @5xl:py-8 flex"
           >
-            <div className="relative aspect-square h-16 w-16 shrink-0 @5xl:h-20 @5xl:w-20">
+            <div className="relative aspect-square h-16 w-16 shrink-0 @5xl:h-20 @5xl:w-20 hidden md:block">
               <Avatar
                 name={address?.name}
                 src="https://isomorphic-furyroad.s3.amazonaws.com/public/avatars-blur/avatar-11.webp"

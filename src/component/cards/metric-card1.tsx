@@ -158,104 +158,104 @@ import { RiCoupon2Line } from 'react-icons/ri';
 import { FaRegUserCircle } from 'react-icons/fa';
 import { TbDeviceDesktopAnalytics } from 'react-icons/tb';
 
-const SellerOptions = ({ seller }: any) => {
+export const menuItems = [
+  {
+    name: 'Dashboard',
+    href: '/dashboard',
+    icon: <TbDeviceDesktopAnalytics />,
+  },
+  {
+    name: 'Orders',
+    href: '/orders',
+    icon: <PiPackageDuotone />,
+  },
+  {
+    name: 'Products',
+    href: '/products',
+    icon: <PiShoppingCartDuotone />,
+  },
+  {
+    name: 'Add Product',
+    href: '/products/create',
+    icon: <MdOutlineCreateNewFolder />,
+    badge: '',
+  },
+  {
+    name: 'Categories',
+    href: '/categories',
+    icon: <PiCreditCardDuotone />,
+  },
+  {
+    name: 'Add Category',
+    href: '/categories/create',
+    icon: <MdOutlineCreateNewFolder />,
+    badge: '',
+  },
+
+  {
+    name: 'Coupons',
+    href: '/coupons',
+    icon: <RiCoupon2Line />,
+  },
+  {
+    name: 'Add Coupon',
+    href: '/coupons/create',
+    icon: <MdOutlineCreateNewFolder />,
+    badge: '',
+  },
+
+  {
+    name: 'Banners',
+    href: '/banners',
+    icon: <AiFillPicture />,
+  },
+  {
+    name: 'Add Banner',
+    href: '/banners/create',
+    icon: <MdOutlineCreateNewFolder />,
+    badge: '',
+  },
+
+  {
+    name: 'Payouts',
+    href: '/transactions',
+    icon: <PiCreditCardDuotone />,
+    badge: '',
+  },
+  {
+    name: 'Logistics',
+    href: '/logistics',
+    icon: <CiDeliveryTruck />,
+    badge: '',
+  },
+  {
+    name: 'Tickets',
+    href: '/tickets',
+    icon: <TiTicket />,
+    badge: '',
+  },
+  {
+    name: 'Create Ticket',
+    href: '/tickets/create',
+    icon: <MdOutlineCreateNewFolder />,
+    badge: '',
+  },
+  {
+    name: 'Download Report',
+    href: '/report',
+    icon: <MdOutlineFileDownload />,
+    badge: '',
+  },
+  {
+    name: 'Profile',
+    href: '/shop',
+    icon: <FaRegUserCircle />,
+    badge: '',
+  },
+];
+
+export const SellerOptions = ({ seller }: any) => {
   const { closeModal } = useModal();
-
-  const menuItems = [
-    {
-      name: 'Dashboard',
-      href: '/dashboard',
-      icon: <TbDeviceDesktopAnalytics />,
-    },
-    {
-      name: 'Orders',
-      href: '/orders',
-      icon: <PiPackageDuotone />,
-    },
-    {
-      name: 'Products',
-      href: '/products',
-      icon: <PiShoppingCartDuotone />,
-    },
-    {
-      name: 'Add Product',
-      href: '/products/create',
-      icon: <MdOutlineCreateNewFolder />,
-      badge: '',
-    },
-    {
-      name: 'Categories',
-      href: '/categories',
-      icon: <PiCreditCardDuotone />,
-    },
-    {
-      name: 'Add Category',
-      href: '/categories/create',
-      icon: <MdOutlineCreateNewFolder />,
-      badge: '',
-    },
-
-    {
-      name: 'Coupons',
-      href: '/coupons',
-      icon: <RiCoupon2Line />,
-    },
-    {
-      name: 'Add Coupon',
-      href: '/coupons/create',
-      icon: <MdOutlineCreateNewFolder />,
-      badge: '',
-    },
-
-    {
-      name: 'Banners',
-      href: '/banners',
-      icon: <AiFillPicture />,
-    },
-    {
-      name: 'Add Banner',
-      href: '/banners/create',
-      icon: <MdOutlineCreateNewFolder />,
-      badge: '',
-    },
-
-    {
-      name: 'Payouts',
-      href: '/transactions',
-      icon: <PiCreditCardDuotone />,
-      badge: '',
-    },
-    {
-      name: 'Logistics',
-      href: '/logistics',
-      icon: <CiDeliveryTruck />,
-      badge: '',
-    },
-    {
-      name: 'Tickets',
-      href: '/tickets',
-      icon: <TiTicket />,
-      badge: '',
-    },
-    {
-      name: 'Create Ticket',
-      href: '/tickets/create',
-      icon: <MdOutlineCreateNewFolder />,
-      badge: '',
-    },
-    {
-      name: 'Download Report',
-      href: '/report',
-      icon: <MdOutlineFileDownload />,
-      badge: '',
-    },
-    {
-      name: 'Profile',
-      href: '/shop',
-      icon: <FaRegUserCircle />,
-      badge: '',
-    },
-  ];
 
   return (
     <div>
@@ -270,7 +270,7 @@ const SellerOptions = ({ seller }: any) => {
         </div>
         <div className="grid grid-cols-1 gap-6 @container md:grid-cols-2 lg:grid-cols-4 3xl:gap-8">
           {menuItems?.map((e: any, i: any) => (
-            <Link key={i} href={`${seller}${e?.href}`}>
+            <Link key={i} href={`/${seller}${e?.href}`}>
               <Button className="w-full" type="submit" size="lg">
                 <span>{e?.name}</span>
                 <div className="ms-2 mt-2 h-6 w-6">{e?.icon}</div>

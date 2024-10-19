@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import { PiPlusBold, PiShoppingCartDuotone } from 'react-icons/pi';
+import { PiPlusBold } from 'react-icons/pi';
 import { Button } from '@/component/ui/button';
 import PageHeader from '@/component/others/pageHeader';
 import ExportButton from '@/component/others/export-button';
@@ -25,6 +25,7 @@ import DeletedProductsTable from '@/component/ecommerce/product/deleted/table';
 import { useCookies } from 'react-cookie';
 import { fetcher } from '@/constants/fetcher';
 import { extractPathAndParams } from '@/utils/urlextractor';
+import { RiTShirtAirLine } from 'react-icons/ri';
 
 export default function ProductsPage() {
   const params = useParams();
@@ -131,11 +132,11 @@ export default function ProductsPage() {
         name: 'Home',
       },
       {
-        href: '/',
-        name: 'Deleted Products',
+        href: `/${params?.seller}/dashboard`,
+        name: 'Seller',
       },
       {
-        name: 'List',
+        name: 'Deleted Products',
       },
     ],
   };
@@ -163,24 +164,18 @@ export default function ProductsPage() {
             href={`/${params?.seller}/products/create`}
             className="w-full @lg:w-auto"
           >
-            <Button
-              tag="span"
-              className="w-full @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
-            >
-              <PiPlusBold className="me-1.5 h-[17px] w-[17px]" />
-              Add Product
+            <Button className=" w-full gap-2 @lg:w-auto" variant="outline">
+              <PiPlusBold className="h-4 w-4" />
+              Add
             </Button>
           </Link>
           <Link
             href={`/${params?.seller}/products`}
             className="w-full @lg:w-auto"
           >
-            <Button
-              tag="span"
-              className="w-full @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
-            >
-              <PiShoppingCartDuotone className="me-1.5 h-[17px] w-[17px]" />
-              View All
+            <Button className=" w-full gap-2 @lg:w-auto" variant="outline">
+              <RiTShirtAirLine className="h-4 w-4" />
+              All
             </Button>
           </Link>
         </div>

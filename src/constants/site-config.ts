@@ -10,7 +10,7 @@ const BASE_URL = 'http://localhost:3000';
 
 export const siteConfig: Metadata = {
   title: {
-    default: 'Thribute Admin Panel',
+    default: 'Thribute | Admin Panel',
     template: '%s | Thribute Admin Panel',
   },
   description: DESCRIPTION,

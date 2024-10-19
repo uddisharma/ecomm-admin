@@ -8,7 +8,7 @@ import { useContext, useState } from 'react';
 import { SubmitHandler } from 'react-hook-form';
 import { Form } from '@/component/ui/form';
 import { toast } from 'sonner';
-import { BaseApi, LoginSeller } from '@/constants/index';
+import { adminLogin, BaseApi } from '@/constants/index';
 import axios from 'axios';
 import { OnboardingContext } from '@/store/onboarding/context';
 
@@ -25,7 +25,7 @@ export default function StepOne({ step, setStep }: any) {
   const onSubmit: SubmitHandler<LoginSchema> = (data) => {
     setLoading(true);
     axios
-      .post(`${BaseApi}${LoginSeller}`, {
+      .post(`${BaseApi}${adminLogin}/seller`, {
         username: data?.email,
         password: data?.password,
       })
@@ -41,6 +41,8 @@ export default function StepOne({ step, setStep }: any) {
           return toast.warning('Wrong Password');
         } else if (res.data?.message == 'user not found') {
           return toast.warning('Seller not found');
+        } else if (res.data?.message == "onboardingpending") {
+          toast.error('Onboarding pending');
         } else {
           toast.error('something went wrong');
         }

@@ -83,16 +83,16 @@ export default function OrderDetailsPage({ params }: any) {
         name: 'Home',
       },
       {
-        href: '/orders',
-        name: 'Orders',
+        href: `/${params?.seller}/dashboard`,
+        name: 'Seller',
       },
       {
         name:
           data == null
             ? ''
             : orderData?.order
-            ? String(orderData?.order?.order_id)
-            : String(orderData?.order_id),
+            ? `order #${String(orderData?.order?.order_id)}`
+            : `order #${String(orderData?.order_id)}`,
       },
     ],
   };
@@ -110,7 +110,7 @@ export default function OrderDetailsPage({ params }: any) {
   return (
     <>
       <CartProvider>
-        <br />
+    
         <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
           <div className="mt-6 flex items-center gap-4 @2xl:mt-0">
             {orderData?.courior != 'Local' && (

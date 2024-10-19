@@ -13,12 +13,13 @@ import HandWaveIcon from '@/component/icons/hand-wave';
 import { formatNumber } from '@/utils/format-number';
 import useSWR from 'swr';
 import { BaseApi, errorRetry, totalCounts } from '@/constants';
-import axios from 'axios';
 import { useParams } from 'next/navigation';
 import { useCookies } from 'react-cookie';
 import { fetcher } from '@/constants/fetcher';
 import { toast } from 'sonner';
 import { extractPathAndParams } from '@/utils/urlextractor';
+import { useModal } from '@/component/modal-views/use-modal';
+import { SellerOptions } from '@/component/cards/metric-card1';
 
 export default function SellerDashboard() {
   function getGreeting() {
@@ -39,6 +40,7 @@ export default function SellerDashboard() {
   }
 
   const params = useParams();
+  const { openModal } = useModal();
 
   const [cookies] = useCookies(['admintoken']);
 
@@ -147,17 +149,20 @@ export default function SellerDashboard() {
           contentClassName="@2xl:max-w-[calc(100%-340px)]"
           className="border border-gray-200 bg-gray-0 pb-8 @4xl:col-span-2 @7xl:col-span-8 lg:pb-9 dark:bg-gray-100/30"
         >
-          <Link
-            href={`/${params?.seller}/products/create`}
-            className="inline-flex"
-          >
+         
             <Button
+             onClick={() => {
+              openModal({
+                view: <SellerOptions seller={params?.seller} />,
+                customSize: '1000px',
+              });
+            }}
               tag="span"
-              className="h-[38px] shadow md:h-10 dark:bg-gray-100 dark:text-gray-900"
+              className="h-[38px] shadow md:h-10 dark:bg-gray-100 dark:text-gray-900 cursor-pointer"
             >
-              <PiPlusBold className="me-1 h-4 w-4" /> Add Product
+              <PiPlusBold className="me-1 h-4 w-4" /> View Options
             </Button>
-          </Link>
+          
         </WelcomeBanner>
         {/* stats */}
 

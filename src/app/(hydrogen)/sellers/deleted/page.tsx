@@ -184,10 +184,10 @@ const Page = () => {
       },
       {
         href: '/',
-        name: 'Deleted Sellers',
+        name: 'Sellers',
       },
       {
-        name: 'List',
+        name: 'Deleted',
       },
     ],
   };

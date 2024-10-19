@@ -233,11 +233,11 @@ export default function OrdersPage() {
         name: 'Home',
       },
       {
-        href: '/',
-        name: 'Orders',
+        href: `/${params?.seller}/dashboard`,
+        name: 'Seller',
       },
       {
-        name: 'List',
+        name: 'Orders',
       },
     ],
   };
@@ -268,7 +268,7 @@ export default function OrdersPage() {
                 customSize: '720px',
               })
             }
-            className=" ml-5 w-full gap-2 @lg:w-auto"
+            className="w-full gap-2 @lg:w-auto"
             variant="outline"
           >
             <CiFilter className="h-4 w-4" />

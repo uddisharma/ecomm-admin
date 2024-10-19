@@ -247,7 +247,7 @@ function LoadingCard({ className }: { className?: string }) {
 }
 
 const Header = ({  downlaoadablelist, term, setTerm, findSeller, loading }: any) => {
-  const { openModal, closeModal } = useModal();
+  const { openModal } = useModal();
 
   const handleMoreOptionsClick = () => {
     openModal({

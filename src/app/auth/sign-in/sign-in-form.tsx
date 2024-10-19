@@ -67,6 +67,8 @@ export default function SignInForm() {
           return toast.error('Wrong Password');
         } else if (res.data?.message == 'Seller not found') {
           return toast.error('User not found');
+        } else if (res.data?.message == "onboardingpending") {
+          toast.error('Onboarding pending');
         } else {
           toast.error('something went wrong');
         }

@@ -250,11 +250,11 @@ export default function OrdersPage() {
         name: 'Home',
       },
       {
-        href: '/',
-        name: 'Deleted Orders',
+        href: `/${params?.seller}/dashboard`,
+        name: 'Seller',
       },
       {
-        name: 'List',
+        name: 'Deleted Orders',
       },
     ],
   };
@@ -269,6 +269,7 @@ export default function OrdersPage() {
     }
   }
 
+
   return (
     <>
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
@@ -278,8 +279,8 @@ export default function OrdersPage() {
             fileName={`deleted_order_data_${date}`}
             header=""
           />
-          <Link href={`/${params?.seller}/orders`}>
-            <Button className=" ml-5 w-full gap-2 @lg:w-auto" variant="outline">
+          <Link className='w-full' href={`/${params?.seller}/orders`}>
+            <Button className="w-full gap-2 @lg:w-auto" variant="outline">
               <PiPackageDuotone className="h-4 w-4" />
               View All
             </Button>

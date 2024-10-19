@@ -5,25 +5,26 @@ import { Button } from '@/component/ui/button';
 import CreateEditProduct1 from '@/component/ecommerce/product/create-edit';
 import { useParams } from 'next/navigation';
 
-const pageHeader = {
-  title: 'Create Product',
-  breadcrumb: [
-    {
-      href: '/',
-      name: 'Home',
-    },
-    {
-      href: '/products',
-      name: 'Products',
-    },
-    {
-      name: 'Create',
-    },
-  ],
-};
 
 export default function CreateProductPage() {
   const params = useParams();
+  const pageHeader = {
+    title: 'Create Product',
+    breadcrumb: [
+      {
+        href: '/',
+        name: 'Home',
+      },
+      {
+        href: `/${params?.seller}/dashboard`,
+        name: 'Seller',
+      },
+      {
+        name: 'Create Product',
+      },
+    ],
+  };
+  
   return (
     <>
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>

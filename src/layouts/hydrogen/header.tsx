@@ -30,7 +30,7 @@ export default function Header() {
         <div className="flex justify-center xl:hidden">
           <Link href={'/'}>
             <Image
-              className="block w-full dark:hidden"
+              className="block lg:w-full w-[150px]  dark:hidden"
               src={siteConfig.logo}
               alt={siteConfig.title}
             />

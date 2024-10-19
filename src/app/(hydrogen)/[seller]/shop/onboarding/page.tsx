@@ -35,11 +35,13 @@ export default function Page() {
       }}
     >
       <div className="flex items-center gap-6 ">
-        {!isActive ? (
-          <MdClose className="h-7 w-7 text-gray-500" />
-        ) : (
-          <IoCheckmarkDoneOutline className="h-7 w-7 text-gray-500" />
-        )}
+        <div className='hidden md:block'>
+          {!isActive ? (
+            <MdClose className="h-7 w-7 text-gray-500" />
+          ) : (
+            <IoCheckmarkDoneOutline className="h-7 w-7 text-gray-500" />
+          )}
+        </div>
         <div>
           <div className="mb-2 flex items-center gap-2">
             <Title
@@ -99,14 +101,13 @@ export default function Page() {
       {isActive ? (
         <Button
           style={{
-            marginLeft: '30px',
             border: '2px solid red',
             backgroundColor: 'red',
             color: 'white',
           }}
           variant="outline"
           color="danger"
-          className=""
+          className="md:ml-[50px]"
           onClick={() =>
             openModal({
               view: <DisableAccount title="Mark as pending onboarding" />,
@@ -119,13 +120,12 @@ export default function Page() {
       ) : (
         <Button
           style={{
-            marginLeft: '30px',
             backgroundColor: '#08bf94',
             color: 'white',
           }}
           variant="outline"
           color="success"
-          className=""
+          className="md:ml-[50px]"
           onClick={() =>
             openModal({
               view: <DisableAccount title="Mark as onboarding completed" />,
