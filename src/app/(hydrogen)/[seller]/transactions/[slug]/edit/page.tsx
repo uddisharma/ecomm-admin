@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { SubmitHandler } from 'react-hook-form';
 import { Input } from '@/component/ui/input';
 import { Form } from '@/component/ui/form';
-import dynamic from 'next/dynamic';
 import FormGroup from '@/component/others/form-group';
 import FormFooter from '@/component/others/form-footer';
 import cn from '@/utils/class-names';
@@ -33,11 +32,6 @@ const schema = z.object({
 });
 
 type Schema = z.infer<typeof schema>;
-
-const Select = dynamic(() => import('@/component/ui/select'), {
-  ssr: false,
-  loading: () => <SelectLoader />,
-});
 
 export default function NewsLetterForm() {
   const [reset, setReset] = useState({});
@@ -128,11 +122,11 @@ export default function NewsLetterForm() {
         name: 'Home',
       },
       {
-        href: `/${params?.seller}/transactions`,
-        name: 'Transactions',
+        href: `/${params?.seller}/dashboard`,
+        name: 'Seller',
       },
       {
-        name: 'Edit',
+        name: 'Edit Transaction',
       },
     ],
   };
@@ -144,7 +138,7 @@ export default function NewsLetterForm() {
     isLoading: loading,
     error,
   } = useSWR(
-    `{BaseApi}${singleTransaction}/${params?.slug}`,
+    `${BaseApi}${singleTransaction}/${params?.slug}`,
     (url) => fetcher(url, cookies.admintoken),
     {
       refreshInterval: 3600000,
@@ -186,7 +180,6 @@ export default function NewsLetterForm() {
   if (error) {
     return (
       <div>
-        <br />
         <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
           <Link
             href={`/${params?.seller}/transactions`}
@@ -215,7 +208,6 @@ export default function NewsLetterForm() {
   if (data) {
     return (
       <>
-        <br />
         <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
           <Link
             href={`/${params?.seller}/transactions`}
@@ -254,9 +246,9 @@ export default function NewsLetterForm() {
                   <div className="mb-10 grid gap-7 divide-y divide-dashed divide-gray-200 @2xl:gap-9 @3xl:gap-11">
                     <FormGroup
                       title="Transaction Details"
-                      className="pt-7 @2xl:pt-9 @3xl:grid-cols-12 @3xl:pt-11"
+                      className=""
                     >
-                      <div className="mb-5 @3xl:col-span-2">
+                      <div className=" @3xl:col-span-2">
                         <Input
                           label="Transaction ID"
                           className="col-span-full"
@@ -266,7 +258,7 @@ export default function NewsLetterForm() {
                           error={errors.transactionId?.message as string}
                         />
                       </div>
-                      <div className="mb-5 @3xl:col-span-2">
+                      <div className=" @3xl:col-span-2">
                         <Input
                           label="Amount"
                           className="col-span-full"
@@ -276,7 +268,7 @@ export default function NewsLetterForm() {
                           error={errors.amount?.message as string}
                         />
                       </div>
-                      <div className="mb-5 @3xl:col-span-2">
+                      <div className="@3xl:col-span-2">
                         <Input
                           label="From Date"
                           className="col-span-full"
@@ -286,7 +278,7 @@ export default function NewsLetterForm() {
                           error={errors.from?.message as string}
                         />
                       </div>
-                      <div className="mb-5 @3xl:col-span-2">
+                      <div className="@3xl:col-span-2">
                         <Input
                           label="To Date"
                           className="col-span-full"

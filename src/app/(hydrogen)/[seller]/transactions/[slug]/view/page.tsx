@@ -64,7 +64,7 @@ export default function NewsLetterForm() {
     discount_type:
       data?.data?.discount_type == 'direct_amount'
         ? 'Direct Amount'
-        : 'Percentage' ?? '',
+        : 'Percentage',
     discount: data?.data?.discount.toString() ?? '',
   };
 

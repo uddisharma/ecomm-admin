@@ -116,11 +116,11 @@ export default function NewsLetterForm() {
         name: 'Home',
       },
       {
-        href: `/${params?.seller}/transactions`,
-        name: 'Transactions',
+        href: `/${params?.seller}/dashboard`,
+        name: 'Seller',
       },
       {
-        name: 'Create',
+        name: 'Create Transaction',
       },
     ],
   };
@@ -134,7 +134,6 @@ export default function NewsLetterForm() {
 
   return (
     <>
-      <br />
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
         <Link
           href={`/${params?.seller}/transactions`}
@@ -168,9 +167,9 @@ export default function NewsLetterForm() {
                 <div className="mb-10 grid gap-7 divide-y divide-dashed divide-gray-200 @2xl:gap-9 @3xl:gap-11">
                   <FormGroup
                     title="Transaction Details"
-                    className="pt-7 @2xl:pt-9 @3xl:grid-cols-12 @3xl:pt-11"
+                    className=""
                   >
-                    <div className="mb-5 @3xl:col-span-2">
+                    <div className=" @3xl:col-span-2">
                       <Input
                         label="Transaction ID"
                         className="col-span-full"
@@ -180,7 +179,7 @@ export default function NewsLetterForm() {
                         error={errors.transactionId?.message as string}
                       />
                     </div>
-                    <div className="mb-5 @3xl:col-span-2">
+                    <div className=" @3xl:col-span-2">
                       <Input
                         label="Amount"
                         className="col-span-full"
@@ -190,7 +189,7 @@ export default function NewsLetterForm() {
                         error={errors.amount?.message as string}
                       />
                     </div>
-                    <div className="mb-5 @3xl:col-span-2">
+                    <div className=" @3xl:col-span-2">
                       <Input
                         label="From Date"
                         className="col-span-full"
@@ -200,7 +199,7 @@ export default function NewsLetterForm() {
                         error={errors.from?.message as string}
                       />
                     </div>
-                    <div className="mb-5 @3xl:col-span-2">
+                    <div className="@3xl:col-span-2">
                       <Input
                         label="To Date"
                         className="col-span-full"

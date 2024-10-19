@@ -106,18 +106,17 @@ export default function NewsLetterForm() {
         name: 'Home',
       },
       {
-        href: '/tickets',
-        name: 'Tickets',
+        href: `/${params?.seller}/dashboard`,
+        name: 'Seller',
       },
       {
-        name: 'Create',
+        name: 'Create Ticket',
       },
     ],
   };
 
   return (
     <>
-      <br />
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
         <Link
           href={`/${params?.seller}/tickets`}
@@ -125,7 +124,8 @@ export default function NewsLetterForm() {
         >
           <Button
             tag="span"
-            className="w-full @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+            className="w-full @lg:w-auto"
+            variant='outline'
           >
             View all Tickets
           </Button>
@@ -156,9 +156,9 @@ export default function NewsLetterForm() {
                 <div className="mb-10 grid gap-7 divide-y divide-dashed divide-gray-200 @2xl:gap-9 @3xl:gap-11">
                   <FormGroup
                     title="Ticket Type"
-                    className="pt-7 @2xl:pt-9 @3xl:grid-cols-12 @3xl:pt-11"
+                    className=""
                   >
-                    <div className="mb-5 @3xl:col-span-2">
+                    <div className="@3xl:col-span-2">
                       <Controller
                         name="type"
                         control={control}
@@ -178,7 +178,7 @@ export default function NewsLetterForm() {
 
                   <FormGroup
                     title="Subject and Description"
-                    className="pt-7 @2xl:pt-9 @3xl:grid-cols-12 @3xl:pt-11"
+                    className="pt-5 @2xl:pt-5 @3xl:grid-cols-12 @3xl:pt-9"
                   >
                     <Input
                       label="Subject"

@@ -28,7 +28,7 @@ export default function MessageBody({ chat }: any) {
     return (
       <div
         className={cn(
-          'mt-8 !grid h-full min-h-[128px] flex-grow place-content-center items-center justify-center'
+          '!grid h-full min-h-[128px] flex-grow place-content-center items-center justify-center'
         )}
       >
         <Empty

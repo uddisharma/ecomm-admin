@@ -48,6 +48,7 @@ type Schema = z.infer<typeof schema>;
 
 function PromoBanner() {
   const { openModal } = useModal();
+  const params = useParams();
   const pageHeader = {
     title: 'Logistics',
     breadcrumb: [
@@ -56,13 +57,16 @@ function PromoBanner() {
         name: 'Home',
       },
       {
+        href: `/${params?.seller}/dashboard`,
+        name: 'Seller',
+      },
+      {
         name: 'Logistics',
       },
     ],
   };
 
   const [cookies] = useCookies(['admintoken']);
-  const params = useParams();
 
   let {
     data,

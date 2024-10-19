@@ -164,10 +164,11 @@ export default function ReplyDetails({ className }: { className?: string }) {
     >
       <div>
         <header className="flex flex-col justify-between gap-4 border-b border-gray-200 pb-5 3xl:flex-row 3xl:items-center">
-          <div className="flex flex-row flex-wrap items-start justify-between gap-3 xs:flex-row xs:items-center xs:gap-6 lg:justify-normal">
+          <div className="flex items-start justify-between gap-3 xs:flex-row xs:items-center xs:gap-6 lg:justify-normal">
             <Title as="h4" className="font-semibold">
               {data2?.data?.subject}
             </Title>
+
             <Badge variant="outline" color="primary" size="sm">
               {data2?.data?.type}
             </Badge>
@@ -197,42 +198,23 @@ export default function ReplyDetails({ className }: { className?: string }) {
           </SimpleBar>
         </div>
 
-        <div
-          ref={ref}
-          className="grid grid-cols-[32px_1fr] items-start gap-3 rounded-b-lg bg-white @3xl:pt-4 lg:gap-4 lg:pl-0 xl:grid-cols-[48px_1fr] dark:bg-transparent dark:lg:pt-0"
-        >
-          <figure className="dark:mt-4">
-            <Avatar
-              name={'Seller'}
-              initials={initials}
-              src={
-                (data2 && data2?.data?.seller?.cover) ??
-                'https://isomorphic-furyroad.s3.amazonaws.com/public/avatars-blur/avatar-11.webp'
-              }
-              className="!h-5 !w-5 bg-[#70C5E0] font-medium text-white xl:!h-8 xl:!w-8"
-            />
-          </figure>
-          <div
-            className={`relative rounded-lg bg-gray-50 p-4 2xl:p-5`}
-            style={{
-              maxWidth: formWidth(),
-            }}
-          >
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <div style={{ flex: '8' }}>
+        <div className="border-gray-100 border-[1px] grid grid-cols-[32px_1fr] items-start gap-3 rounded-b-lg bg-white @3xl:pt-4 lg:gap-4 lg:pl-0 xl:grid-cols-[48px_1fr] dark:bg-transparent dark:lg:pt-0">
+          <div className="relative rounded-lg p-4 2xl:p-5">
+            <div className="flex gap-3">
+              <div className="flex-grow">
                 <Input
                   onChange={(e) => {
                     setRMessage(e.target.value);
                   }}
                   value={r_message}
                   placeholder="Reply..."
-                  className="col-span-full"
+                  className="w-full min-w-[250px] md:min-w-[750px]"
                 />
               </div>
-              <div className="relative mb-2.5 flex items-center justify-between">
+              <div className="flex items-center">
                 <Button
-                  type="button"
                   isLoading={loading}
+                  type="button"
                   onClick={sendReply}
                   className="dark:bg-gray-200 dark:text-white"
                 >

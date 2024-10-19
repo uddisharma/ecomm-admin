@@ -142,11 +142,11 @@ export default function Transactions() {
         name: 'Home',
       },
       {
-        href: '/',
-        name: 'Deleted Payouts',
+        href: `/${params?.seller}/dashboard`,
+        name: 'Seller',
       },
       {
-        name: 'List',
+        name: 'Deleted Payouts',
       },
     ],
   };
@@ -167,25 +167,23 @@ export default function Transactions() {
         <div className="mt-4 flex items-center gap-3 @lg:mt-0">
           <ExportButton
             data={downloadblepayouts}
-            fileName="deleted_payout_data"
+            fileName="payout_data"
             header=""
           />
           <Link href={`/${params?.seller}/transactions/create`}>
             <Button
               tag="span"
-              className="mt-4 w-full cursor-pointer @lg:mt-0 @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+              className=" w-full cursor-pointer @lg:mt-0 @lg:w-auto"
+              variant='outline'
             >
               <PiPlusBold className="me-1 h-4 w-4" />
-              Create Transaction
+              Create
             </Button>
           </Link>
           <Link href={`/${params?.seller}/transactions`}>
-            <Button
-              tag="span"
-              className="mt-4 w-full cursor-pointer @lg:mt-0 @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
-            >
-              <PiCreditCardDuotone className="me-1 h-4 w-4" />
-              View All
+            <Button className=" w-full gap-2 @lg:w-auto" variant="outline">
+              <PiCreditCardDuotone className="h-4 w-4" />
+              All
             </Button>
           </Link>
         </div>

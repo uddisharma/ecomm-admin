@@ -135,11 +135,11 @@ export default function Coupons() {
         name: 'Home',
       },
       {
-        href: '/',
-        name: 'Coupons',
+        href: `/${params?.seller}/dashboard`,
+        name: 'Seller',
       },
       {
-        name: 'List',
+        name: 'Coupons',
       },
     ],
   };
@@ -169,10 +169,11 @@ export default function Coupons() {
           >
             <Button
               tag="span"
-              className="w-full @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+              className="w-full @lg:w-auto"
+              variant='outline'
             >
               <PiPlusBold className="me-1.5 h-[17px] w-[17px]" />
-              Add Coupon
+              Add
             </Button>
           </Link>
           <Link href={`/${params?.seller}/coupons/deleted`}>

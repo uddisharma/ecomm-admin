@@ -133,8 +133,8 @@ export default function Coupons() {
         name: 'Home',
       },
       {
-        href: '/',
-        name: 'Deleted Coupons',
+        href: `/${params?.seller}/dashboard`,
+        name: 'Seller',
       },
       {
         name: 'List',
@@ -167,10 +167,11 @@ export default function Coupons() {
           >
             <Button
               tag="span"
-              className="w-full @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+              className="w-full @lg:w-auto "
+              variant='outline'
             >
               <PiPlusBold className="me-1.5 h-[17px] w-[17px]" />
-              Add Coupon
+              Add 
             </Button>
           </Link>
           <Link
@@ -179,10 +180,11 @@ export default function Coupons() {
           >
             <Button
               tag="span"
-              className="w-full @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+              className="w-full @lg:w-auto"
+              variant='outline'
             >
               <RiCoupon2Line className="me-1.5 h-[17px] w-[17px]" />
-              View All
+               All
             </Button>
           </Link>
         </div>

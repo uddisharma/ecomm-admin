@@ -55,6 +55,8 @@ const initialValues = {
 export default function CreateCategory1() {
   const [reset, _setReset] = useState({});
 
+  const params = useParams();
+
   const pageHeader = {
     title: 'Create Category',
     breadcrumb: [
@@ -63,8 +65,8 @@ export default function CreateCategory1() {
         name: 'Home',
       },
       {
-        href: '/categories',
-        name: 'Categories',
+        href: `/${params?.seller}/dashboard`,
+        name: 'Seller',
       },
       {
         name: 'Add Category',
@@ -79,8 +81,6 @@ export default function CreateCategory1() {
     null
   );
   const [selectedItem, setSelectedItem] = useState<any | null>(null);
-
-  const params = useParams();
 
   const [cookies] = useCookies(['admintoken']);
 
@@ -272,12 +272,12 @@ export default function CreateCategory1() {
             >
               <div>
                 <>
-                  <div className="mb-10 grid gap-7 divide-y divide-dashed divide-gray-200 @2xl:gap-9 @3xl:gap-11">
+                  <div className="mb-8 grid gap-7 divide-y divide-dashed divide-gray-200 @2xl:gap-9 @3xl:gap-11">
                     <FormGroup
                       title="Select Category"
-                      className="pt-7 @2xl:pt-9 @3xl:grid-cols-12 @3xl:pt-11"
+                      className=""
                     >
-                      <div className="mb-5 @3xl:col-span-2">
+                      <div className=" @3xl:col-span-2">
                         <Controller
                           name="parent"
                           control={control}
@@ -292,7 +292,7 @@ export default function CreateCategory1() {
                         />
                       </div>
                       {selectedCategory && (
-                        <div className="mb-5 @3xl:col-span-2">
+                        <div className=" @3xl:col-span-2">
                           <Controller
                             name="child"
                             control={control}
@@ -308,7 +308,7 @@ export default function CreateCategory1() {
                         </div>
                       )}
                       {selectedSubcategory && (
-                        <div className="mb-5 @3xl:col-span-2">
+                        <div className="@3xl:col-span-2">
                           <Controller
                             name="subchild"
                             control={control}
@@ -326,7 +326,7 @@ export default function CreateCategory1() {
                     </FormGroup>
                     <FormGroup
                       title="Add Photo"
-                      className="pt-7 @2xl:pt-9 @3xl:grid-cols-12 @3xl:pt-11"
+                      className="pt-5 @2xl:pt-7 @3xl:grid-cols-12 @3xl:pt-9"
                     >
                       <div className="col-span-2 flex flex-col items-center gap-4 @xl:flex-row">
                         <AvatarUploadS3

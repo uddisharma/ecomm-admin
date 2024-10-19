@@ -33,12 +33,17 @@ export default function CategoryPageHeader({
   return (
     <>
       <PageHeader title={title} breadcrumb={breadcrumb} className={className}>
-        <div className="mt-4 flex items-center gap-3 @lg:mt-0">
-          <ExportButton data={categories} fileName="category_data" header="" />
-          <Link href={`/${params?.seller}/categories/create`}>
+        <div className="mt-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:gap-3 lg:mt-0">
+          <ExportButton
+            data={categories}
+            fileName="category_data"
+            header=""
+            className="w-full lg:w-auto"
+          />
+          <Link href={`/${params?.seller}/categories/create`} className="w-full lg:w-auto">
             <Button
               tag="span"
-              className="mt-4 w-full cursor-pointer @lg:mt-0 @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+              className="w-full lg:w-auto cursor-pointer dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
             >
               <PiPlusBold className="me-1 h-4 w-4" />
               Add Category

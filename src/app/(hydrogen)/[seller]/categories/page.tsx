@@ -17,25 +17,25 @@ import { fetcher } from '@/constants/fetcher';
 import { useCookies } from 'react-cookie';
 import { extractPathAndParams } from '@/utils/urlextractor';
 
-const pageHeader = {
-  title: 'Categories',
-  breadcrumb: [
-    {
-      href: '/',
-      name: 'Home',
-    },
-    {
-      href: '/categories',
-      name: 'Categories',
-    },
-    {
-      name: 'List',
-    },
-  ],
-};
-
 export default function CategoriesPage() {
   const params = useParams();
+
+  const pageHeader = {
+    title: 'Categories',
+    breadcrumb: [
+      {
+        href: '/',
+        name: 'Home',
+      },
+      {
+        href: `/${params?.seller}/dashboard`,
+        name: 'Seller',
+      },
+      {
+        name: 'Categories',
+      },
+    ],
+  };
 
   const [cookies] = useCookies(['admintoken']);
 

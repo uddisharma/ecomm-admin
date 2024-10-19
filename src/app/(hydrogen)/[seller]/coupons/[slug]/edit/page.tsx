@@ -67,7 +67,7 @@ export default function NewsLetterForm() {
     discount_type:
       data?.data?.discount_type == 'direct_amount'
         ? 'Direct Amount'
-        : 'Percentage' ?? '',
+        : 'Percentage',
     discount: data?.data?.discount.toString() ?? '',
   };
 
@@ -85,8 +85,9 @@ export default function NewsLetterForm() {
           discount_type:
             data.discount_type == 'Percentage' ? 'percentage' : 'direct_amount',
         },
-        {headers: {
-          
+        {
+          headers: {
+
             Authorization: `Bearer ${cookies?.admintoken}`,
           },
         }
@@ -124,11 +125,11 @@ export default function NewsLetterForm() {
         name: 'Home',
       },
       {
-        href: '/coupons',
-        name: 'Coupons',
+        href: `/${params?.seller}/dashboard`,
+        name: 'Seller',
       },
       {
-        name: 'Edit',
+        name: 'Edit Coupon',
       },
     ],
   };
@@ -156,7 +157,6 @@ export default function NewsLetterForm() {
 
   if (loading) {
     <div>
-      <br />
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
         <Link
           href={`/${params?.seller}/coupons`}
@@ -177,7 +177,6 @@ export default function NewsLetterForm() {
   } else if (error) {
     return (
       <div>
-        <br />
         <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
           <Link
             href={`/${params?.seller}/coupons`}
@@ -206,7 +205,6 @@ export default function NewsLetterForm() {
   if (data) {
     return (
       <>
-        <br />
         <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
           <Link
             href={`/${params?.seller}/coupons`}
@@ -238,12 +236,12 @@ export default function NewsLetterForm() {
             >
               <div>
                 <>
-                  <div className="mb-10 grid gap-7 divide-y divide-dashed divide-gray-200 @2xl:gap-9 @3xl:gap-11">
+                  <div className="mb-10 grid gap-7  @2xl:gap-9 @3xl:gap-11">
                     <FormGroup
                       title="Coupon Details"
-                      className="pt-7 @2xl:pt-9 @3xl:grid-cols-12 @3xl:pt-11"
+                      className=""
                     >
-                      <div className="mb-5 @3xl:col-span-2">
+                      <div className=" @3xl:col-span-2">
                         <Input
                           label="Coupon Code (must be unique)"
                           className="col-span-full"
@@ -253,7 +251,7 @@ export default function NewsLetterForm() {
                           error={errors.code?.message as string}
                         />
                       </div>
-                      <div className="mb-5 @3xl:col-span-2">
+                      <div className="@3xl:col-span-2">
                         <Controller
                           name="discount_type"
                           control={control}
@@ -269,7 +267,7 @@ export default function NewsLetterForm() {
                           )}
                         />
                       </div>
-                      <div className="mb-5 @3xl:col-span-2">
+                      <div className=" @3xl:col-span-2">
                         <Input
                           label="Discount"
                           className="col-span-full"

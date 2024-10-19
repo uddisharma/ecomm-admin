@@ -146,11 +146,11 @@ export default function BlankPage() {
         name: 'Home',
       },
       {
-        href: '/',
-        name: 'Tickets',
+        href: `/${params?.seller}/dashboard`,
+        name: 'Seller',
       },
       {
-        name: 'List',
+        name: 'Tickets',
       },
     ],
   };
@@ -167,7 +167,6 @@ export default function BlankPage() {
 
   return (
     <>
-      <br />
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
         <div className="mt-4 flex items-center gap-3 @lg:mt-0">
           <ExportButton
@@ -181,10 +180,11 @@ export default function BlankPage() {
           >
             <Button
               tag="span"
-              className="w-full @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+              className="w-full @lg:w-auto"
+              variant='outline'
             >
               <PiPlusBold className="me-1.5 h-[17px] w-[17px]" />
-              Create Ticket
+              Create
             </Button>
           </Link>
           <Link href={`/${params?.seller}/tickets/deleted`}>

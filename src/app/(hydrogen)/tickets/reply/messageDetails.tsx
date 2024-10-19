@@ -173,7 +173,6 @@ export default function ReplyDetails({ className }: { className?: string }) {
 
   return (
     <div
-    
       className={cn(
         'relative  lg:rounded-lg lg:border lg:border-gray-200 lg:px-4 lg:py-7 xl:px-5 xl:py-5  2xl:pt-6',
         className

@@ -115,11 +115,11 @@ export default function Transactions() {
         name: 'Home',
       },
       {
-        href: '/',
-        name: 'Payouts',
+        href: `/${params?.seller}/dashboard`,
+        name: 'Seller',
       },
       {
-        name: 'List',
+        name: 'Payouts',
       },
     ],
   };
@@ -146,10 +146,11 @@ export default function Transactions() {
           <Link href={`/${params?.seller}/transactions/create`}>
             <Button
               tag="span"
-              className="mt-4 w-full cursor-pointer @lg:mt-0 @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+              className=" w-full cursor-pointer @lg:mt-0 @lg:w-auto"
+              variant='outline'
             >
               <PiPlusBold className="me-1 h-4 w-4" />
-              Create Transaction
+              Create
             </Button>
           </Link>
           <Link href={`/${params?.seller}/transactions/deleted`}>

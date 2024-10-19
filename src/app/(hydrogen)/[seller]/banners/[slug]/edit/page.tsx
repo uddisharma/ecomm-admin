@@ -82,8 +82,10 @@ export default function AssetInit() {
   const mobileBanner = { name: 'mobile', size: 1024, url: phone };
   const redirectLink = data?.redirectLink;
   const initialValues = {
-    desktop: [desktopBanner] ?? undefined,
-    mobile: [mobileBanner] ?? undefined,
+    // desktop: [desktopBanner] ?? undefined,
+    // mobile: [mobileBanner] ?? undefined,
+    desktop: [desktopBanner],
+    mobile: [mobileBanner],
     link: redirectLink ?? '',
   };
 
@@ -157,11 +159,11 @@ export default function AssetInit() {
         name: 'Home',
       },
       {
-        href: `/${params?.slug}/banners`,
-        name: 'Banners',
+        href: `/${params?.seller}/dashboard`,
+        name: 'Seller',
       },
       {
-        name: 'Edit',
+        name: 'Edit Banner',
       },
     ],
   };
@@ -178,7 +180,6 @@ export default function AssetInit() {
 
   if (loading) {
     <div>
-      <br />
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
         <Link
           href={`/${params?.seller}/banners`}
@@ -186,7 +187,8 @@ export default function AssetInit() {
         >
           <Button
             tag="span"
-            className="w-full @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+            className="w-full @lg:w-auto "
+            variant="outline"
           >
             View all Banners
           </Button>
@@ -199,7 +201,6 @@ export default function AssetInit() {
   } else if (error) {
     return (
       <div>
-        <br />
         <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
           <Link
             href={`/${params?.seller}/banners`}
@@ -228,7 +229,6 @@ export default function AssetInit() {
   if (data) {
     return (
       <>
-        <br />
         <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
           <Link
             href={`/${params?.seller}/banners`}
@@ -268,7 +268,7 @@ export default function AssetInit() {
                     <FormGroup
                       title="Upload Banner For Desktop"
                       description="This will shown in big screens"
-                      className="pt-7 @2xl:pt-9 @3xl:grid-cols-12 @3xl:pt-11"
+                      className=""
                     >
                       <UploadZoneS3
                         className="col-span-full"

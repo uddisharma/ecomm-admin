@@ -123,17 +123,16 @@ export default function AssetInit() {
         name: 'Home',
       },
       {
-        href: `/${params?.slug}/banners`,
-        name: 'Banners',
+        href: `/${params?.seller}/dashboard`,
+        name: 'Seller',
       },
       {
-        name: 'Add',
+        name: 'Add Banner',
       },
     ],
   };
   return (
     <>
-      <br />
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
         <Link
           href={`/${params?.seller}/banners`}
@@ -141,7 +140,8 @@ export default function AssetInit() {
         >
           <Button
             tag="span"
-            className="w-full @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+            className="w-full @lg:w-auto "
+            variant='outline'
           >
             View all Banners
           </Button>
@@ -177,7 +177,7 @@ export default function AssetInit() {
                   <FormGroup
                     title="Upload Banner For Desktop"
                     description="This will shown in big screens"
-                    className="pt-7 @2xl:pt-9 @3xl:grid-cols-12 @3xl:pt-11"
+                    className=""
                   >
                     <UploadZoneS3
                       className="col-span-full"
