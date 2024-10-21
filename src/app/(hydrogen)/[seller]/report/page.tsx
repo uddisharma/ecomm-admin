@@ -1,6 +1,7 @@
 import { metaObject } from '@/config/site.config';
 import EventCalendarView from '@/component/event-calendar';
 import PageHeader from '@/component/others/pageHeader';
+import EventCalendarView1 from '@/component/event-calendar/index1';
 
 export const metadata = {
   ...metaObject('Event Calendar'),
@@ -27,7 +28,7 @@ export default function EventCalendarPage() {
         breadcrumb={pageHeader.breadcrumb}
       ></PageHeader>
 
-      <EventCalendarView />
+      <EventCalendarView1 />
     </>
   );
 }

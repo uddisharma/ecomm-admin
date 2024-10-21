@@ -172,7 +172,8 @@ export default function Transactions() {
             <Link href={`/payouts/create`} className="w-full lg:w-auto">
               <Button
                 tag="span"
-                className="w-full cursor-pointer dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+                className="w-full cursor-pointer "
+                variant='outline'
               >
                 <PiPlusBold className="me-1 h-4 w-4" />
                 Create Transaction
@@ -181,7 +182,8 @@ export default function Transactions() {
             <Link href={`/payouts/all`} className="w-full lg:w-auto">
               <Button
                 tag="span"
-                className="w-full cursor-pointer dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+                className="w-full cursor-pointer "
+                variant='outline'
               >
                 <CiMoneyCheck1 className="me-1 h-4 w-4" />
                 View All

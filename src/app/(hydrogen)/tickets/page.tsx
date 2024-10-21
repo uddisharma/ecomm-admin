@@ -168,7 +168,6 @@ export default function BlankPage() {
 
   return (
     <>
-      <br />
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
         <div className="mt-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:flex-wrap lg:mt-0">
           <ExportButton
@@ -181,7 +180,8 @@ export default function BlankPage() {
             <Link href={'/tickets/create'} className="w-full lg:w-auto">
               <Button
                 tag="span"
-                className="w-full lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+                className="w-full "
+                variant='outline'
               >
                 <PiPlusBold className="me-1.5 h-[17px] w-[17px]" />
                 Create Ticket

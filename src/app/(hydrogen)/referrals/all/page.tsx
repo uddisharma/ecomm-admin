@@ -203,27 +203,32 @@ export default function Transactions() {
   return (
     <>
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
-        <div className="mt-4 flex items-center gap-3 @lg:mt-0">
+        <div className="mt-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:gap-3 lg:mt-0">
           <ExportButton
             data={downloadabeList}
             fileName="referrals_data"
             header=""
+            className="w-full lg:w-auto"
           />
-          <Link href={`/referrals/create`}>
-            <Button
-              tag="span"
-              className="mt-4 w-full cursor-pointer @lg:mt-0 @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
-            >
-              <PiPlusBold className="me-1 h-4 w-4" />
-              Add Referrals
-            </Button>
-          </Link>
-          <Link href={`/referrals/deleted`}>
-            <Button className=" w-full gap-2 @lg:w-auto" variant="outline">
-              <MdOutlineAutoDelete className="h-4 w-4" />
-              Deleted
-            </Button>
-          </Link>
+          <div className="flex flex-col gap-3 sm:flex-row sm:gap-3 w-full lg:w-auto">
+            <Link href={`/referrals/create`} className="w-full sm:w-1/2 lg:w-auto">
+              <Button
+                tag="span"
+                className="w-full "
+                variant='outline'
+              >
+                <PiPlusBold className="me-1 h-4 w-4" />
+                Add Referrals
+              </Button>
+            </Link>
+            <Link href={`/referrals/deleted`} className="w-full sm:w-1/2 lg:w-auto">
+              <Button className="w-full "
+                variant='outline'>
+                <MdOutlineAutoDelete className="h-4 w-4" />
+                Deleted
+              </Button>
+            </Link>
+          </div>
         </div>
       </PageHeader>
 

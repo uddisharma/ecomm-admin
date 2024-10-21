@@ -164,7 +164,8 @@ export default function NewsLetterForm() {
         >
           <Button
             tag="span"
-            className="w-full @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+            className="w-full @lg:w-auto "
+            variant='outline'
           >
             View all Coupons
           </Button>
@@ -184,7 +185,8 @@ export default function NewsLetterForm() {
           >
             <Button
               tag="span"
-              className="w-full @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+              className="w-full @lg:w-auto "
+              variant='outline'
             >
               View all Coupons
             </Button>
@@ -212,7 +214,8 @@ export default function NewsLetterForm() {
           >
             <Button
               tag="span"
-              className="w-full @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+              className="w-full @lg:w-auto "
+              variant='outline'
             >
               View all Coupons
             </Button>

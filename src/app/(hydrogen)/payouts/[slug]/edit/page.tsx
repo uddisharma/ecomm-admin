@@ -276,7 +276,6 @@ export default function NewsLetterForm() {
   if (loading) {
     return (
       <div>
-        <br />
         <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
           <Link
             href={`/payouts/all`}
@@ -284,7 +283,8 @@ export default function NewsLetterForm() {
           >
             <Button
               tag="span"
-              className="w-full @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+              className="w-full cursor-pointer "
+              variant='outline'
             >
               View all Payouts
             </Button>
@@ -300,7 +300,6 @@ export default function NewsLetterForm() {
   if (error) {
     return (
       <div>
-        <br />
         <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
           <Link
             href={'/payouts/all'}
@@ -308,7 +307,8 @@ export default function NewsLetterForm() {
           >
             <Button
               tag="span"
-              className="w-full @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+              className="w-full cursor-pointer "
+              variant='outline'
             >
               View all Payouts
             </Button>
@@ -329,7 +329,6 @@ export default function NewsLetterForm() {
   if (data) {
     return (
       <>
-        <br />
         <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
           <Link
             href={`/payouts/all`}
@@ -337,7 +336,8 @@ export default function NewsLetterForm() {
           >
             <Button
               tag="span"
-              className="w-full @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+              className="w-full cursor-pointer "
+              variant='outline'
             >
               View all Transactions
             </Button>
@@ -369,7 +369,7 @@ export default function NewsLetterForm() {
                     <FormGroup
                       title="Transaction Details"
                       description="Edit Transaction Details"
-                      className="pt-7 @2xl:pt-9 @3xl:grid-cols-12 @3xl:pt-11"
+                      className=""
                     >
                       <div className="relative col-span-full">
                         <Input

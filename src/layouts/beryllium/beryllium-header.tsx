@@ -10,10 +10,18 @@ import Sidebar from '@/layouts/beryllium/beryllium-sidebar-drawer';
 import { useIsMounted } from '@/hooks/use-is-mounted';
 import { useWindowScroll } from '@/hooks/use-window-scroll';
 import HeaderMenuRight from '@/layouts/header-menu-right';
+import { useParams, usePathname } from 'next/navigation';
 
 export default function Header({ className }: { className?: string }) {
   const isMounted = useIsMounted();
   const windowScroll = useWindowScroll();
+  const pathname = usePathname();
+  const params = useParams();
+  const sellerID = params?.seller;
+  const isSellerDashboardHome = pathname?.includes(`${sellerID}/dashboard`);
+  const isSellerDashboard = pathname?.includes(`${sellerID}`);
+  const link = isSellerDashboardHome ? "/" : isSellerDashboard ? `/${sellerID}/dashboard` : "/";
+
 
   return (
     <header
@@ -26,7 +34,7 @@ export default function Header({ className }: { className?: string }) {
       <div className="hidden items-center gap-3 xl:flex">
         <Link
           aria-label="Site Logo"
-          href={'/'}
+          href={link}
           className="me-4 hidden w-[155px] shrink-0 text-gray-900 lg:me-5 xl:block"
         >
           <Logo className="max-w-[155px]" />
@@ -40,7 +48,7 @@ export default function Header({ className }: { className?: string }) {
           />
           <Link
             aria-label="Site Logo"
-            href="/"
+            href={link}
             className="me-4 w-9 shrink-0 text-gray-900 lg:me-5 xl:hidden"
           >
             <Logo iconOnly={true} />

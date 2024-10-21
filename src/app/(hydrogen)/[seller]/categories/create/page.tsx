@@ -227,7 +227,8 @@ export default function CreateCategory1() {
         >
           <Button
             tag="span"
-            className="w-full @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+            className="w-full @lg:w-auto "
+            variant='outline'
           >
             View all Categories
           </Button>
@@ -272,7 +273,7 @@ export default function CreateCategory1() {
             >
               <div>
                 <>
-                  <div className="mb-8 grid gap-7 divide-y divide-dashed divide-gray-200 @2xl:gap-9 @3xl:gap-11">
+                  <div className="mb-8 grid gap-7  @2xl:gap-9 @3xl:gap-11">
                     <FormGroup
                       title="Select Category"
                       className=""
@@ -337,6 +338,7 @@ export default function CreateCategory1() {
                         />
                       </div>
                     </FormGroup>
+                    <div className='h-[50px] w-full'></div>
                   </div>
                   <FormFooter
                     isLoading={isLoading}

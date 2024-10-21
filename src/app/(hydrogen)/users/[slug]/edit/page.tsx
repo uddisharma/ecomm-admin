@@ -221,11 +221,11 @@ export default function CreateUserForm() {
 
   const handleInputChange =
     (index: number, field: keyof Warehouse) =>
-    (e: ChangeEvent<HTMLInputElement>) => {
-      const updatedWarehouses = [...warehouses];
-      updatedWarehouses[index][field] = e.target.value;
-      setWarehouses(updatedWarehouses);
-    };
+      (e: ChangeEvent<HTMLInputElement>) => {
+        const updatedWarehouses = [...warehouses];
+        updatedWarehouses[index][field] = e.target.value;
+        setWarehouses(updatedWarehouses);
+      };
 
   const validateForm1 = (data: any) => {
     if (
@@ -298,12 +298,12 @@ export default function CreateUserForm() {
 
   if (loading) {
     <div>
-      <br />
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
         <Link href={`/users`} className="mt-4 w-full @lg:mt-0 @lg:w-auto">
           <Button
             tag="span"
-            className="w-full @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+            variant="outline"
+            className="mt-4 w-full cursor-pointer lg:mt-0 lg:w-auto "
           >
             View all Users
           </Button>
@@ -316,12 +316,12 @@ export default function CreateUserForm() {
   } else if (error) {
     return (
       <div>
-        <br />
         <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
           <Link href={`/users`} className="mt-4 w-full @lg:mt-0 @lg:w-auto">
             <Button
               tag="span"
-              className="w-full @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+              variant="outline"
+              className="mt-4 w-full cursor-pointer lg:mt-0 lg:w-auto "
             >
               View all Users
             </Button>
@@ -341,12 +341,12 @@ export default function CreateUserForm() {
   }
   return (
     <>
-      <br />
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
         <Link href={`/users`} className="mt-4 w-full @lg:mt-0 @lg:w-auto">
           <Button
             tag="span"
-            className="w-full @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+            variant="outline"
+            className="mt-4 w-full cursor-pointer lg:mt-0 lg:w-auto "
           >
             View all Users
           </Button>
@@ -365,7 +365,7 @@ export default function CreateUserForm() {
               <FormGroup
                 title="User Details"
                 description="Personal Details of User"
-                className="pt-7 @2xl:pt-9 @3xl:pt-11"
+                className="pt-5 @2xl:pt-7 @3xl:pt-9"
               >
                 <Input
                   label="Name"
@@ -400,7 +400,7 @@ export default function CreateUserForm() {
               <FormGroup
                 title="Shipping Address"
                 description="Add User's Shipping Address"
-                className={' pt-7 @2xl:pt-9 @3xl:pt-11'}
+                className={' pt-5 @2xl:pt-7 @3xl:pt9'}
               >
                 <div className="col-span-full">
                   <div className="col-span-full">

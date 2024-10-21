@@ -21,7 +21,7 @@ import cn from '@/utils/class-names';
 import { menuItems } from '@/layouts/lithium/lithium-menu-items';
 import HeaderMenuLeft from '@/layouts/lithium/lithium-header-left-menu';
 import { useContext, useEffect, useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
 import Sidebar from '@/layouts/hydrogen/sidebar';
 import { useIsMounted } from '@/hooks/use-is-mounted';
 import { useWindowScroll } from '@/hooks/use-window-scroll';
@@ -128,6 +128,13 @@ function HeaderMenuRight() {
 export default function Header() {
   const isMounted = useIsMounted();
   const windowScroll = useWindowScroll();
+  const pathname = usePathname();
+  const params = useParams();
+  const sellerID = params?.seller;
+  const isSellerDashboardHome = pathname?.includes(`${sellerID}/dashboard`);
+  const isSellerDashboard = pathname?.includes(`${sellerID}`);
+  const link = isSellerDashboardHome ? "/" : isSellerDashboard ? `/${sellerID}/dashboard` : "/";
+
   return (
     <header
       className={cn(
@@ -138,7 +145,7 @@ export default function Header() {
       <div className="hidden items-center gap-3 xl:flex">
         <Link
           aria-label="Site Logo"
-          href={'/'}
+          href={link}
           className="me-4 hidden w-[155px] shrink-0 text-gray-900 lg:me-5 xl:block"
         >
           <Logo className="max-w-[155px]" />
@@ -150,7 +157,7 @@ export default function Header() {
           <HamburgerButton
             view={<Sidebar className="static w-full 2xl:w-full" />}
           />
-          <Link className="xl:hidden" href={'/'}>
+          <Link className="xl:hidden" href={link}>
             <Image
               className="block w-[120px] dark:hidden"
               src={siteConfig.logo}

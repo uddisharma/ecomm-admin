@@ -254,7 +254,8 @@ export default function NewsLetterForm() {
           <Link href={`/tickets`} className="mt-4 w-full @lg:mt-0 @lg:w-auto">
             <Button
               tag="span"
-              className="w-full @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+              className="w-full "
+              variant='outline'
             >
               View all Tickets
             </Button>
@@ -279,7 +280,8 @@ export default function NewsLetterForm() {
           <Link href={`/tickets`} className="mt-4 w-full @lg:mt-0 @lg:w-auto">
             <Button
               tag="span"
-              className="w-full @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+              className="w-full "
+              variant='outline'
             >
               View all Tickets
             </Button>
@@ -302,7 +304,8 @@ export default function NewsLetterForm() {
           >
             <Button
               tag="span"
-              className="w-full @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+              className="w-full "
+              variant='outline'
             >
               View all Tickets
             </Button>

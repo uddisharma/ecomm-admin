@@ -65,7 +65,7 @@ export default function NewsLetterForm() {
     discount_type:
       data?.data?.discount_type == 'direct_amount'
         ? 'Direct Amount'
-        : 'Percentage' ?? '',
+        : 'Percentage' ,
     discount: data?.data?.discount.toString() ?? '',
   };
 
@@ -111,12 +111,12 @@ export default function NewsLetterForm() {
   if (error) {
     return (
       <div>
-        <br />
         <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
           <Link href={'/coupons'} className="mt-4 w-full @lg:mt-0 @lg:w-auto">
             <Button
               tag="span"
-              className="w-full @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+               className="w-full "
+                variant='outline'
             >
               View all Coupons
             </Button>
@@ -137,12 +137,12 @@ export default function NewsLetterForm() {
   if (data) {
     return (
       <>
-        <br />
         <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
           <Link href={'/coupons'} className="mt-4 w-full @lg:mt-0 @lg:w-auto">
             <Button
               tag="span"
-              className="w-full @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+              className="w-full "
+                variant='outline'
             >
               View all Coupons
             </Button>

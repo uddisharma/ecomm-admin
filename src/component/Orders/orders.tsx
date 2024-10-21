@@ -1,5 +1,4 @@
 'use client';
-import HorizontalFormBlockWrapper from '../account-settings/horiozontal-block';
 import PageHeader from '../others/pageHeader';
 import OrdersList from './orders-list';
 

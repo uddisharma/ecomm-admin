@@ -229,7 +229,6 @@ export default function NewsLetterForm() {
 
   return (
     <>
-      <br />
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
         <Link
           href={`/referrals/all`}
@@ -237,7 +236,8 @@ export default function NewsLetterForm() {
         >
           <Button
             tag="span"
-            className="w-full @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+            className="w-full "
+            variant='outline'
           >
             View all Referrals
           </Button>
@@ -264,7 +264,7 @@ export default function NewsLetterForm() {
                   <FormGroup
                     title="Referral Details"
                     description="Enter Referral Details"
-                    className="pt-7 @2xl:pt-9 @3xl:pt-11"
+                    className=""
                   >
                     <div className="relative col-span-full">
                       <Input

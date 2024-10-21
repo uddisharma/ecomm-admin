@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { Fragment } from 'react';
-import { usePathname } from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
 import { Title } from '@/component/ui/text';
 import { Collapse } from '@/component/ui/collapse';
 import cn from '@/utils/class-names';
@@ -15,6 +15,12 @@ import getStatusBadge from '@/component/others/get-status-badge';
 
 export default function HeliumSidebar({ className }: { className?: string }) {
   const pathname = usePathname();
+  const params = useParams();
+  const sellerID = params?.seller;
+  const isSellerDashboardHome = pathname?.includes(`${sellerID}/dashboard`);
+  const isSellerDashboard = pathname?.includes(`${sellerID}`);
+  const link = isSellerDashboardHome ? "/" : isSellerDashboard ? `/${sellerID}/dashboard` : "/";
+
   return (
     <aside
       className={cn(
@@ -24,11 +30,10 @@ export default function HeliumSidebar({ className }: { className?: string }) {
     >
       <div className="h-full bg-gray-900 p-1.5 pl-0  pr-1.5 xl:rounded-2xl dark:bg-gray-100/70">
         <div className="sticky top-0 z-40 flex justify-center px-6 pb-5 pt-5 2xl:px-8 2xl:pt-6">
-          <Link href={'/'} aria-label="Site Logo">
+          <Link href={link} aria-label="Site Logo">
             <Image
               src="/logo-short-light.svg"
               alt={siteConfig.title}
-              // className="dark:invert"
               width={58}
               height={35}
               priority

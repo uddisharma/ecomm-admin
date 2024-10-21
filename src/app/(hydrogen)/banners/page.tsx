@@ -139,7 +139,8 @@ export default function Coupons() {
             <Link href={`/banners/create`} className="w-full sm:w-1/2 lg:w-auto">
               <Button
                 tag="span"
-                className="w-full dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+                 className="w-full "
+                variant='outline'
               >
                 <PiPlusBold className="me-1.5 h-[17px] w-[17px]" />
                 Add Banner

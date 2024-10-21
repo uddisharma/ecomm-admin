@@ -17,6 +17,7 @@ import {
 } from 'react-icons/pi';
 import cn from '@/utils/class-names';
 import Sidebar from './helium-sidebar';
+import { useParams, usePathname } from 'next/navigation';
 
 function HeaderMenuRight() {
   return (
@@ -66,6 +67,13 @@ function HeaderMenuRight() {
 }
 
 export default function Header() {
+  const pathname = usePathname();
+  const params = useParams();
+  const sellerID = params?.seller;
+  const isSellerDashboardHome = pathname?.includes(`${sellerID}/dashboard`);
+  const isSellerDashboard = pathname?.includes(`${sellerID}`);
+  const link = isSellerDashboardHome ? "/" : isSellerDashboard ? `/${sellerID}/dashboard` : "/";
+
   return (
     <header
       className={
@@ -79,7 +87,7 @@ export default function Header() {
           }
         />
         <Link
-          href={'/'}
+          href={link}
           aria-label="Site Logo"
           className="me-4 w-9 shrink-0 lg:me-5 xl:hidden"
         >

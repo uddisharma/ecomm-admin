@@ -82,8 +82,10 @@ export default function AssetInit() {
   const mobileBanner = { name: 'mobile', size: 1024, url: phone };
   const redirectLink = data?.redirectLink;
   const initialValues = {
-    desktop: [desktopBanner] ?? undefined,
-    mobile: [mobileBanner] ?? undefined,
+    // desktop: [desktopBanner] ?? undefined,
+    // mobile: [mobileBanner] ?? undefined,
+    desktop: [desktopBanner],
+    mobile: [mobileBanner],
     link: redirectLink ?? '',
   };
   const onSubmit: SubmitHandler<Schema> = (data) => {
@@ -176,7 +178,6 @@ export default function AssetInit() {
 
   if (loading) {
     <div>
-      <br />
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
         <Link href={`/banners`} className="mt-4 w-full @lg:mt-0 @lg:w-auto">
           <Button
@@ -194,7 +195,6 @@ export default function AssetInit() {
   } else if (error) {
     return (
       <div>
-        <br />
         <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
           <Link
             href={`/${params?.seller}/banners`}
@@ -223,7 +223,6 @@ export default function AssetInit() {
   if (data) {
     return (
       <>
-        <br />
         <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
           <Link
             href={`/${params?.seller}/banners`}
@@ -231,7 +230,8 @@ export default function AssetInit() {
           >
             <Button
               tag="span"
-              className="w-full @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+               className="w-full "
+                variant='outline'
             >
               View all Banners
             </Button>

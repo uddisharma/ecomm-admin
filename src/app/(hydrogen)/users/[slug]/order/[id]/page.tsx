@@ -71,11 +71,10 @@ export default function LogisticsListPage() {
 
   return (
     <>
-      <br />
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
         <div className="mt-6 flex items-center gap-4 @2xl:mt-0">
           {data?.courior == 'Local' ? (
-            <Button className="w-full gap-2 @lg:w-auto" variant="outline">
+            <Button className="w-full gap-2 @lg:w-auto cursor-not-allowed" variant="outline">
               <FaTruck className="h-4 w-4" />
               Tracking N/A
             </Button>
@@ -86,8 +85,8 @@ export default function LogisticsListPage() {
                   data?.courior == 'Local'
                     ? toast.error('Tracking Not Available for this order')
                     : router1.push(
-                        `/track/${router?.slug}/${data?.order?.awb_number}`
-                      );
+                      `/track/${router?.slug}/${data?.order?.awb_number}`
+                    );
                 }
               }}
               className="w-full gap-2 @lg:w-auto"
@@ -101,10 +100,13 @@ export default function LogisticsListPage() {
             onClick={() => {
               window.open(data?.order?.label, '_blank');
             }}
-            className="w-full gap-2 @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+            className="w-full gap-2 @lg:w-auto "
             style={{ borderRadius: '5px' }}
           >
-            <Button className="w-full gap-2 @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100">
+            <Button
+              variant="outline"
+              className="w-full cursor-pointer lg:mt-0 lg:w-auto "
+            >
               <PiDownloadSimpleBold className="h-4 w-4" />
               Invoice
             </Button>

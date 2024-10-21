@@ -206,12 +206,12 @@ export default function NewsLetterForm() {
 
   return (
     <>
-      <br />
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
         <Link href={`/payouts/all`} className="mt-4 w-full @lg:mt-0 @lg:w-auto">
           <Button
             tag="span"
-            className="w-full @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+            className="w-full cursor-pointer "
+            variant='outline'
           >
             View all Payouts
           </Button>

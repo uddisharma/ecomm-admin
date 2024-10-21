@@ -43,7 +43,8 @@ export default function CategoryPageHeader({
           <Link href={`/${params?.seller}/categories/create`} className="w-full lg:w-auto">
             <Button
               tag="span"
-              className="w-full lg:w-auto cursor-pointer dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+              className="w-full lg:w-auto cursor-pointer"
+              variant='outline'
             >
               <PiPlusBold className="me-1 h-4 w-4" />
               Add Category

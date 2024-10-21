@@ -25,6 +25,12 @@ import DeletedUsersTable from '@/component/users/user-list/deleted/table';
 import { extractPathAndParams } from '@/utils/urlextractor';
 import { fetcher } from '@/constants/fetcher';
 import { useCookies } from 'react-cookie';
+import { FiMoreHorizontal, FiUserPlus } from 'react-icons/fi';
+import Link from 'next/link';
+import cn from '@/utils/class-names';
+import { MdVerifiedUser } from 'react-icons/md';
+import { useModal } from '@/component/modal-views/use-modal';
+import { LuUsers2 } from 'react-icons/lu';
 
 const pageHeader = {
   title: 'Deleted Users',
@@ -90,7 +96,7 @@ export default function ProductsPage() {
   const findUser = () => {
     setLoading(true);
     axios
-      .get(`${BaseApi}${findUsers}?term=${term}`, {
+      .get(`${BaseApi}${findUsers}?term=${term}&isDeleted=true`, {
         headers: {
           Authorization: `Bearer ${cookies?.admintoken}`,
         },
@@ -219,32 +225,9 @@ export default function ProductsPage() {
 
   return (
     <>
-      <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
-        <div className="mt-4 flex items-center gap-3 @lg:mt-0">
-          <ExportButton
-            data={downlaodableList}
-            fileName="deleted_user_data"
-            header=""
-          />
-          <Input
-            prefix={<CiSearch className="h-auto w-5" />}
-            type="text"
-            value={term}
-            onChange={(e) => {
-              setTerm(e.target?.value);
-            }}
-            placeholder="Search for Users..."
-          />
-          <Button
-            isLoading={loading}
-            disabled={!term}
-            onClick={() => findUser()}
-            className=" w-full gap-2 @lg:w-auto"
-          >
-            Search
-          </Button>
-        </div>
-      </PageHeader>
+      <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}> </PageHeader>
+      <Header pagininator={pagininator} downlaoadablelist={downlaodableList} term={term} setTerm={setTerm} findUser={findUser} loading={loading} />
+
       {isLoading ? (
         <ProductLoadingPage />
       ) : (
@@ -314,3 +297,107 @@ export default function ProductsPage() {
     </>
   );
 }
+
+
+const Header = ({ downlaoadablelist, term, setTerm, findUser, loading }: any) => {
+  const { openModal } = useModal();
+
+  const handleMoreOptionsClick = () => {
+    openModal({
+      view: (
+        <div className="p-4">
+          <Link href={`/users/create`}>
+            <Button
+              tag="span"
+              variant="outline"
+              className="mt-4 w-full cursor-pointer dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+            >
+              <FiUserPlus className="me-1 h-4 w-4" />
+              New User
+            </Button>
+          </Link>
+          <Link href={`/users`}>
+            <Button
+              tag="span"
+              variant="outline"
+              className="mt-4 w-full cursor-pointer dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+            >
+              <LuUsers2 className="me-1 h-4 w-4" />
+              All Users
+            </Button>
+          </Link>
+
+          <ExportButton
+            data={downlaoadablelist}
+            fileName="sellers_data"
+            header=""
+            className="mt-4 w-full"
+          />
+        </div>
+      ),
+      customSize: '1000px',
+    });
+  };
+
+  return (
+    <header className={cn('mb-3 container xs:mt-2 lg:mb-7')}>
+      <div className="hidden lg:flex">
+        <div className="mt-4 flex items-center gap-3 lg:mt-0">
+          <Link href={`/users/create`}>
+            <Button
+              tag="span"
+              variant="outline"
+              className="mt-4 w-full cursor-pointer lg:mt-0 lg:w-auto "
+            >
+              <FiUserPlus className="me-1 h-4 w-4" />
+              New User
+            </Button>
+          </Link>
+          <Link href={`/users`}>
+            <Button
+              tag="span"
+              variant="outline"
+              className="mt-4 w-full cursor-pointer lg:mt-0 lg:w-auto "
+
+            >
+              <LuUsers2 className="me-1 h-4 w-4" />
+              All Users
+            </Button>
+          </Link>
+          <ExportButton
+            data={downlaoadablelist}
+            fileName="sellers_data"
+            header=""
+            className="mt-4 w-full lg:mt-0 lg:w-auto"
+          />
+        </div>
+      </div>
+      <div className='mt-[-10px] mb-5 lg:mb-0 lg:mt-4 lg:flex items-center lg:gap-3 grid grid-cols-1'>
+        <Button
+          onClick={() => handleMoreOptionsClick()}
+          className="mt-4 w-full lg:w-auto lg:mt-0 lg:hidden"
+        >
+          More Options <FiMoreHorizontal className="ml-1 mt-0" />
+        </Button>
+        <Input
+          prefix={<CiSearch className="h-auto w-full" />}
+          type="text"
+          value={term}
+          onChange={(e) => {
+            setTerm(e.target?.value);
+          }}
+          placeholder="Search for Seller..."
+          className="mt-4 flex-grow lg:mt-0 lg:w-auto"
+        />
+        <Button
+          isLoading={loading}
+          disabled={!term}
+          onClick={() => findUser()}
+          className="mt-4 w-full lg:w-auto lg:mt-0"
+        >
+          Search
+        </Button>
+      </div>
+    </header>
+  );
+};

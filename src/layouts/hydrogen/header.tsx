@@ -5,16 +5,22 @@ import HamburgerButton from '@/layouts/hamburger-button';
 import SearchWidget from '@/component/search/search';
 import Sidebar from '@/layouts/hydrogen/sidebar';
 import cn from '@/utils/class-names';
-import Logo from '@/component/others/logo';
 import { useIsMounted } from '@/hooks/use-is-mounted';
 import { useWindowScroll } from '@/hooks/use-window-scroll';
 import HeaderMenuRight from '@/layouts/header-menu-right';
 import Image from 'next/image';
 import { siteConfig } from '@/config/site.config';
+import { useParams, usePathname } from 'next/navigation';
 
 export default function Header() {
   const isMounted = useIsMounted();
   const windowScroll = useWindowScroll();
+  const pathname = usePathname();
+  const params = useParams();
+  const sellerID = params?.seller;
+  const isSellerDashboardHome = pathname?.includes(`${sellerID}/dashboard`);
+  const isSellerDashboard = pathname?.includes(`${sellerID}`);
+  const link = isSellerDashboardHome ? "/" : isSellerDashboard ? `/${sellerID}/dashboard` : "/";
 
   return (
     <header
@@ -28,7 +34,7 @@ export default function Header() {
           view={<Sidebar className="static w-full 2xl:w-full" />}
         />
         <div className="flex justify-center xl:hidden">
-          <Link href={'/'}>
+          <Link href={link}>
             <Image
               className="block lg:w-full w-[150px]  dark:hidden"
               src={siteConfig.logo}

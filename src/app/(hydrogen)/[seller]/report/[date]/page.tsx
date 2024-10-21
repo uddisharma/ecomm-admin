@@ -4,7 +4,7 @@ import { Button } from 'rizzui';
 import * as XLSX from 'xlsx';
 import PageHeader from '@/component/others/pageHeader';
 import { useEffect, useState } from 'react';
-import { BaseApi, datewiseStats, sellerOrders } from '@/constants';
+import { BaseApi, datewiseStats, datewiseStatsSeller, sellerOrders } from '@/constants';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { useParams } from 'next/navigation';
@@ -56,7 +56,7 @@ function PromoBanner() {
   const comprehensive = () => {
     setLoading1(true);
     axios
-      .get(`${BaseApi}${datewiseStats}/${params?.seller}?date=${date}`, {
+      .get(`${BaseApi}${datewiseStatsSeller}/${params?.seller}?date=${date}`, {
         headers: {
           Authorization: `Bearer ${cookies?.admintoken}`,
         },

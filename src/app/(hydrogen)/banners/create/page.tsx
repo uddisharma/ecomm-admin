@@ -136,7 +136,8 @@ export default function AssetInit() {
         <Link href={`/banners`} className="mt-4 w-full @lg:mt-0 @lg:w-auto">
           <Button
             tag="span"
-            className="w-full @lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+           className="w-full "
+                variant='outline'
           >
             View all Banners
           </Button>

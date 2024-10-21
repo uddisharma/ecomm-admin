@@ -19,9 +19,8 @@ import { extractPathAndParams } from '@/utils/urlextractor';
 
 const getformatDate = (date: any) => {
   const originalDate = new Date(date);
-  const formattedDate = `${originalDate.getDate()}-${
-    originalDate.getMonth() + 1
-  }-${originalDate.getFullYear()}`;
+  const formattedDate = `${originalDate.getDate()}-${originalDate.getMonth() + 1
+    }-${originalDate.getFullYear()}`;
   return formattedDate;
 };
 export default function OrderCard() {
@@ -153,11 +152,10 @@ function AccordionContent({ order }: any) {
                 priority
                 placeholder="blur"
                 sizes="(max-width: 768px) 100vw"
-                blurDataURL={`/_next/image?url=${
-                  order?.orderItems &&
+                blurDataURL={`/_next/image?url=${order?.orderItems &&
                   order?.orderItems[0].productId?.images &&
                   order?.orderItems[0].productId?.images
-                }&w=10&q=1`}
+                  }&w=10&q=1`}
                 className="h-full w-full object-contain"
               />
             </div>
@@ -219,13 +217,12 @@ function AccordionContent({ order }: any) {
           {order?.orderItems?.map((el: any, i: any) => (
             <div
               style={{
-                border: '1px solid #333',
                 borderRadius: '10px',
                 padding: '10px',
                 marginTop: '5px',
               }}
               key={i}
-              className="grid grid-cols-8"
+              className="grid grid-cols-8 border border-gray-100 rounded-lg p-3 gap-4"
             >
               <div className="hidden flex-col gap-0.5 lg:col-span-2 lg:flex">
                 <span>

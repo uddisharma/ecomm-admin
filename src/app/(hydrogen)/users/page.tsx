@@ -75,7 +75,7 @@ export default function ProductsPage() {
   const findUser = () => {
     setLoading(true);
     axios
-      .get(`${BaseApi}${findUsers}?term=${term}`, {
+      .get(`${BaseApi}${findUsers}?term=${term}&isDeleted=false`, {
         headers: {
           Authorization: `Bearer ${cookies?.admintoken}`,
         },
@@ -295,7 +295,7 @@ const Header = ({ downlaoadablelist, term, setTerm, findUser, loading }: any) =>
             <Button
               tag="span"
               variant="outline"
-              className="mt-4 w-full cursor-pointer lg:mt-0 lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+              className="mt-4 w-full cursor-pointer lg:mt-0 lg:w-auto "
             >
               <FiUserPlus className="me-1 h-4 w-4" />
               New User
@@ -305,7 +305,8 @@ const Header = ({ downlaoadablelist, term, setTerm, findUser, loading }: any) =>
             <Button
               tag="span"
               variant="outline"
-              className="mt-4 w-full cursor-pointer lg:mt-0 lg:w-auto dark:bg-gray-100 dark:text-white dark:active:bg-gray-100"
+              className="mt-4 w-full cursor-pointer lg:mt-0 lg:w-auto "
+
             >
               <MdOutlineAutoDelete className="me-1 h-4 w-4" />
               Deleted

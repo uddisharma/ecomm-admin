@@ -16,7 +16,7 @@ export const menuItems = [
   },
 
   {
-    name: 'Orders',
+    name: 'Orderssdf',
     href: '/orders',
     icon: <PiPackageDuotone />,
   },

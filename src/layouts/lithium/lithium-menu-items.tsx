@@ -4,13 +4,20 @@ import {
   PiCreditCardDuotone,
   PiHouseLine,
 } from 'react-icons/pi';
-import { CiDeliveryTruck, CiShop } from 'react-icons/ci';
+import { CiDeliveryTruck, CiShop, CiMoneyCheck1 } from 'react-icons/ci';
 import { TiTicket } from 'react-icons/ti';
 import {
   MdOutlineCreateNewFolder,
   MdOutlineFileDownload,
+  MdOutlinePhotoLibrary,
+  MdOutlineAddPhotoAlternate,
+  MdConnectWithoutContact,
 } from 'react-icons/md';
-import { RiCoupon2Line } from 'react-icons/ri';
+import { RiCoupon2Line, RiUserStarLine } from 'react-icons/ri';
+import { FiUser, FiUserPlus } from 'react-icons/fi';
+import { IoTicketOutline } from 'react-icons/io5';
+import { LuScreenShare } from 'react-icons/lu';
+import { VscGitPullRequestCreate } from 'react-icons/vsc';
 
 export interface SubMenuItemType {
   name: string;
@@ -38,206 +45,140 @@ export interface MenuItemsType {
 }
 
 export const menuItems: MenuItemsType[] = [
-  // {
-  //   id: '1',
-  //   name: 'Home',
-  //   type: 'link',
-  //   hasdropdown: false,
-  //   popoverContentClassName: 'flex flex-col',
-  //   dropdownItems: [
-  //     {
-  //       name: 'Home',
-  //       href: '/',
-  //       icon: (
-  //         <span>
-  //           <PiHouseLine className="h-5 w-5" />
-  //         </span>
-  //       ),
-  //     },
-  //   ],
-  // },
   {
     id: '2',
-    name: 'Orders',
+    name: 'Sellers',
     type: 'link',
     hasdropdown: false,
     popoverContentClassName: 'flex flex-col',
     dropdownItems: [
       {
-        name: 'Orders',
-        href: '/orders',
-        icon: (
-          <span>
-            <PiPackageDuotone className="h-5 w-5" />
-          </span>
-        ),
-      },
-    ],
-  },
-
-  {
-    id: '3',
-    name: 'Products',
-    type: 'link',
-    hasdropdown: true,
-    popoverContentClassName: 'flex flex-col',
-    dropdownItems: [
-      {
-        name: 'View All',
-        href: '/products',
-        icon: (
-          <span>
-            <PiShoppingCartDuotone className="h-5 w-5" />
-          </span>
-        ),
+        name: 'Sellers',
+        href: '/sellers',
+        icon: <RiUserStarLine className="h-5 w-5" />,
       },
       {
-        name: 'Add New',
-        href: '/products/create',
-        icon: (
-          <span>
-            <MdOutlineCreateNewFolder className="h-5 w-5" />
-          </span>
-        ),
+        name: 'Requests',
+        href: '/onboarding/requests',
+        icon: <VscGitPullRequestCreate className="h-5 w-5" />,
       },
     ],
   },
   {
     id: '4',
-    name: 'Categories',
+    name: 'Users',
     type: 'link',
     hasdropdown: false,
     popoverContentClassName: 'flex flex-col',
     dropdownItems: [
       {
-        name: 'View All',
-        href: '/categories',
-        icon: (
-          <span>
-            <PiCreditCardDuotone className="h-5 w-5" />
-          </span>
-        ),
-      },
-      {
-        name: 'Add New',
-        href: '/categories/create',
-        icon: (
-          <span>
-            <MdOutlineCreateNewFolder className="h-5 w-5" />
-          </span>
-        ),
-      },
-    ],
-  },
-  {
-    id: '8',
-    name: 'Coupons',
-    type: 'collapse',
-    hasdropdown: true,
-    popoverContentClassName:
-      'grid grid-cols-1 2xl:grid-cols-2 w-[220px] 2xl:w-[420px]  gap-x-1 p-3',
-    dropdownItems: [
-      {
-        name: 'View All',
-        icon: (
-          <span>
-            <RiCoupon2Line className="h-5 w-5" />
-          </span>
-        ),
-        href: '/coupons',
-      },
-      {
-        name: 'Add New',
-        icon: (
-          <span>
-            <MdOutlineCreateNewFolder className="h-5 w-5" />
-          </span>
-        ),
-        href: '/coupons/create',
+        name: 'Users',
+        href: '/users',
+        icon: <FiUser className="h-5 w-5" />,
       },
     ],
   },
   {
     id: '5',
-    name: 'Payout',
+    name: 'Payouts',
     type: 'link',
-    hasdropdown: false,
+    hasdropdown: true,
     popoverContentClassName: 'flex flex-col',
     dropdownItems: [
       {
-        name: 'Transactions',
-        href: '/transactions',
-        icon: (
-          <span>
-            <PiCreditCardDuotone className="h-5 w-5" />
-          </span>
-        ),
+        name: 'View All',
+        href: '/payouts/all',
+        icon: <CiMoneyCheck1 className="h-5 w-5" />,
+      },
+      {
+        name: 'Create Payout',
+        href: '/payouts/create',
+        icon: <MdOutlineCreateNewFolder className="h-5 w-5" />,
       },
     ],
   },
   {
     id: '6',
-    name: 'Logistics',
-    type: 'collapse',
+    name: 'Tickets',
+    type: 'link',
     hasdropdown: true,
-    popoverContentClassName:
-      'grid grid-cols-1 2xl:grid-cols-2 w-[220px] 2xl:w-[420px]  gap-x-1 p-3',
+    popoverContentClassName: 'flex flex-col',
     dropdownItems: [
       {
-        name: 'Logistics',
-        icon: (
-          <span>
-            <CiDeliveryTruck className="h-5 w-5" />
-          </span>
-        ),
-        href: '/logistics',
+        name: 'View All',
+        href: '/tickets',
+        icon: <IoTicketOutline className="h-5 w-5" />,
+      },
+      {
+        name: 'Create Ticket',
+        href: '/tickets/create',
+        icon: <MdOutlineCreateNewFolder className="h-5 w-5" />,
       },
     ],
   },
   {
     id: '7',
-    name: 'Tickets',
-    type: 'collapse',
+    name: 'Banners',
+    type: 'link',
     hasdropdown: true,
-    popoverContentClassName:
-      'grid grid-cols-1 2xl:grid-cols-2 w-[220px] 2xl:w-[420px]  gap-x-1 p-3',
+    popoverContentClassName: 'flex flex-col',
     dropdownItems: [
       {
         name: 'View All',
-        icon: (
-          <span>
-            <TiTicket className="h-5 w-5" />
-          </span>
-        ),
-        href: '/tickets',
+        href: '/banners',
+        icon: <MdOutlinePhotoLibrary className="h-5 w-5" />,
       },
       {
-        name: 'Create New',
-        icon: (
-          <span>
-            <MdOutlineCreateNewFolder className="h-5 w-5" />
-          </span>
-        ),
-        href: '/tickets/create',
+        name: 'Add Banner',
+        href: '/banners/create',
+        icon: <MdOutlineAddPhotoAlternate className="h-5 w-5" />,
+      },
+    ],
+  },
+  {
+    id: '8',
+    name: 'Referrals',
+    type: 'link',
+    hasdropdown: true,
+    popoverContentClassName: 'flex flex-col',
+    dropdownItems: [
+      {
+        name: 'View All',
+        href: '/referrals/all',
+        icon: <LuScreenShare className="h-5 w-5" />,
+      },
+      {
+        name: 'Add Referral',
+        href: '/referrals/create',
+        icon: <MdOutlineCreateNewFolder className="h-5 w-5" />,
       },
     ],
   },
   {
     id: '9',
-    name: 'Report',
-    type: 'collapse',
-    hasdropdown: true,
-    popoverContentClassName:
-      'grid grid-cols-1 2xl:grid-cols-2 w-[220px] 2xl:w-[420px]  gap-x-1 p-3',
+    name: 'Contacts',
+    type: 'link',
+    hasdropdown: false,
+    popoverContentClassName: 'flex flex-col',
+    dropdownItems: [
+      {
+        name: 'Contacts',
+        href: '/contacts',
+        icon: <MdConnectWithoutContact className="h-5 w-5" />,
+      },
+    ],
+  },
+  {
+    id: '10',
+    name: 'Download Report',
+    type: 'link',
+    hasdropdown: false,
+    popoverContentClassName: 'flex flex-col',
     dropdownItems: [
       {
         name: 'Download Report',
-        icon: (
-          <span>
-            <MdOutlineFileDownload className="h-5 w-5" />
-          </span>
-        ),
         href: '/report',
+        icon: <MdOutlineFileDownload className="h-5 w-5" />,
       },
     ],
   },

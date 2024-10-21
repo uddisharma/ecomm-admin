@@ -2,12 +2,9 @@
 
 import Link from 'next/link';
 import { Fragment } from 'react';
-import { usePathname } from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
 import { Title } from '@/component/ui/text';
-
-import { Collapse } from '@/component/ui/collapse';
 import cn from '@/utils/class-names';
-import { PiCaretDownBold } from 'react-icons/pi';
 import SimpleBar from '@/component/ui/simplebar';
 import { menuItems } from './menu-items';
 import Logo from '@/component/others/logo';
@@ -15,6 +12,12 @@ import getStatusBadge from '@/component/others/get-status-badge';
 
 export default function Sidebar({ className }: { className?: string }) {
   const pathname = usePathname();
+  const params = useParams();
+  const sellerID = params?.seller;
+  const isSellerDashboardHome = pathname?.includes(`${sellerID}/dashboard`);
+  const isSellerDashboard = pathname?.includes(`${sellerID}`);
+  const link = isSellerDashboardHome ? "/" : isSellerDashboard ? `/${sellerID}/dashboard` : "/";
+
   return (
     <aside
       className={cn(
@@ -23,7 +26,7 @@ export default function Sidebar({ className }: { className?: string }) {
       )}
     >
       <div className="sticky top-0 z-40 bg-gray-0/10 px-6 pb-0 pt-3 2xl:px-8 2xl:pt-6 dark:bg-gray-100/5">
-        <Link href={'/'} aria-label="Site Logo">
+        <Link href={link} aria-label="Site Logo">
           <Logo className="max-w-[155px]" />
         </Link>
       </div>
